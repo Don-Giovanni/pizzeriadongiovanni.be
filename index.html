@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Pizzeria Don Giovanni, Grand'Rue 1, 6530 Thuin. Menu, prix, livraison et allergènes. Tél. 0455 11 16 77.">
+<meta name="theme-color" content="#0d0b0a">
+<link rel="icon" href="logo-dark.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Menu Don Giovanni</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500&family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: carta su fondo nero (colori del logo), barra tricolore, categorie fisse in alto, righe a puntini come il menu stampato, panier in basso */
+:root{
+  --bg:#0d0b0a;--panel:#171412;--panel2:#201b18;--line:#2c2622;
+  --fg:#fbf4e6;--muted:#b7ab98;--red:#e3201b;--green:#1f9a4b;--amber:#f2b33d;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --body:"Poppins","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--body);-webkit-font-smoothing:antialiased;padding-bottom:84px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.flag{display:grid;grid-template-columns:1fr 1fr 1fr;height:6px}
+.flag i:nth-child(1){background:var(--green)}.flag i:nth-child(2){background:var(--fg)}.flag i:nth-child(3){background:var(--red)}
+button{font-family:inherit}
+.langs{display:flex;justify-content:flex-end;gap:4px;padding-block:10px 0}
+.langs button{font:600 12px var(--body);letter-spacing:.06em;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 9px;cursor:pointer}
+.langs button[aria-pressed="true"]{color:var(--bg);background:var(--fg);border-color:var(--fg)}
+header.hero{padding-block:6px 18px;text-align:center}
+header.hero img{width:min(220px,56vw);height:auto;display:block;margin:0 auto}
+.fact>span[data-t]{display:block}
+.status{display:inline-flex;max-width:100%;align-items:center;gap:8px;margin:6px 0 8px;font-weight:600;border-radius:999px;padding:6px 14px;background:var(--panel);border:1px solid var(--line)}
+.status i{width:10px;height:10px;border-radius:50%;background:var(--muted);flex:0 0 auto}
+.status.open i{background:#2fc964;box-shadow:0 0 0 4px rgba(47,201,100,.18)}
+.status.closed i{background:var(--red)}
+.fact .status small,.status small{display:inline;font-weight:400;color:var(--muted);font-size:inherit}
+.dl{display:block;margin:6px 0 8px;font-weight:600;font-size:14px}
+.addr{margin-top:12px;font-weight:600;letter-spacing:.02em}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px;text-align:left}
+.fact{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel)}
+.fact>b{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg);margin-bottom:2px}
+.cday{display:block;margin-top:6px;color:var(--red);font-size:17px;font-weight:700}
+.party{margin:10px 0 0;padding:8px 10px;border-left:3px solid var(--amber);background:var(--bg);border-radius:0 8px 8px 0;font-size:13px;color:var(--muted)}.party b{color:var(--amber)}
+.fact small{display:block;color:var(--muted);font-size:13px}
+.call{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:14px}
+.phone{font:700 clamp(24px,7vw,34px)/1.1 var(--body);color:var(--fg);text-decoration:none;font-variant-numeric:tabular-nums}
+.phone em{font-style:normal;color:var(--red)}
+.btn{font:600 13px var(--body);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.red{background:var(--red);border-color:var(--red)}
+.btn.big{font-size:16px;padding:13px 18px;justify-content:center}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+nav.cats{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav.cats .wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding-block:8px}
+nav.cats .wrap::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;font:600 14px var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 14px;text-decoration:none;white-space:nowrap}
+.chip.on{background:var(--red);border-color:var(--red)}
+.tools{display:flex;gap:8px;align-items:center;padding-block:14px 4px}
+.tools input{flex:1;min-width:0;font:400 15px var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.tools input::placeholder{color:var(--muted)}
+#blanche{flex:0 0 auto}
+#blanche[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.info{margin-top:10px;font-size:13px;color:var(--muted);border-left:3px solid var(--amber);padding:6px 10px;background:var(--panel)}
+section.cat{padding-block:18px 6px;scroll-margin-top:var(--navh,64px)}
+h2{font:500 clamp(34px,9vw,46px)/1 var(--display);color:var(--red);margin:0 0 6px;display:flex;align-items:center;gap:14px;text-wrap:balance}
+h2::after{content:"";flex:1;height:3px;background:var(--green);border-radius:2px}
+section.cat:nth-of-type(even) h2::after{background:var(--red)}
+.note{color:var(--muted);font-size:13px;margin:0 0 6px}
+ul.items{list-style:none;margin:0;padding:0}
+li.it{padding:9px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;align-items:flex-start}
+.itx{flex:1;min-width:0}
+.row{display:flex;align-items:baseline;gap:8px}
+.nm{font-weight:700;font-size:16px}
+.dots{flex:1;min-width:12px;border-bottom:2px dotted #4a413a;transform:translateY(-4px)}
+.pr{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ing{color:var(--muted);font-size:14px;margin-top:1px}
+.alg{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.alg span{font:600 10px/1 var(--body);color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:3px 5px}
+.alg span.v{color:var(--amber);border-color:rgba(242,179,61,.4)}
+.tag{display:inline-block;font:600 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--bg);background:var(--fg);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.add{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:1px solid var(--red);background:transparent;color:var(--fg);font:500 22px/1 var(--body);cursor:pointer;margin-top:2px;position:relative}
+.add[data-n]::after{content:attr(data-n);position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;background:var(--red);font:700 11px/18px var(--body);padding:0 4px}
+.sup li.it .nm{font-weight:500;font-size:15px}
+.empty{color:var(--muted);padding:18px 0}
+table.at{border-collapse:collapse;font-size:13px;min-width:100%}
+.atw{overflow-x:auto;margin-top:8px}
+table.at th,table.at td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.at th{color:var(--muted);font-weight:600}
+ol.legend{columns:2;column-gap:20px;font-size:13px;color:var(--muted);padding-left:22px;margin:6px 0 0}
+@media (max-width:420px){ol.legend{columns:1}}
+footer{padding-block:26px 34px;color:var(--muted);font-size:13px;text-align:center}
+footer a{color:var(--fg)}
+/* barra panier */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--red);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bar .wrap{display:flex;align-items:center;gap:10px;padding-block:12px}
+.bar button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;flex:1;font-weight:700;font-size:16px}
+.bar .cnt{background:var(--fg);color:var(--red);border-radius:999px;min-width:28px;text-align:center;padding:2px 8px;font-size:14px}
+.bar .tot{font-variant-numeric:tabular-nums;font-weight:700}
+/* panneau */
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
+.panel{background:var(--panel);width:100%;max-width:760px;max-height:92%;overflow-y:auto;border-radius:18px 18px 0 0;padding-block:16px calc(18px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ph h3{font:500 30px/1 var(--display);color:var(--red);margin:0}
+.x{all:unset;cursor:pointer;font-size:26px;line-height:1;color:var(--muted);padding:4px 8px}
+.warn{background:var(--panel2);border:1px solid rgba(242,179,61,.45);border-radius:12px;padding:10px 12px;font-size:13px;margin:12px 0}
+.warn b{color:var(--amber)}
+.line{border-bottom:1px solid var(--line);padding:10px 0}
+.lt{display:flex;align-items:center;gap:8px}
+.lt .nm{flex:1;min-width:0}
+.qty{display:flex;align-items:center;gap:4px}
+.qty button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-size:18px;cursor:pointer}
+.qty span{min-width:22px;text-align:center;font-weight:700}
+.sups{font-size:13px;color:var(--muted);margin-top:4px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sups .s{border:1px solid var(--line);border-radius:999px;padding:2px 8px;cursor:pointer;background:transparent;color:var(--fg);font-size:12px}
+.sups .s::after{content:" ×";color:var(--muted)}
+.lnk{all:unset;cursor:pointer;color:var(--amber);font-size:13px;font-weight:600}
+.pick{margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:8px;max-height:260px;overflow-y:auto;background:var(--bg)}
+.pick h4{margin:8px 4px 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pick button{margin:3px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--fg);padding:5px 10px;font-size:13px;cursor:pointer}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:14px 0 8px}
+.seg button{border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:12px;padding:11px;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+label.f{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+select,textarea,#km{width:100%;font:400 15px var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:4px}
+textarea{min-height:64px;resize:vertical}
+.maps{display:grid;grid-template-columns:1fr 1fr;gap:8px}.maps .btn{justify-content:center;text-decoration:none}
+#km{font-size:18px;font-variant-numeric:tabular-nums}
+.sum{margin-top:12px;font-variant-numeric:tabular-nums}
+.sum div{display:flex;justify-content:space-between;padding:3px 0}
+.sum .grand{font-size:20px;font-weight:700;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.msg{font-size:13px;margin-top:6px;color:var(--amber)}
+.actions{display:grid;gap:8px;margin-top:14px}
+.modal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:12px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px))}
+.mbox{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:440px;width:100%;padding:22px;text-align:center;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow-y:auto}
+.mz{font-size:34px}.mbox .num{font:700 28px/1.1 var(--body);margin:10px 0;font-variant-numeric:tabular-nums}
+.recap{text-align:left;background:var(--bg);border-radius:12px;padding:10px 12px;margin:12px 0;font-size:14px;max-height:40vh;overflow-y:auto}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:25;background:var(--fg);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:13px;max-width:min(92vw,420px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+@media (max-width:420px){.chip{font-size:13px;padding:6px 11px}}
+@media (max-height:520px){.mbox{padding:14px 16px}.mbox .mz{display:none}.mbox h3.mt{font-size:24px!important;margin:0!important}.mbox .num{font-size:22px;margin:6px 0}.recap{max-height:none;margin:8px 0}.mbox .actions{grid-template-columns:repeat(3,1fr);margin-top:8px}.mbox .btn.big{font-size:14px;padding:10px}}
+@media (min-width:900px){body{font-size:16px}.wrap{max-width:1100px}.panel{max-width:860px}
+ ul.items{display:grid;grid-template-columns:1fr 1fr;column-gap:40px}
+ .nm{font-size:18px}.ing{font-size:15px}.pr{font-size:17px}.chip{font-size:15px;padding:8px 16px}.fact span{font-size:16px}.fact small,.party{font-size:14px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+
+<div class="flag" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="wrap langs" role="group" aria-label="Langue · Taal · Language · Lingua">
+  <button type="button" data-l="fr">FR</button><button type="button" data-l="nl">NL</button><button type="button" data-l="en">EN</button><button type="button" data-l="it">IT</button>
+</div>
+<header class="hero wrap">
+  <img src="logo-dark.png" alt="Pizzeria Don Giovanni" width="643" height="720">
+  <div class="addr">Grand'Rue 1 · 6530 Thuin</div>
+  <div class="call">
+    <a class="phone" href="tel:+32455111677"><em data-t="tel"></em> 0455 11 16 77</a>
+    <button class="btn" id="copy" type="button" data-t="copy"></button>
+  </div>
+  <div class="facts">
+    <div class="fact"><b data-t="open"></b><span class="status" id="status"><i></i><span id="stTxt"></span></span><span data-t="openH"></span><strong class="cday" data-t="closedMon"></strong><p class="party"><b data-t="partyT"></b> <span data-t="party"></span></p></div>
+    <div class="fact"><b data-t="deliv"></b><span class="dl" id="dlTxt"></span><span data-t="delivH"></span><small data-t="delivC"></small><small data-t="bigC"></small></div>
+  </div>
+</header>
+
+<nav class="cats" id="catsNav" aria-label="Catégories"><div class="wrap" id="chips"></div></nav>
+
+<main class="wrap">
+  <p class="info" data-t="howto"></p>
+  <div class="tools">
+    <input id="q" type="search" autocomplete="off">
+    <button class="btn" id="blanche" type="button" aria-pressed="false" data-t="white"></button>
+  </div>
+  <div id="menu"></div>
+  <p class="empty" id="none" hidden data-t="nothing"></p>
+  <section class="cat" id="allergenes"></section>
+</main>
+
+<footer class="wrap">
+  <p><a href="https://www.facebook.com/pizzeriadongiovanni" target="_blank" rel="noopener">Facebook · @pizzeriadongiovanni</a></p>
+  <p>Pizzeria Don Giovanni · Grand'Rue 1, 6530 Thuin · 0455 11 16 77</p>
+</footer>
+
+<div class="bar" id="bar" hidden><div class="wrap"><button type="button" id="openCart"><span class="cnt" id="barN">0</span><span data-t="mySel"></span><span style="flex:1"></span><span class="tot" id="barT"></span></button></div></div>
+<div class="sheet" id="sheet" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="cartH" id="panel"></div></div>
+<div class="modal" id="modal" hidden><div class="mbox" role="dialog" aria-modal="true" id="mbox"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ================= dati ================= */
+const PHONE="0455 11 16 77",TEL="+32455111677";
+/* Chiusure eccezionali e lunedì aperti: aggiornati dal titolare / controllo automatico */
+const CLOSED=[];   // [{from:"AAAA-MM-GG",to:"AAAA-MM-GG",note:{fr:"",nl:"",en:""}}]
+const OPEN_EXTRA=[]; // lunedì aperti eccezionalmente ["AAAA-MM-GG"]
+const ALLERGEN_DRAFT=true; // bozza da verificare con le etichette dei fornitori
+/* zone livraison: prezzo per 2,3,4 pizze; 5+ gratuite */
+const TIERS=[[3,[3,3,3]],[4,[4,4,3]],[6,[5,4,3]],[8,[6,5,4]],[10,[7,6,5]]]; /* [fino a km, [2,3,4 pizze]]; da 5 pizze gratuita */
+const MAPS_G="https://www.google.com/maps/dir/?api=1&destination=Grand%27Rue%201%2C%206530%20Thuin%2C%20Belgique&travelmode=driving",MAPS_W="https://www.waze.com/ul?q=Grand%27Rue%201%2C%206530%20Thuin&navigate=yes";
+/* paesi: [nome, cap, km su strada da Grand'Rue 1 (OSRM, 04.11.2026), zona; -1 = fuori zona] */
+
+/* allergeni UE (1-14) */
+const ALG={fr:["Gluten","Crustacés","Œufs","Poisson","Arachides","Soja","Lait","Fruits à coque","Céleri","Moutarde","Sésame","Sulfites","Lupin","Mollusques"],
+nl:["Gluten","Schaaldieren","Eieren","Vis","Pinda's","Soja","Melk","Noten","Selderij","Mosterd","Sesam","Sulfiet","Lupine","Weekdieren"],
+it:["Glutine","Crostacei","Uova","Pesce","Arachidi","Soia","Latte","Frutta a guscio","Sedano","Senape","Sesamo","Solfiti","Lupini","Molluschi"],
+en:["Gluten","Crustaceans","Eggs","Fish","Peanuts","Soy","Milk","Tree nuts","Celery","Mustard","Sesame","Sulphites","Lupin","Molluscs"]};
+/* ingredienti: [fr, nl, en, allergeni, da verificare (prodotto confezionato)] */
+const I={
+tom:["tomate","tomaat","tomato",[]],stom:["sauce tomate","tomatensaus","tomato sauce",[]],mozz:["mozzarella","mozzarella","mozzarella",[7]],
+bas:["basilic","basilicum","basil",[]],huile:["huile d'olive","olijfolie","olive oil",[]],jb:["jambon blanc","gekookte ham","cooked ham",[],1],jam:["jambon","ham","ham",[],1],
+snp:["salami non piquant","milde salami","mild salami",[],1],sp:["salami piquant","pikante salami","spicy salami",[],1],spnp:["salami piquant et non piquant","pikante en milde salami","spicy and mild salami",[],1],
+tc:["tomates cerises","kerstomaatjes","cherry tomatoes",[]],parm:["parmesan","parmezaan","parmesan",[7]],ail:["ail","look","garlic",[]],ana:["ananas","ananas","pineapple",[]],
+thon:["thon","tonijn","tuna",[4]],oig:["oignons","ui","onions",[]],pdt:["pomme de terre","aardappel","potato",[]],anch:["anchois","ansjovis","anchovies",[4]],anchf:["filets d'anchois","ansjovisfilets","anchovy fillets",[4]],
+oli:["olives","olijven","olives",[]],champ:["champignons","champignons","mushrooms",[]],chev:["chèvre","geitenkaas","goat's cheese",[7]],lard:["lardons","spekblokjes","bacon",[],1],
+cr:["crème","room","cream",[7]],oeuf:["œuf","ei","egg",[3]],oeufd:["œuf dur","hardgekookt ei","hard-boiled egg",[3]],poiv:["poivrons","paprika","peppers",[]],
+chic:["chicons","witloof","chicory",[]],noix:["noix","walnoten","walnuts",[8]],aub:["aubergines","aubergine","aubergine",[]],epi:["épinards","spinazie","spinach",[]],
+miel:["miel","honing","honey",[]],art:["artichauts","artisjok","artichokes",[]],porc:["porchetta","porchetta","porchetta",[],1],tal:["taleggio","taleggio","taleggio",[7]],
+sauc:["chair à saucisse","worstvlees","sausage meat",[],1],gorg:["gorgonzola","gorgonzola","gorgonzola",[7]],buf:["mozzarella di bufala","buffelmozzarella","buffalo mozzarella",[7]],
+grana:["copeaux de grana","grana-schilfers","grana shavings",[7,3],1],cparm:["copeaux de parmesan","parmezaanschilfers","parmesan shavings",[7]],ori:["origan","oregano","oregano",[]],
+cap:["câpres","kappertjes","capers",[]],ric:["ricotta","ricotta","ricotta",[7]],rics:["ricotta salata","ricotta salata","ricotta salata",[7]],jcru:["jambon cru","rauwe ham","cured ham",[],1],
+roq:["roquette","rucola","rocket",[]],bal:["balsamique","balsamico","balsamic",[12]],bres:["bresaola","bresaola","bresaola",[],1],
+fria:["friarielli (brocoli-rave)","friarielli (raapstelen)","friarielli (broccoli rabe)",[]],fdm:["fruits de mer","zeevruchten","seafood",[2,14],1],scam:["scampis","scampi","scampi",[2]],
+saum:["saumon","zalm","salmon",[4]],courg:["courgettes","courgette","courgette",[]],pist:["pistaches","pistachenoten","pistachios",[8]],pesto:["pesto","pesto","pesto",[7],1],
+mort:["mortadella","mortadella","mortadella",[],1],burr:["burrata","burrata","burrata",[7]],poivre:["poivre","peper","pepper",[]],jaune:["jaune d'œuf","eigeel","egg yolk",[3]],
+pers:["persil","peterselie","parsley",[]],f4:["4 fromages","4 kazen","4 cheeses",[7]],
+};
+const IT_T={"Pour commencer": "Per iniziare", "Pizzas": "Pizze", "Suppléments": "Supplementi", "Pâtes": "Pasta", "Desserts": "Dolci", "Boissons": "Bevande", "nature ou ail-parmesan": "semplice o aglio e parmigiano", "moitié pizza, moitié calzone (choix du chef)": "metà pizza, metà calzone (scelta dello chef)", "tomate, mozzarella et 3 ingrédients au choix": "pomodoro, mozzarella e 3 ingredienti a scelta", "traditionnel ou speculoos": "classico o speculoos", "Nutella, pistaches": "Nutella, pistacchi", "Nutella, fruits": "Nutella, frutta", "canette 33 cl": "lattina 33 cl", "50 cl": "50 cl", "bouteille 75 cl": "bottiglia 75 cl", "crème de balsamique": "crema di balsamico", "charcuterie": "salumi", "fromage": "formaggio", "mozzarella fior di latte": "fior di latte", "jambon cru italien": "prosciutto crudo italiano", "Ajoutez-les dans votre sélection avec « + Supplément ».": "Aggiungili nella tua selezione con « + Supplemento ».", "« Blanche » = sans sauce tomate.": "« Bianca » = senza pomodoro."};
+const T3=(fr,nl,en,it)=>({fr,nl,en,it:it||IT_T[fr]||fr});
+/* voci: [nome, ingredienti (chiavi) o testo, prezzo, blanche, allergeni extra, verificare] */
+const MENU=[
+ {id:"commencer",t:T3("Pour commencer","Om te beginnen","To start"),items:[["Pain pizza",T3("nature ou ail-parmesan","naturel of look-parmezaan","plain or garlic & parmesan"),7,0,[1,7]]]},
+ {id:"pizzas",t:T3("Pizzas","Pizza's","Pizzas"),pz:1,note:T3("« Blanche » = sans sauce tomate.","« Wit » = zonder tomatensaus.","« White » = no tomato sauce."),items:[
+  ["Margherita","tom mozz bas huile",11],["Prosciutto","tom mozz jb",13],["Genova","tom mozz snp",13],["Salami","tom mozz sp",13],
+  ["Ciliegino","tom mozz tc parm ail bas",13.5],["Esotica","tom mozz jb ana",14],["Tonno","tom mozz thon oig",14],["Tonno 2.0","mozz pdt thon oig",14,1],
+  ["Casereccia","tom anch oli parm oig",14],["Napoli","tom mozz anch oli",14],["Regina","tom mozz jb champ",14],["Campagnola","tom mozz chev tc ail",14],
+  ["Sfiziosa","tom mozz lard oig cr ail",14.5],["Sole mio","tom mozz jb champ oeuf",14.5],["Fantasia","tom mozz lard champ poiv",14.5],["Chicon","tom mozz chic noix parm",14.5],
+  ["Parmigiana","tom mozz aub parm",15],["Braccio di ferro","tom mozz epi champ oeufd cr parm",15],["Capra","tom mozz lard chev miel noix",15],
+  ["Quattro Stagioni","tom mozz jb champ art oli",15],["Carbonara","tom mozz lard cr oeuf parm",15],["Porchetta","tom mozz porc oig tal",15],
+  ["Patatina","mozz pdt sauc gorg",15,1],["Bufalina","tom buf grana bas huile ori",15],["Siciliana","tom mozz anch oli poiv cap",15],
+  ["Ricotta e Spinaci","tom mozz ric epi parm",15],["Monte Bianco","mozz jb ric parm",15,1],["Quattro formaggi","tom mozz gorg tal parm",15.5],
+  ["Parma","tom mozz jcru cparm",15.5],["Norma","tom mozz aub rics bas",15.5],["Vegetariana","tom mozz champ art poiv aub oig",15.5],
+  ["Don Giovanni","tom mozz ric sauc oig grana",16],["Peperoni","tom mozz sp poiv oig oli",16],["Calzone tradizionale","tom mozz jb champ",16],
+  ["Capricciosa","tom mozz jam champ poiv art oeuf",16],["Pizza du chef",T3("moitié pizza, moitié calzone (choix du chef)","half pizza, half calzone (keuze van de chef)","half pizza, half calzone (chef's choice)"),16,0,[1,7],1],
+  ["Chicon gratin","mozz porc chic tal parm",16.5,1],["Carrettiera","mozz sauc fria tc parm",17],["Frutti di mare","tom mozz fdm ail",17],
+  ["Calzone special",T3("tomate, mozzarella et 3 ingrédients au choix","tomaat, mozzarella en 3 ingrediënten naar keuze","tomato, mozzarella and 3 toppings of your choice"),17,0,[1,7],1],
+  ["Scampi","tom mozz scam ail",17],["Salmone","tom mozz saum cr ail",17],["Melanzane","tom mozz aub jcru grana",17.5],
+  ["Primavera","tom mozz jcru roq tc bal grana",17.5],["Bresaola","tom mozz bres roq tc bal grana",17.5],["Bomba","tom mozz jb champ sp gorg parm oig",17.5],
+  ["Gamberoni","tom mozz scam ail courg tc pist",17.5],["Gamberoni e pesto","mozz scam ail tc pesto",17.5],["Maialina","tom mozz jb porc spnp lard sauc",17.5],
+  ["Mortadella","mozz parm mort burr pist",17.5,1]]},
+ {id:"supplements",t:T3("Suppléments","Supplementen","Extras"),sup:1,note:T3("Ajoutez-les dans votre sélection avec « + Supplément ».","Voeg ze toe in uw selectie met « + Supplement ».","Add them in your selection with « + Extra »."),items:[]},
+ {id:"pates",t:T3("Pâtes","Pasta","Pasta"),pa:1,items:[
+  ["Pasta Napoli","stom bas",14],["Pasta all'Amatriciana","stom lard oig",15],["Pasta Carrettiera","anchf tc ail bas",15],["Pasta Carbonara","lard cr jaune poivre parm",15],
+  ["Pasta Panna e prosciutto","jam parm cr",15],["Pasta ai Quattro Formaggi","f4 cr",15],["Pasta alla Norma","stom aub rics bas",15],["Pasta Funghi e Salsiccia","sauc champ cr",16],
+  ["Pasta al Salmone","saum cr stom",17],["Pasta frutti di mare","fdm ail tc pers",17],["Pasta Scampi","scam cr tc pers",17]]},
+ {id:"desserts",t:T3("Desserts","Desserts","Desserts"),items:[
+  ["Tiramisù",T3("traditionnel ou speculoos","traditioneel of speculoos","classic or speculoos"),7,0,[1,3,7],1],
+  ["Pizza Nutella et pistache",T3("Nutella, pistaches","Nutella, pistachenoten","Nutella, pistachios"),12.5,0,[1,6,7,8],1],
+  ["Pizza Nutella et fruits",T3("Nutella, fruits","Nutella, fruit","Nutella, fruit"),12.5,0,[1,6,7,8],1]]},
+ {id:"boissons",t:T3("Boissons","Dranken","Drinks"),items:[
+  ["Coca-Cola, Fanta, Ice Tea",T3("canette 33 cl","blikje 33 cl","can 33 cl"),2.5,0,[]],["Eau",T3("50 cl","50 cl","50 cl"),2.5,0,[]],
+  ["Jupiler",T3("canette 33 cl","blikje 33 cl","can 33 cl"),2.5,0,[1]],["Résilience","",5,0,[1],1],["Vin rouge / rosé",T3("bouteille 75 cl","fles 75 cl","bottle 75 cl"),16,0,[12]]]}
+];
+/* supplementi (prezzo, chiavi o testi) */
+const SUPS=[
+ [0,["ori","huile","bas"]],
+ [0.5,[T3("crème de balsamique","balsamicocrème","balsamic glaze"),"miel","ail"]],
+ [1,["tom","champ","art","courg","oig","tc","ana","pdt","poiv","epi","fria","chic","cr","cap","oli","pesto","roq","oeuf"]],
+ [2.5,[T3("charcuterie","vleeswaren","cured meat"),T3("fromage","kaas","cheese"),"aub","anch",T3("mozzarella fior di latte","mozzarella fior di latte","fior di latte mozzarella"),"buf","thon","lard","ric"]],
+ [4.5,["scam","fdm",T3("jambon cru italien","Italiaanse rauwe ham","Italian cured ham"),"bres","burr","saum"]]];
+
+const IT_I={"tom": "pomodoro", "stom": "salsa di pomodoro", "mozz": "mozzarella", "bas": "basilico", "huile": "olio d'oliva", "jb": "prosciutto cotto", "jam": "prosciutto", "snp": "salame dolce", "sp": "salame piccante", "spnp": "salame piccante e dolce", "tc": "pomodorini", "parm": "parmigiano", "ail": "aglio", "ana": "ananas", "thon": "tonno", "oig": "cipolla", "pdt": "patate", "anch": "acciughe", "anchf": "filetti d'acciuga", "oli": "olive", "champ": "funghi", "chev": "formaggio di capra", "lard": "pancetta", "cr": "panna", "oeuf": "uovo", "oeufd": "uovo sodo", "poiv": "peperoni", "chic": "indivia belga", "noix": "noci", "aub": "melanzane", "epi": "spinaci", "miel": "miele", "art": "carciofi", "porc": "porchetta", "tal": "taleggio", "sauc": "salsiccia", "gorg": "gorgonzola", "buf": "mozzarella di bufala", "grana": "scaglie di grana", "cparm": "scaglie di parmigiano", "ori": "origano", "cap": "capperi", "ric": "ricotta", "rics": "ricotta salata", "jcru": "prosciutto crudo", "roq": "rucola", "bal": "aceto balsamico", "bres": "bresaola", "fria": "friarielli", "fdm": "frutti di mare", "scam": "scampi", "saum": "salmone", "courg": "zucchine", "pist": "pistacchi", "pesto": "pesto", "mort": "mortadella", "burr": "burrata", "poivre": "pepe", "jaune": "tuorlo d'uovo", "pers": "prezzemolo", "f4": "4 formaggi"};
+const NAMES={"Pain pizza": {"nl": "Pizzabrood", "en": "Pizza bread", "it": "Pane pizza"}, "Pizza du chef": {"nl": "Pizza van de chef", "en": "Chef's pizza", "it": "Pizza dello chef"}, "Pizza Nutella et pistache": {"nl": "Pizza Nutella en pistache", "en": "Nutella & pistachio pizza", "it": "Pizza Nutella e pistacchio"}, "Pizza Nutella et fruits": {"nl": "Pizza Nutella en fruit", "en": "Nutella & fruit pizza", "it": "Pizza Nutella e frutta"}, "Eau": {"nl": "Water", "en": "Water", "it": "Acqua"}, "Vin rouge / rosé": {"nl": "Rode / rosé wijn", "en": "Red / rosé wine", "it": "Vino rosso / rosato"}};
+/* testi interfaccia */
+const TX={
+fr:{tel:"Tél.",copy:"Copier le numéro",copied:"Numéro copié",open:"Horaires",openH:"Du mardi au dimanche, 17h00 – 22h00",closedMon:"Fermé le lundi",deliv:"Livraison",delivH:"Du jeudi au dimanche, 17h30 – 21h30",delivC:"Dès 2 pizzas · prix selon les km · gratuite dès 5 pizzas (jusqu'à 10 km)",
+howto:"Touchez + pour préparer votre choix et voir le prix total, livraison comprise. Ce n'est pas une commande en ligne : pour commander, appelez-nous.",search:"Chercher une pizza ou un ingrédient…",white:"Pizzas blanches",nothing:"Rien trouvé. Essayez un autre mot (par ex. « chèvre », « scampis »).",
+mySel:"Ma sélection",cartT:"Ma sélection",notOrder:"<b>Ceci n'est pas une commande en ligne.</b> Ce menu vous aide à préparer votre choix et à connaître le prix (pizzas, suppléments et livraison). Pour commander, appelez-nous ou passez à la pizzeria.",
+empty:"Votre sélection est vide. Touchez + à côté d'un plat.",addSup:"+ Supplément",take:"À emporter",del:"Livraison",village:"Distance réelle jusqu'à la pizzeria (km)",choose:"Choisir…",out:"(hors zone)",note:"Remarque pour la pizzeria",noteP:"Ex. : sans oignons, bien cuite, sonner au 2e…",
+sub:"Plats",supT:"Suppléments",fee:"Livraison",free:"gratuite",total:"Total",min2:"Livraison à partir de 2 pizzas.",outZone:"Désolé, nous ne livrons pas au-delà de 15 km. À emporter, c'est possible !",pickV:"Indiquez les km pour voir le prix de la livraison.",noDelDay:"La livraison se fait du jeudi au dimanche, de 17h30 à 21h30.",
+ready:"Ma sélection est prête",clear:"Tout effacer",readyT:"Votre sélection est prête !",readyX:"Ce n'est pas encore une commande. <b>Appelez-nous pour commander</b> et lisez simplement votre récapitulatif.",call:"Appeler pour commander",close:"Fermer",
+firstAdd:"Votre sélection reste sur votre téléphone. Elle n'est pas envoyée à la pizzeria.",added:"ajouté",pz:"pizza(s)",
+stOpen:"Ouvert maintenant",stUntil:"jusqu'à {0}",stClosed:"Fermé",stOpensToday:"ouvre aujourd'hui à {0}",stOpensTom:"ouvre demain à {0}",stOpensDay:"ouvre {0} à {1}",stExc:"Fermeture exceptionnelle",
+dlNow:"Livraison en cours jusqu'à 21h30",dlNo:"Livraison du jeudi au dimanche, 17h30 – 21h30",dlToday:"Livraison aujourd'hui de 17h30 à 21h30",
+algT:"Allergènes",algIntro:"Les 14 allergènes à déclarer. Les numéros à côté de chaque plat renvoient à cette liste.",algDraft:"Liste en cours de vérification avec nos fournisseurs. En cas d'allergie, signalez-le toujours au moment de la commande.",algV:"* peut contenir d'autres allergènes selon le produit : demandez-nous.",algDish:"Plat",algList:"Allergènes",algNone:"aucun allergène majeur indiqué",
+bigC:"Grande commande (au moins 200 €) : livraison possible de 11 à 15 km, frais de livraison 10 €. Confirmation uniquement par téléphone.",bigOk:"Grande commande : livraison possible (10 €). Appelez-nous pour la confirmation.",kmP:"ex. 7,5",maps:"Calculez la distance :",kmNote:"Le prix est calculé sur les km indiqués et confirmé au téléphone.",bigOnly:"De 11 à 15 km : livraison uniquement pour une commande d'au moins 200 €. À emporter, c'est possible !",partyT:"Anniversaire, repas d'entreprise, fête ?",party:"Pour une commande d'au moins 200 € (une vingtaine de pizzas), nous pouvons ouvrir exprès pour vous, même le midi. Contactez-nous.",tagW:"blanche",free0:"Gratuit",cats:"Catégories",
+days:["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"]},
+nl:{tel:"Tel.",copy:"Nummer kopiëren",copied:"Nummer gekopieerd",open:"Openingsuren",openH:"Van dinsdag tot zondag, 17u00 – 22u00",closedMon:"Gesloten op maandag",deliv:"Levering",delivH:"Van donderdag tot zondag, 17u30 – 21u30",delivC:"Vanaf 2 pizza's · prijs volgens km · gratis vanaf 5 pizza's (tot 10 km)",
+howto:"Tik op + om uw keuze voor te bereiden en de totale prijs te zien, levering inbegrepen. Dit is geen online bestelling: bel ons om te bestellen.",search:"Zoek een pizza of een ingrediënt…",white:"Witte pizza's",nothing:"Niets gevonden. Probeer een ander woord (bv. « geitenkaas », « scampi »).",
+mySel:"Mijn selectie",cartT:"Mijn selectie",notOrder:"<b>Dit is geen online bestelling.</b> Dit menu helpt u uw keuze voor te bereiden en de prijs te kennen (pizza's, supplementen en levering). Om te bestellen: bel ons of kom langs in de pizzeria.",
+empty:"Uw selectie is leeg. Tik op + naast een gerecht.",addSup:"+ Supplement",take:"Afhalen",del:"Levering",village:"Werkelijke afstand tot de pizzeria (km)",choose:"Kiezen…",out:"(buiten zone)",note:"Opmerking voor de pizzeria",noteP:"Bv.: zonder ui, goed gebakken…",
+sub:"Gerechten",supT:"Supplementen",fee:"Levering",free:"gratis",total:"Totaal",min2:"Levering vanaf 2 pizza's.",outZone:"Sorry, we leveren niet verder dan 15 km. Afhalen kan wel!",pickV:"Vul de km in om de leveringsprijs te zien.",noDelDay:"We leveren van donderdag tot zondag, van 17u30 tot 21u30.",
+ready:"Mijn selectie is klaar",clear:"Alles wissen",readyT:"Uw selectie is klaar!",readyX:"Dit is nog geen bestelling. <b>Bel ons om te bestellen</b> en lees gewoon uw overzicht voor.",call:"Bellen om te bestellen",close:"Sluiten",
+firstAdd:"Uw selectie blijft op uw telefoon. Ze wordt niet naar de pizzeria gestuurd.",added:"toegevoegd",pz:"pizza('s)",
+stOpen:"Nu open",stUntil:"tot {0}",stClosed:"Gesloten",stOpensToday:"opent vandaag om {0}",stOpensTom:"opent morgen om {0}",stOpensDay:"opent {0} om {1}",stExc:"Uitzonderlijk gesloten",
+dlNow:"Levering tot 21u30",dlNo:"Levering van donderdag tot zondag, 17u30 – 21u30",dlToday:"Levering vandaag van 17u30 tot 21u30",
+algT:"Allergenen",algIntro:"De 14 allergenen die vermeld moeten worden. De nummers naast elk gerecht verwijzen naar deze lijst.",algDraft:"Lijst wordt nog nagekeken met onze leveranciers. Meld een allergie altijd bij het bestellen.",algV:"* kan andere allergenen bevatten afhankelijk van het product: vraag het ons.",algDish:"Gerecht",algList:"Allergenen",algNone:"geen belangrijke allergenen vermeld",
+bigC:"Grote bestelling (minstens 200 €): levering mogelijk van 11 tot 15 km, leveringskosten 10 €. Bevestiging enkel telefonisch.",bigOk:"Grote bestelling: levering mogelijk (10 €). Bel ons voor de bevestiging.",kmP:"bv. 7,5",maps:"Bereken de afstand:",kmNote:"De prijs wordt berekend op de opgegeven km en telefonisch bevestigd.",bigOnly:"Van 11 tot 15 km: levering enkel voor een bestelling van minstens 200 €. Afhalen kan wel!",partyT:"Verjaardag, bedrijfslunch, feest?",party:"Voor een bestelling van minstens 200 € (een twintigtal pizza's) kunnen we speciaal voor u openen, ook 's middags. Neem contact met ons op.",tagW:"wit",free0:"Gratis",cats:"Categorieën",
+days:["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"]},
+en:{tel:"Tel.",copy:"Copy number",copied:"Number copied",open:"Opening hours",openH:"Tuesday to Sunday, 5:00 pm – 10:00 pm",closedMon:"Closed on Mondays",deliv:"Delivery",delivH:"Thursday to Sunday, 5:30 pm – 9:30 pm",delivC:"From 2 pizzas · price by distance · free from 5 pizzas (up to 10 km)",
+howto:"Tap + to prepare your choice and see the total price, delivery included. This is not an online order: to order, give us a call.",search:"Search a pizza or an ingredient…",white:"White pizzas",nothing:"Nothing found. Try another word (e.g. « goat », « scampi »).",
+mySel:"My selection",cartT:"My selection",notOrder:"<b>This is not an online order.</b> This menu helps you prepare your choice and know the price (pizzas, extras and delivery). To order, call us or come to the pizzeria.",
+empty:"Your selection is empty. Tap + next to a dish.",addSup:"+ Extra",take:"Takeaway",del:"Delivery",village:"Actual distance to the pizzeria (km)",choose:"Choose…",out:"(out of area)",note:"Note for the pizzeria",noteP:"E.g. no onions, well done…",
+sub:"Dishes",supT:"Extras",fee:"Delivery",free:"free",total:"Total",min2:"Delivery from 2 pizzas.",outZone:"Sorry, we don't deliver beyond 15 km. Takeaway is possible!",pickV:"Enter the km to see the delivery price.",noDelDay:"We deliver Thursday to Sunday, 5:30 pm – 9:30 pm.",
+ready:"My selection is ready",clear:"Clear all",readyT:"Your selection is ready!",readyX:"This is not an order yet. <b>Call us to order</b> and simply read out your summary.",call:"Call to order",close:"Close",
+firstAdd:"Your selection stays on your phone. It is not sent to the pizzeria.",added:"added",pz:"pizza(s)",
+stOpen:"Open now",stUntil:"until {0}",stClosed:"Closed",stOpensToday:"opens today at {0}",stOpensTom:"opens tomorrow at {0}",stOpensDay:"opens {0} at {1}",stExc:"Exceptionally closed",
+dlNow:"Delivering until 9:30 pm",dlNo:"Delivery Thursday to Sunday, 5:30 pm – 9:30 pm",dlToday:"Delivery today 5:30 pm – 9:30 pm",
+algT:"Allergens",algIntro:"The 14 allergens that must be declared. The numbers next to each dish refer to this list.",algDraft:"List being checked with our suppliers. If you have an allergy, always tell us when you order.",algV:"* may contain other allergens depending on the product: ask us.",algDish:"Dish",algList:"Allergens",algNone:"no major allergens listed",
+bigC:"Large order (at least €200): delivery possible from 11 to 15 km, delivery fee €10. Confirmation by phone only.",bigOk:"Large order: delivery possible (€10). Call us to confirm.",kmP:"e.g. 7.5",maps:"Check the distance:",kmNote:"The price is based on the km you enter and confirmed by phone.",bigOnly:"From 11 to 15 km: delivery only for orders of at least €200. Takeaway is possible!",partyT:"Birthday, business lunch, party?",party:"For an order of at least €200 (about twenty pizzas), we can open especially for you, even at lunchtime. Get in touch.",tagW:"white",free0:"Free",cats:"Categories",
+days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]},
+it:{tel:"Tel.",copy:"Copia il numero",copied:"Numero copiato",open:"Orari",openH:"Dal martedì alla domenica, 17:00 – 22:00",closedMon:"Chiuso il lunedì",deliv:"Consegna",delivH:"Dal giovedì alla domenica, 17:30 – 21:30",delivC:"Da 2 pizze · prezzo secondo i km · gratuita da 5 pizze (fino a 10 km)",
+howto:"Tocca + per preparare la tua scelta e vedere il prezzo totale, consegna compresa. Non è un ordine online: per ordinare, chiamaci.",search:"Cerca una pizza o un ingrediente…",white:"Pizze bianche",nothing:"Nessun risultato. Prova un'altra parola (es. « capra », « scampi »).",
+mySel:"La mia selezione",cartT:"La mia selezione",notOrder:"<b>Questo non è un ordine online.</b> Questo menu ti aiuta a preparare la tua scelta e a conoscere il prezzo (pizze, supplementi e consegna). Per ordinare, chiamaci o passa in pizzeria.",
+empty:"La tua selezione è vuota. Tocca + accanto a un piatto.",addSup:"+ Supplemento",take:"Da asporto",del:"Consegna",village:"Distanza reale fino alla pizzeria (km)",choose:"Scegli…",out:"(fuori zona)",note:"Nota per la pizzeria",noteP:"Es.: senza cipolla, ben cotta…",
+sub:"Piatti",supT:"Supplementi",fee:"Consegna",free:"gratuita",total:"Totale",min2:"Consegna da 2 pizze.",outZone:"Ci dispiace, non consegniamo oltre i 15 km. Da asporto si può!",pickV:"Scrivi i km per vedere il prezzo della consegna.",noDelDay:"Consegniamo dal giovedì alla domenica, dalle 17:30 alle 21:30.",
+ready:"La mia selezione è pronta",clear:"Cancella tutto",readyT:"La tua selezione è pronta!",readyX:"Non è ancora un ordine. <b>Chiamaci per ordinare</b> e leggi semplicemente il tuo riepilogo.",call:"Chiama per ordinare",close:"Chiudi",
+firstAdd:"La tua selezione resta sul tuo telefono. Non viene inviata alla pizzeria.",added:"aggiunto",pz:"pizza/e",
+stOpen:"Aperto ora",stUntil:"fino alle {0}",stClosed:"Chiuso",stOpensToday:"apre oggi alle {0}",stOpensTom:"apre domani alle {0}",stOpensDay:"apre {0} alle {1}",stExc:"Chiusura eccezionale",
+dlNow:"Consegne in corso fino alle 21:30",dlNo:"Consegna dal giovedì alla domenica, 17:30 – 21:30",dlToday:"Consegna oggi dalle 17:30 alle 21:30",
+algT:"Allergeni",algIntro:"I 14 allergeni da dichiarare. I numeri accanto a ogni piatto rimandano a questa lista.",algDraft:"Lista in corso di verifica con i nostri fornitori. In caso di allergia, segnalalo sempre quando ordini.",algV:"* può contenere altri allergeni a seconda del prodotto: chiedici.",algDish:"Piatto",algList:"Allergeni",algNone:"nessun allergene principale indicato",
+bigC:"Ordine grande (almeno 200 €): consegna possibile da 11 a 15 km, costo di consegna 10 €. Conferma solo per telefono.",bigOk:"Ordine grande: consegna possibile (10 €). Chiamaci per la conferma.",kmP:"es. 7,5",maps:"Calcola la distanza:",kmNote:"Il prezzo è calcolato sui km indicati e confermato al telefono.",bigOnly:"Da 11 a 15 km: consegna solo per ordini di almeno 200 €. Da asporto si può!",partyT:"Compleanno, pranzo aziendale, festa?",party:"Per un ordine di almeno 200 € (una ventina di pizze) possiamo aprire apposta per voi, anche a mezzogiorno. Contattateci.",tagW:"bianca",free0:"Gratis",cats:"Categorie",
+days:["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"]}};
+
+/* ================= logica ================= */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let L=LS.get("dg_lang")||(navigator.language||"fr").slice(0,2);if(!TX[L])L="fr";
+const t=(k,...a)=>{let s=(TX[L][k]??TX.fr[k]??k);a.forEach((v,i)=>s=s.replace("{"+i+"}",v));return s};
+const LI={fr:0,nl:1,en:2};
+const ingW=k=>L==="it"?(IT_I[k]||I[k][0]):I[k][LI[L]];
+const nm=x=>(NAMES[x.n]&&NAMES[x.n][L])||x.n;
+const txt3=v=>typeof v==="string"?(I[v]?ingW(v):v):v[L];
+const price=v=>{const s=v===0?"":(Number.isInteger(v)?v+",00":v.toFixed(2).replace(".",","));return v===0?t("free0"):(L==="en"?"€"+v.toFixed(2):s+" €")};
+const norm=s=>String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/œ/g,"oe");
+/* voce normalizzata */
+const ITEMS=[];MENU.forEach(c=>c.items.forEach((x,i)=>{const [n,ing,p,w,extra,ver]=x;const keys=typeof ing==="string"&&ing&&ing.split(" ").every(k=>I[k])?ing.split(" "):null;
+  const base=c.pz?[1]:c.pa?[1]:[];let al=new Set([...base,...(extra||[])]);let v=!!ver||!!c.pa;if(keys)keys.forEach(k=>{I[k][3].forEach(a=>al.add(a));if(I[k][4])v=true});
+  ITEMS.push({id:c.id+"-"+i,cat:c.id,n,keys,txt:keys?null:ing,p,w:!!w,al:[...al].sort((a,b)=>a-b),v,pizza:!!c.pz})}));
+const byId=Object.fromEntries(ITEMS.map(x=>[x.id,x]));
+const ingTxt=it=>it.keys?it.keys.map(ingW).join(", "):(it.txt?txt3(it.txt):"");
+/* supplementi piatti */
+const SUPL=[];SUPS.forEach(([p,list])=>list.forEach((x,j)=>SUPL.push({id:"s"+p+"-"+j,p,x})));
+const supName=s=>txt3(s.x);
+
+/* stato panier */
+let CART=[];try{CART=JSON.parse(LS.get("dg_cart")||"[]").filter(l=>byId[l.id])}catch(e){CART=[]}
+let MODE=LS.get("dg_mode")||"take",KM=LS.get("dg_km")||"",NOTE=LS.get("dg_note")||"",onlyWhite=false,openPick=-1;
+const save=()=>{LS.set("dg_cart",JSON.stringify(CART));LS.set("dg_mode",MODE);LS.set("dg_km",KM);LS.set("dg_note",NOTE)};
+const lineUnit=l=>byId[l.id].p+(l.s||[]).reduce((a,sid)=>a+(SUPL.find(s=>s.id===sid)?.p||0),0);
+const kmVal=()=>{const v=parseFloat(String(KM).replace(",","."));return isFinite(v)?v:NaN};
+function kmFee(km,npz){if(npz<2)return 0;if(km<=10){if(npz>=5)return 0;const tr=TIERS.find(x=>km<=x[0]);return tr[1][Math.min(npz,4)-2]}return npz>=6?0:8}
+function totals(){const sub=CART.reduce((a,l)=>a+byId[l.id].p*l.q,0),sup=CART.reduce((a,l)=>a+(lineUnit(l)-byId[l.id].p)*l.q,0);
+  const npz=CART.reduce((a,l)=>a+(byId[l.id].pizza?l.q:0),0);let fee=0,msg="",ok=true;
+  if(MODE==="del"){const km=kmVal(),big=sub+sup>=200;
+    if(km>15){msg=t("outZone");ok=false}
+    else if(km>11&&!big){msg=t("bigOnly");ok=false}
+    else if(npz<2&&!big){msg=t("min2");ok=false}
+    else if(!(km>0)){msg=t("pickV");ok=false}
+    else if(km>11){fee=10;msg=t("bigOk")}
+    else fee=kmFee(km,npz);}
+  return {sub,sup,fee,npz,msg,ok,tot:sub+sup+(ok?fee:0),n:CART.reduce((a,l)=>a+l.q,0)}}
+
+const setNavH=()=>{const n=$("catsNav");if(n)document.documentElement.style.setProperty("--navh",(n.offsetHeight+8)+"px")};try{new ResizeObserver(setNavH).observe(document.getElementById("catsNav"))}catch(_){addEventListener("resize",setNavH)}
+/* ora di Bruxelles */
+function bxNow(){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Brussels",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",weekday:"short",hourCycle:"h23"});
+  const o={};f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value);const wd={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[o.weekday];
+  return {iso:`${o.year}-${o.month}-${o.day}`,wd,min:+o.hour*60+ +o.minute}}
+const addDays=(iso,n)=>{const d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
+const closedOn=iso=>CLOSED.find(c=>iso>=c.from&&iso<=c.to);
+const openDay=(iso,wd)=>!closedOn(iso)&&(wd!==1||OPEN_EXTRA.includes(iso));
+const hhmm=m=>L==="en"?`${(Math.floor(m/60)+11)%12+1}:${String(m%60).padStart(2,"0")} ${m>=720?"pm":"am"}`:`${Math.floor(m/60)}${L==="it"?":":L==="nl"?"u":"h"}${String(m%60).padStart(2,"0")}`;
+function status(){const n=bxNow(),O=17*60,C=22*60,DO=17*60+30,DC=21*60+30;let open=false,txt="",sub="";
+  if(openDay(n.iso,n.wd)&&n.min>=O&&n.min<C){open=true;txt=t("stOpen");sub=t("stUntil",hhmm(C))}
+  else{txt=closedOn(n.iso)?t("stExc"):t("stClosed");
+    if(openDay(n.iso,n.wd)&&n.min<O)sub=t("stOpensToday",hhmm(O));
+    else for(let i=1;i<=60;i++){const d=addDays(n.iso,i),wd=(n.wd+i)%7;if(openDay(d,wd)){sub=i===1?t("stOpensTom",hhmm(O)):t("stOpensDay",t("days")[wd],hhmm(O));break}}
+    const c=closedOn(n.iso);if(c&&c.note&&c.note[L])sub=c.note[L]+" · "+sub}
+  const s=$("status");s.className="status "+(open?"open":"closed");$("stTxt").innerHTML=`${esc(txt)} <small>· ${esc(sub)}</small>`;
+  const dd=[0,4,5,6].includes(n.wd)&&openDay(n.iso,n.wd);
+  $("dlTxt").textContent=dd&&n.min>=DO&&n.min<DC?t("dlNow"):dd&&n.min<DO?t("dlToday"):t("dlNo");}
+
+/* disegno menu */
+function draw(){
+  document.documentElement.lang=L;
+  document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+  $("catsNav").setAttribute("aria-label",t("cats"));$("q").placeholder=t("search");$("q").setAttribute("aria-label",t("search"));
+  document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===L));
+  $("chips").innerHTML=[...MENU.map(c=>`<a class="chip" href="#${c.id}" data-c="${c.id}">${esc(c.t[L])}</a>`),`<a class="chip" href="#allergenes" data-c="allergenes">${esc(t("algT"))}</a>`].join("");
+  const q=norm($("q").value.trim());let shown=0;const inCart=id=>CART.filter(l=>l.id===id).reduce((a,l)=>a+l.q,0);
+  $("menu").innerHTML=MENU.map(c=>{
+    if(c.sup){if(q||onlyWhite)return "";return `<section class="cat sup" id="${c.id}"><h2>${esc(c.t[L])}</h2><p class="note">${esc(c.note[L])}</p><ul class="items">${SUPS.map(([p,list])=>`<li class="it"><div class="itx"><div class="row"><span class="nm">${esc(list.map(x=>txt3(x)).join(", "))}</span><span class="dots"></span><span class="pr">${price(p)}</span></div></div></li>`).join("")}</ul></section>`}
+    const its=ITEMS.filter(x=>x.cat===c.id).filter(x=>(!onlyWhite||x.w)&&(!q||norm(x.n+" "+nm(x)+" "+ingTxt(x)).includes(q)));
+    if(!its.length)return "";shown+=its.length;
+    return `<section class="cat" id="${c.id}"><h2>${esc(c.t[L])}</h2>${c.note&&!q?`<p class="note">${esc(c.note[L])}</p>`:""}<ul class="items">${its.map(x=>{const n=inCart(x.id);return `<li class="it"><div class="itx"><div class="row"><span class="nm">${esc(nm(x))}${x.w?`<span class="tag">${esc(t("tagW"))}</span>`:""}</span><span class="dots"></span><span class="pr">${price(x.p)}</span></div>${ingTxt(x)?`<div class="ing">${esc(ingTxt(x))}</div>`:""}${x.al.length||x.v?`<div class="alg" aria-label="${esc(t("algT"))}">${x.al.map(a=>`<span title="${esc(ALG[L][a-1])}">${a}</span>`).join("")}${x.v?'<span class="v" title="*">*</span>':""}</div>`:""}</div><button class="add" type="button" data-add="${x.id}" aria-label="+ ${esc(nm(x))}"${n?` data-n="${n}"`:""}>+</button></li>`}).join("")}</ul></section>`}).join("");
+  $("none").hidden=shown>0;
+  drawAllergens();bar();status();spy();
+}
+function drawAllergens(){
+  $("allergenes").innerHTML=`<h2>${esc(t("algT"))}</h2><p class="note">${esc(t("algIntro"))}</p>${ALLERGEN_DRAFT?`<p class="info">${esc(t("algDraft"))}</p>`:""}
+  <ol class="legend">${ALG[L].map(a=>`<li>${esc(a)}</li>`).join("")}</ol>
+  <div class="atw"><table class="at"><thead><tr><th>${esc(t("algDish"))}</th><th>${esc(t("algList"))}</th></tr></thead><tbody>${ITEMS.map(x=>`<tr><td><b>${esc(nm(x))}</b></td><td>${x.al.length?esc(x.al.map(a=>a+" "+ALG[L][a-1]).join(", ")):esc(t("algNone"))}${x.v?" *":""}</td></tr>`).join("")}</tbody></table></div>
+  <p class="note" style="margin-top:8px">${esc(t("algV"))}</p>`}
+function bar(){const T=totals();$("bar").hidden=!T.n;$("barN").textContent=T.n;$("barT").textContent=price(T.tot)}
+
+/* panier */
+function addItem(id){const l=CART.find(l=>l.id===id&&!(l.s||[]).length);if(l)l.q++;else CART.push({id,q:1,s:[]});save();
+  if(!LS.get("dg_seen")){LS.set("dg_seen","1");toast(t("firstAdd"),5000)}else toast(nm(byId[id])+" · "+t("added"),1400);draw();if(!$("sheet").hidden)cart()}
+let tt;function toast(m,ms){const e=$("toast");e.textContent=m;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,ms)}
+function cart(){
+  const T=totals(),P=$("panel");
+  const lines=CART.map((l,i)=>{const it=byId[l.id];return `<div class="line"><div class="lt"><span class="nm"><b>${esc(nm(it))}</b></span><div class="qty"><button type="button" data-q="${i}" data-d="-1" aria-label="−">−</button><span>${l.q}</span><button type="button" data-q="${i}" data-d="1" aria-label="+">+</button></div><span class="pr">${price(lineUnit(l)*l.q)}</span></div>
+    ${it.pizza?`<div class="sups">${(l.s||[]).map((sid,j)=>{const s=SUPL.find(s=>s.id===sid);return s?`<button type="button" class="s" data-rs="${i}" data-j="${j}">${esc(supName(s))} ${s.p?"+"+price(s.p):""}</button>`:""}).join("")}<button type="button" class="lnk" data-ps="${i}">${esc(t("addSup"))}</button></div>
+    ${openPick===i?`<div class="pick">${SUPS.map(([p])=>`<h4>${price(p)}</h4>${SUPL.filter(s=>s.p===p).map(s=>`<button type="button" data-as="${i}" data-sid="${s.id}">${esc(supName(s))}</button>`).join("")}`).join("")}</div>`:""}`:""}</div>`}).join("");
+  P.innerHTML=`<div class="ph"><h3 id="cartH">${esc(t("cartT"))}</h3><button type="button" class="x" id="closeCart" aria-label="${esc(t("close"))}">×</button></div>
+  <div class="warn">${t("notOrder")}</div>
+  ${CART.length?lines:`<p class="empty">${esc(t("empty"))}</p>`}
+  ${CART.length?`<div class="seg" role="group"><button type="button" data-m="take" aria-pressed="${MODE==="take"}">${esc(t("take"))}</button><button type="button" data-m="del" aria-pressed="${MODE==="del"}">${esc(t("del"))}</button></div>
+  ${MODE==="del"?`<p class="note" style="margin:12px 0 6px">${esc(t("maps"))}</p><div class="maps"><a class="btn" href="${MAPS_G}" target="_blank" rel="noopener">Google Maps</a><a class="btn" href="${MAPS_W}" target="_blank" rel="noopener">Waze</a></div><label class="f" for="km">${esc(t("village"))}</label><input id="km" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t("kmP"))}" value="${esc(KM)}"><p class="note" style="margin-top:6px">${esc(t("kmNote"))}</p><p class="note" style="margin-top:6px">${esc(t("delivC"))} · ${esc(t("delivH"))}</p>`:""}
+  <label class="f" for="nt">${esc(t("note"))}</label><textarea id="nt" placeholder="${esc(t("noteP"))}">${esc(NOTE)}</textarea>
+  <div class="sum"><div><span>${esc(t("sub"))}</span><span>${price(T.sub)}</span></div>${T.sup?`<div><span>${esc(t("supT"))}</span><span>${price(T.sup)}</span></div>`:""}
+  ${MODE==="del"&&T.ok?`<div><span>${esc(t("fee"))} · ${T.npz} ${esc(t("pz"))}</span><span>${T.fee?price(T.fee):esc(t("free"))}</span></div>`:""}
+  <div class="grand"><span>${esc(t("total"))}</span><span>${price(T.tot)}</span></div></div>${T.msg?`<p class="msg">${esc(T.msg)}</p>`:""}
+  <div class="actions"><button type="button" class="btn red big" id="ready">${esc(t("ready"))}</button><button type="button" class="btn" id="clear">${esc(t("clear"))}</button></div>`:""}`;
+  $("sheet").hidden=false;
+}
+function recapTxt(){const T=totals();return CART.map(l=>{const it=byId[l.id];const s=(l.s||[]).map(sid=>SUPL.find(x=>x.id===sid)).filter(Boolean).map(supName);return `${l.q} × ${nm(it)}${s.length?" (+ "+s.join(", ")+")":""}`}).concat(MODE==="del"?[`${t("del")}: ${kmVal()>0?String(KM).replace(".",L==="en"?".":",")+" km":"—"}`]:[t("take")]).concat(NOTE?[`${t("note")}: ${NOTE}`]:[])}
+function ready(){const T=totals();$("mbox").innerHTML=`<div class="mz">🍕</div><h3 class="mt" style="font:500 28px/1.1 var(--display);color:var(--red);margin:6px 0">${esc(t("readyT"))}</h3><p>${t("readyX")}</p>
+  <div class="recap">${recapTxt().map(x=>`<div>${esc(x)}</div>`).join("")}<div style="border-top:1px solid var(--line);margin-top:6px;padding-top:6px;font-weight:700">${esc(t("total"))}: ${price(T.tot)}</div>${T.msg?`<div class="msg">${esc(T.msg)}</div>`:""}</div>
+  <div class="num">${PHONE}</div><div class="actions"><a class="btn red big" href="tel:${TEL}">${esc(t("call"))}</a><button type="button" class="btn" id="mcopy">${esc(t("copy"))}</button><button type="button" class="btn" id="mclose">${esc(t("close"))}</button></div>`;$("modal").hidden=false}
+async function copyNum(btn){try{await navigator.clipboard.writeText(PHONE.replace(/ /g,""));btn.textContent=t("copied")}catch(e){btn.textContent=PHONE}setTimeout(()=>btn.textContent=t("copy"),2500)}
+
+/* eventi */
+document.addEventListener("click",e=>{const b=e.target.closest("button,a");if(!b)return;const d=b.dataset;
+  if(d.l){L=d.l;LS.set("dg_lang",L);draw();if(!$("sheet").hidden)cart();return}
+  if(d.add){addItem(d.add);return}
+  if(b.id==="openCart"){cart();return}
+  if(b.id==="closeCart"){$("sheet").hidden=true;openPick=-1;return}
+  if(d.q!==undefined){const l=CART[+d.q];l.q+=+d.d;if(l.q<=0){CART.splice(+d.q,1);openPick=-1}save();bar();draw();cart();return}
+  if(d.ps!==undefined){openPick=openPick===+d.ps?-1:+d.ps;cart();return}
+  if(d.as!==undefined){const l=CART[+d.as];(l.s=l.s||[]).push(d.sid);openPick=-1;save();bar();cart();return}
+  if(d.rs!==undefined){CART[+d.rs].s.splice(+d.j,1);save();bar();cart();return}
+  if(d.m){MODE=d.m;save();bar();cart();return}
+  if(b.id==="ready"){ready();return}
+  if(b.id==="clear"){CART=[];NOTE="";save();draw();cart();return}
+  if(b.id==="mclose"){$("modal").hidden=true;return}
+  if(b.id==="mcopy"||b.id==="copy"){copyNum(b);return}
+});
+document.addEventListener("input",e=>{if(e.target.id==="km"){KM=e.target.value.replace(/[^0-9.,]/g,"").slice(0,5);save();bar();const sc=$("sheet").scrollTop;cart();$("sheet").scrollTop=sc;const k=$("km");k.focus();const n=k.value.length;try{k.setSelectionRange(n,n)}catch(_){}}});
+document.addEventListener("input",e=>{if(e.target.id==="nt"){NOTE=e.target.value;save()}if(e.target.id==="q")draw()});
+$("sheet").addEventListener("click",e=>{if(e.target.id==="sheet"){$("sheet").hidden=true;openPick=-1}});
+$("modal").addEventListener("click",e=>{if(e.target.id==="modal")$("modal").hidden=true});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("modal").hidden=true;$("sheet").hidden=true}});
+$("blanche").onclick=()=>{onlyWhite=!onlyWhite;$("blanche").setAttribute("aria-pressed",onlyWhite);draw();if(onlyWhite){const p=$("pizzas");if(p)p.scrollIntoView({block:"start"})}};
+function spy(){const secs=[...document.querySelectorAll("section.cat")];let cur=secs[0]?.id;for(const s of secs){if(s.getBoundingClientRect().top<120)cur=s.id}
+  document.querySelectorAll(".chip").forEach(ch=>{const on=ch.dataset.c===cur;if(on!==ch.classList.contains("on")){ch.classList.toggle("on",on);if(on){const w=$("chips");w.scrollTo({left:ch.offsetLeft-w.clientWidth/2+ch.offsetWidth/2,behavior:"smooth"})}}})}
+addEventListener("scroll",()=>requestAnimationFrame(spy),{passive:true});
+setInterval(status,60000);
+draw();
+</script>
+
+</body>
+</html>
