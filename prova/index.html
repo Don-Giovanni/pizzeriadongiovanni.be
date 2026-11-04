@@ -452,24 +452,32 @@ document.addEventListener("click",e=>{const b=e.target.closest("button,a");if(!b
   if(b.id==="mclose"){$("modal").hidden=true;return}
   if(b.id==="mcopy"||b.id==="copy"){copyNum(b);return}
 });
-let sugT=0,sugN=0,ORIG=null;try{ORIG=JSON.parse(LS.get("dg_orig")||"null")}catch(_){}
+let sugT=0,sugN=0,ORIG=null;try{ORIG=JSON.parse(LS.get("dg_orig2")||"null")}catch(_){}
 const DBG=location.hash==="#debug";let LASTDBG="";
 const orsGet=async(path,params)=>{const u=new URL(ORS+path);u.searchParams.set("api_key",ORS_KEY);for(const[k,v]of Object.entries(params))u.searchParams.set(k,v);const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);
   try{const r=await fetch(u,{signal:ctl.signal});const txt=await r.text();LASTDBG=path+" → "+r.status+" · "+txt.slice(0,300);if(DBG)console.log(LASTDBG);if(!r.ok)throw new Error("ors "+r.status);return JSON.parse(txt)}
   catch(e){if(!LASTDBG.startsWith(path))LASTDBG=path+" → "+(e.name||"")+" "+(e.message||e);throw e}finally{clearTimeout(tm)}};
 const BOX={"boundary.rect.min_lon":"3.95","boundary.rect.min_lat":"50.15","boundary.rect.max_lon":"4.65","boundary.rect.max_lat":"50.55","boundary.country":"BE","focus.point.lon":"4.287","focus.point.lat":"50.339"};
-async function origin(){if(ORIG)return ORIG;const j=await orsGet("/geocode/search",{text:"Grand'Rue 1, 6530 Thuin",size:"1",...BOX});const c=j.features&&j.features[0]&&j.features[0].geometry.coordinates;if(!c)throw new Error("orig");ORIG=c;LS.set("dg_orig",JSON.stringify(c));return c}
+const PH="https://photon.komoot.io/api/";
+const hav=(a,b)=>{const R=6371,r=x=>x*Math.PI/180,dl=r(b[1]-a[1]),dn=r(b[0]-a[0]);const h=Math.sin(dl/2)**2+Math.cos(r(a[1]))*Math.cos(r(b[1]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+const phLabel=p=>{const st=[p.street||p.name,p.housenumber].filter(Boolean).join(" ");const loc=[p.postcode,p.city||p.district||p.locality||p.county].filter(Boolean).join(" ");return [st,loc].filter(Boolean).join(", ")};
+async function photon(q,limit){const u=new URL(PH);u.searchParams.set("q",q);u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");u.searchParams.set("limit",String(limit||8));u.searchParams.set("lang","fr");u.searchParams.set("bbox","3.95,50.15,4.65,50.55");u.searchParams.append("layer","house");u.searchParams.append("layer","street");
+  const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);
+  try{const r=await fetch(u,{signal:ctl.signal});const txt=await r.text();LASTDBG="photon → "+r.status+" · "+txt.slice(0,300);if(!r.ok)throw new Error("photon "+r.status);const j=JSON.parse(txt);
+    const seen=new Set();return (j.features||[]).filter(f=>f.properties&&f.properties.countrycode==="BE"&&hav([4.287,50.339],f.geometry.coordinates)<=25).map(f=>({properties:{label:phLabel(f.properties)},geometry:f.geometry})).filter(f=>{const k=f.properties.label;if(!k||seen.has(k))return false;seen.add(k);return true}).slice(0,5)}
+  catch(e){if(!LASTDBG.startsWith("photon"))LASTDBG="photon → "+(e.name||"")+" "+(e.message||e);throw e}finally{clearTimeout(tm)}}
+async function origin(){if(ORIG)return ORIG;const l=await photon("Grand'Rue 1, 6530 Thuin",3);const c=l[0]&&l[0].geometry.coordinates;if(!c)throw new Error("orig");ORIG=c;LS.set("dg_orig2",JSON.stringify(c));return c}
 function showSug(list){const b=$("sug");if(!b)return;if(!list.length){b.hidden=true;b.innerHTML="";return}b.innerHTML=list.map((f,i)=>`<button type="button" role="option" data-sg="${i}">${esc(f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,""))}</button>`).join("");b.hidden=false;b._list=list}
 async function pick(f){ADR=f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,"");ADRST="wait";KM="";save();refreshCart();
   try{const o=await origin(),d=f.geometry.coordinates;const j=await orsGet("/v2/directions/driving-car",{start:o.join(","),end:d.join(",")});
-    const m=j.features[0].properties.summary.distance;KM=String(Math.round(m/100)/10);ADRST="";if(location.hash==="#debug")toast("orig "+o.join(",")+" · "+m+" m",6000)}
+    const m=j.features[0].properties.summary.distance;KM=String(Math.round(m/100)/10);ADRST="";if(DBG)toast("orig "+o.join(",")+" · "+m+" m",8000)}
   catch(e){ADRST="err";KM=""}
   save();bar();refreshCart()}
 function refreshCart(){const sh=$("sheet");const sc=sh?sh.scrollTop:0;cart();if(sh)sh.scrollTop=sc}
 document.addEventListener("input",e=>{if(e.target.id!=="adr")return;const q=e.target.value.trim();ADR=e.target.value;KM="";if(ADRST)ADRST="";save();bar();
   const kb=$("kmbox");if(kb){kb.textContent="— km";kb.classList.remove("on")}
   clearTimeout(sugT);if(q.length<4){showSug([]);return}
-  sugT=setTimeout(async()=>{const n=++sugN;try{const j=await orsGet("/geocode/autocomplete",{text:q,size:"5",layers:"address,street",...BOX});if(n!==sugN)return;const list=(j.features||[]);showSug(list);if(!list.length){const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrNone"))}${DBG?`<br><small style="color:var(--muted);word-break:break-all">${esc(LASTDBG)}</small>`:""}</div>`;b.hidden=false}}}catch(err){if(n!==sugN)return;ADRST="err";refreshCart();const a=$("adr");if(a){a.focus();const l=a.value.length;try{a.setSelectionRange(l,l)}catch(_){}}}},400)});
+  sugT=setTimeout(async()=>{const n=++sugN;try{const list=await photon(q,10);if(n!==sugN)return;showSug(list);if(!list.length){const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrNone"))}${DBG?`<br><small style="color:var(--muted);word-break:break-all">${esc(LASTDBG)}</small>`:""}</div>`;b.hidden=false}}}catch(err){if(n!==sugN)return;ADRST="err";refreshCart();const a=$("adr");if(a){a.focus();const l=a.value.length;try{a.setSelectionRange(l,l)}catch(_){}}}},400)});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-sg]");if(!b)return;const box=$("sug");const f=box&&box._list&&box._list[+b.dataset.sg];if(f){showSug([]);pick(f)}});
 document.addEventListener("input",e=>{if(e.target.id==="nt"){NOTE=e.target.value;save()}if(e.target.id==="q")draw()});
 $("sheet").addEventListener("click",e=>{if(e.target.id==="sheet"){$("sheet").hidden=true;openPick=-1}});
