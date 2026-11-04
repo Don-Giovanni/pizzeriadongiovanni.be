@@ -1,13 +1,13 @@
 <title>Menu Don Giovanni</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500&family=Poppins:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Poppins:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: carta su fondo nero (colori del logo), barra tricolore, categorie fisse in alto, righe a puntini come il menu stampato, panier in basso */
 :root{
   --bg:#0d0b0a;--panel:#171412;--panel2:#201b18;--line:#2c2622;
   --fg:#fbf4e6;--muted:#b7ab98;--red:#e3201b;--green:#1f9a4b;--amber:#f2b33d;
-  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --display:"DM Serif Display",Georgia,serif;
   --body:"Poppins","Segoe UI",system-ui,sans-serif;
   color-scheme:dark;
 }
@@ -71,7 +71,7 @@ nav.cats .wrap::-webkit-scrollbar{display:none}
 #blanche[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .info{margin-top:10px;font-size:13px;color:var(--muted);border-left:3px solid var(--amber);padding:6px 10px;background:var(--panel)}
 section.cat{padding-block:18px 6px;scroll-margin-top:var(--navh,64px)}
-h2{font:500 clamp(34px,9vw,46px)/1 var(--display);color:var(--red);margin:0 0 6px;display:flex;align-items:center;gap:14px;text-wrap:balance}
+h2{font:400 clamp(34px,9vw,46px)/1 var(--display);color:var(--red);margin:0 0 6px;display:flex;align-items:center;gap:14px;text-wrap:balance}
 h2::after{content:"";flex:1;height:3px;background:var(--green);border-radius:2px}
 section.cat:nth-of-type(even) h2::after{background:var(--red)}
 .note{color:var(--muted);font-size:13px;margin:0 0 6px}
@@ -112,7 +112,7 @@ footer a{color:var(--fg)}
 .sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
 .panel{background:var(--panel);width:100%;max-width:760px;max-height:92%;overflow-y:auto;border-radius:18px 18px 0 0;padding-block:16px calc(18px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .ph{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.ph h3{font:500 30px/1 var(--display);color:var(--red);margin:0}
+.ph h3{font:400 30px/1 var(--display);color:var(--red);margin:0}
 .x{all:unset;cursor:pointer;font-size:26px;line-height:1;color:var(--muted);padding:4px 8px}
 .warn{background:var(--panel2);border:1px solid rgba(242,179,61,.45);border-radius:12px;padding:10px 12px;font-size:13px;margin:12px 0}
 .warn b{color:var(--amber)}
@@ -467,7 +467,7 @@ function cart(){
   $("sheet").hidden=false;
 }
 function recapTxt(){const T=totals();return CART.map(l=>{const it=byId[l.id];const s=(l.s||[]).map(sid=>SUPL.find(x=>x.id===sid)).filter(Boolean).map(supName);return `${l.q} × ${nm(it)}${s.length?" (+ "+s.join(", ")+")":""}`}).concat(MODE==="del"?[`${t("del")}: ${ADR&&kmVal()>0?ADR+" ("+fmtKm(kmVal())+" km"+(DUR>0?" · "+fmtMin(DUR):"")+")":"—"}`]:[t("take")]).concat(NOTE?[`${t("note")}: ${NOTE}`]:[])}
-function ready(){const T=totals();$("mbox").innerHTML=`<div class="mz">🍕</div><h3 class="mt" style="font:500 28px/1.1 var(--display);color:var(--red);margin:6px 0">${esc(t("readyT"))}</h3><p>${t("readyX")}</p>
+function ready(){const T=totals();$("mbox").innerHTML=`<div class="mz">🍕</div><h3 class="mt" style="font:400 28px/1.1 var(--display);color:var(--red);margin:6px 0">${esc(t("readyT"))}</h3><p>${t("readyX")}</p>
   <div class="recap">${recapTxt().map(x=>`<div>${esc(x)}</div>`).join("")}<div style="border-top:1px solid var(--line);margin-top:6px;padding-top:6px;font-weight:700">${esc(t("total"))}: ${price(T.tot)}</div>${T.msg?`<div class="msg">${esc(T.msg)}</div>`:""}</div>
   <div class="num">${PHONE}</div><div class="actions"><a class="btn red big" href="tel:${TEL}" target="_blank" rel="noopener">${esc(t("call"))}</a><button type="button" class="btn" id="mcopy">${esc(t("copy"))}</button><button type="button" class="btn" id="mclose">${esc(t("close"))}</button></div>`;$("modal").hidden=false}
 async function copyNum(btn){try{await navigator.clipboard.writeText(PHONE.replace(/ /g,""));btn.textContent=t("copied")}catch(e){btn.textContent=PHONE}setTimeout(()=>btn.textContent=t("copy"),2500)}
