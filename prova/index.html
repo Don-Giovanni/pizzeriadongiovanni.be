@@ -33,11 +33,12 @@ button{font-family:inherit}
 .intro img{width:min(200px,42vw);height:auto}
 .ich{margin:0;font-size:16px;font-weight:600;line-height:1.5}
 .ibtn{display:flex;flex-direction:column;gap:10px;width:100%;align-items:center}.irow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}.irow button{flex:1 1 0;max-width:150px;min-width:0}
-@media (max-width:560px){.irow button{padding:10px 4px}.irow:first-child{padding-inline:12%}.ibtn b{font-size:18px}.ibtn small{font-size:12px}.fs{height:20px;width:30px}.fs.uk{width:40px}.fl{height:20px}.ich{font-size:15px}}
+@media (max-width:560px){.irow button{padding:10px 4px}.ibtn b{font-size:18px}.ibtn small{font-size:12px}.fs{height:20px;width:30px}.fs.uk{width:40px}.fl{height:20px}.ich{font-size:15px}}
 .ibtn button{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 8px;color:var(--fg);cursor:pointer;font-family:var(--body)}
 .ibtn button:hover,.ibtn button:focus-visible{border-color:var(--amber)}
 .ibtn b{font-size:20px;letter-spacing:.08em}.ibtn small{color:var(--muted);font-size:13px}
 .fl{display:flex;gap:4px;height:24px}.fs{height:24px;width:36px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}.fs.uk{width:48px}
+.irow:first-child button{max-width:200px}.frow{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px}.frow .fs{flex:0 0 auto}
 .inote{margin:0;max-width:520px;color:var(--muted);font-size:12.5px;line-height:1.55}
 
 @media (max-height:600px){.intro{justify-content:flex-start;gap:10px}.intro img{width:min(120px,30vw)}.ibtn{gap:6px}.irow{gap:6px}.ibtn button{padding:6px 6px;gap:2px}.ibtn small{display:none}.ich{font-size:13px}.inote{font-size:11.5px}}
@@ -175,8 +176,8 @@ textarea{min-height:64px;resize:vertical}
   <p class="ich">Choisissez votre langue · Kies uw taal<br>Scegli la lingua · Choose your language · Elige tu idioma</p>
   <div class="ibtn">
   <div class="irow">
-    <button type="button" data-l="fr"><span class="fl"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#000"/><rect x="1" width="1" height="2" fill="#FDDA24"/><rect x="2" width="1" height="2" fill="#EF3340"/></svg><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg></span><b>FR</b><small>Français</small></button>
-    <button type="button" data-l="nl"><span class="fl"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#000"/><rect x="1" width="1" height="2" fill="#FDDA24"/><rect x="2" width="1" height="2" fill="#EF3340"/></svg><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#21468B"/><rect width="3" height="1.333" fill="#fff"/><rect width="3" height=".667" fill="#AE1C28"/></svg></span><b>NL</b><small>Nederlands</small></button>
+    <button type="button" data-l="fr"><span class="frow"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#000"/><rect x="1" width="1" height="2" fill="#FDDA24"/><rect x="2" width="1" height="2" fill="#EF3340"/></svg><b>FR</b><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg></span><small>Français</small></button>
+    <button type="button" data-l="nl"><span class="frow"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#000"/><rect x="1" width="1" height="2" fill="#FDDA24"/><rect x="2" width="1" height="2" fill="#EF3340"/></svg><b>NL</b><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#21468B"/><rect width="3" height="1.333" fill="#fff"/><rect width="3" height=".667" fill="#AE1C28"/></svg></span><small>Nederlands</small></button>
   </div>
   <div class="irow">
     <button type="button" data-l="it"><span class="fl"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#CE2B37"/></svg></span><b>IT</b><small>Italiano</small></button>
