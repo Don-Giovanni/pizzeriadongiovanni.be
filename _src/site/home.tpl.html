@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>if(/[?&]utm_source=qr\b/.test(location.search))location.replace("menu.html"+location.search+location.hash)</script>
+<title>Pizzeria Don Giovanni · Thuin</title>
+<!--HEAD-->
+<meta name="theme-color" content="#0d0b0a">
+<link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-512.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500&family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#0d0b0a;--panel:#171412;--panel2:#201b18;--line:#2c2622;
+  --fg:#fbf4e6;--muted:#b7ab98;--red:#e3201b;--green:#1f9a4b;--amber:#f2b33d;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --body:"Poppins","Segoe UI",system-ui,sans-serif;
+  --navh:64px;
+  color-scheme:dark;padding-top:env(safe-area-inset-top,0px)
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:12px}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.55 var(--body);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--navh) + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+img{max-width:100%}
+a{color:inherit}
+button{font-family:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.flag{display:grid;grid-template-columns:1fr 1fr 1fr;height:6px}
+.flag i:nth-child(1){background:var(--green)}.flag i:nth-child(2){background:var(--fg)}.flag i:nth-child(3){background:var(--red)}
+/*INTROCSS*/
+/* lingue */
+.langs{display:flex;justify-content:flex-end;gap:4px;padding-block:10px;position:absolute;top:6px;left:0;right:0;z-index:3;margin:0 auto}
+.langs button{font:600 12px var(--body);letter-spacing:.06em;color:var(--fg);background:rgba(13,11,10,.55);border:1px solid rgba(251,244,230,.25);border-radius:6px;padding:4px 9px;cursor:pointer;backdrop-filter:blur(4px)}
+.langs button[aria-pressed="true"]{color:var(--bg);background:var(--fg);border-color:var(--fg)}
+/* hero */
+.hero{position:relative;min-height:min(88vh,760px);min-height:min(88svh,760px);display:flex;align-items:flex-end;overflow:hidden}
+.hero>img.bgp{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 50%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,10,.55) 0%,rgba(13,11,10,.15) 30%,rgba(13,11,10,.55) 60%,var(--bg) 100%)}
+.hin{position:relative;z-index:2;width:100%;padding-block:80px 28px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.hin .logo{width:min(190px,46vw);height:auto;filter:drop-shadow(0 4px 18px rgba(0,0,0,.6))}
+.tag{margin:0;font:500 italic clamp(22px,5.4vw,34px)/1.2 var(--display);text-wrap:balance;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.status{display:inline-flex;align-items:center;gap:8px;background:rgba(13,11,10,.7);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600}
+.status i{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:0 0 auto}
+.status.open i{background:#3ad16f;box-shadow:0 0 0 4px rgba(58,209,111,.18)}.status.closed i{background:var(--red)}
+.status small{font-weight:400;color:var(--muted);font-size:13px;display:inline}
+.cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%;max-width:460px}
+.btn{flex:1 1 180px;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:14px;padding:12px 18px;font:600 16px var(--body);text-decoration:none;border:1px solid transparent;cursor:pointer}
+.btn.red{background:var(--red);color:#fff}
+.btn.ghost{background:rgba(13,11,10,.6);color:var(--fg);border-color:rgba(251,244,230,.35)}
+.btn svg{width:20px;height:20px;flex:0 0 auto}
+/* sezioni */
+section{padding-block:34px 8px}
+h2{font:700 clamp(26px,5vw,36px)/1.15 var(--display);margin:0 0 6px;text-wrap:balance}
+h2+.lead{margin:0 0 18px;color:var(--muted)}
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card h3{margin:0;font:600 13px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.card .big{font-size:18px;font-weight:600}
+.card .mon{color:var(--red);font-weight:700;font-size:16px}
+.card .sm{color:var(--muted);font-size:14px}
+.pq{margin:6px 0 0;padding:10px 12px;border-left:3px solid var(--amber);background:var(--panel2);border-radius:0 10px 10px 0;font-size:14px;font-style:italic}.pq small{display:block;font-style:normal;color:var(--amber);font-size:12px;margin-top:4px}
+.card a.lk{color:var(--amber);font-weight:600;text-decoration:none;margin-top:auto;padding-top:6px}
+.gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media (min-width:700px){.gal{grid-template-columns:repeat(5,1fr)}}
+.gal button{padding:0;border:0;background:var(--panel);border-radius:12px;overflow:hidden;aspect-ratio:4/5;cursor:zoom-in;max-width:100%}
+.gal img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.gal button:hover img{transform:scale(1.04)}
+.about{display:grid;gap:18px;align-items:center}
+@media (min-width:800px){.about{grid-template-columns:1.1fr 1fr}}
+.about p{margin:0 0 12px;max-width:62ch}
+.about .ph{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.about .ph img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block}
+.prov{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--amber);color:var(--bg);border-radius:4px;padding:1px 6px;margin-bottom:8px}
+.big1{font:500 italic clamp(22px,5vw,30px)/1.25 var(--display);color:var(--amber);margin:4px 0 16px;text-wrap:balance}
+.qs{display:grid;align-items:start;grid-auto-flow:column;grid-auto-columns:min(82%,320px);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;margin-bottom:6px;scrollbar-width:thin}
+@media (min-width:900px){.qs{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);grid-auto-columns:auto;overflow:visible}}
+.q{margin:0;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.q .st{color:var(--amber);letter-spacing:2px;font-size:15px}.q .st .e{opacity:.25}
+.q blockquote{margin:0;font-size:15px;line-height:1.55}
+.q figcaption{margin-top:auto;color:var(--muted);font-size:13px;font-weight:600}
+.revn{color:var(--muted);font-size:12.5px;margin:2px 0 12px}
+.rev{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.rev a{display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.rev .sc{font:700 30px/1 var(--display);color:var(--amber);white-space:nowrap}
+.rev .st{color:var(--amber);letter-spacing:2px}
+.rev .src{font-weight:600}.rev .sm{color:var(--muted);font-size:13px}
+.info{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.info .card .big a{text-decoration:none}
+footer{margin-top:34px;border-top:1px solid var(--line);padding-block:20px 24px;color:var(--muted);font-size:13px;text-align:center}
+footer p{margin:4px 0}
+footer .mascot{width:90px;height:auto;border-radius:12px;opacity:.9}
+/* barra in basso */
+nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(23,20,18,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.bot .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);height:var(--navh)}
+nav.bot a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:500;min-width:0}
+nav.bot a svg{width:22px;height:22px}
+nav.bot a.on{color:var(--fg)}
+nav.bot a.tel{color:#fff}
+nav.bot a.tel span.ic{background:var(--red);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;margin-top:-2px}
+nav.bot a.tel svg{width:19px;height:19px}
+nav.bot a span.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.92);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));cursor:zoom-out}
+.lb img{max-height:100%;max-width:100%;border-radius:10px;object-fit:contain}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (orientation:landscape) and (max-height:520px){.hero{min-height:100vh}.hin{padding-block:56px 18px;gap:8px}.hin .logo{width:110px}}
+</style>
+</head>
+<body>
+<div class="flag" aria-hidden="true"><i></i><i></i><i></i></div>
+<!--INTRO-->
+<header class="hero" id="top">
+  <img class="bgp" src="img/forno.jpg" alt="" width="1079" height="668" fetchpriority="high">
+  <div class="wrap langs" role="group" aria-label="Langue · Taal · Sprache · Lingua · Language · Idioma">
+    <button type="button" data-l="fr">FR</button><button type="button" data-l="nl">NL</button><button type="button" data-l="de">DE</button><button type="button" data-l="it">IT</button><button type="button" data-l="en">EN</button><button type="button" data-l="es">ES</button>
+  </div>
+  <div class="hin wrap">
+    <img class="logo" src="logo-dark.png" alt="Pizzeria Don Giovanni" width="643" height="720">
+    <p class="tag" data-t="tag"></p>
+    <span class="status" id="status"><i></i><span id="stTxt"></span></span>
+    <div class="cta">
+      <a class="btn red" href="menu.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5V21h16"/></svg><span data-t="seeMenu"></span></a>
+      <a class="btn ghost" href="tel:+32455111677"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>0455 11 16 77</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="wrap" id="horaires">
+  <div class="cards">
+    <div class="card"><h3 data-t="hoursT"></h3><span class="big" data-t="hours"></span><span class="mon" data-t="closedMon"></span><span class="sm" data-t="takeaway"></span></div>
+    <div class="card"><h3 data-t="delivT"></h3><span class="big" data-t="deliv"></span><span class="sm" data-t="delivC"></span><a class="lk" href="livraison.html" data-t="delivSee"></a></div>
+    <div class="card"><h3 data-t="partyT"></h3><span class="big" data-t="partyB"></span><span class="sm" data-t="party"></span><blockquote class="pq">« Une commande de 26 pizzas pour une soirée entre amis. 26 pizzas qui on été faites à l&#39;heure dite. […] Les amis ont, évidemment, adoré! »<small>Tripadvisor ★★★★★</small></blockquote><a class="lk" href="tel:+32455111677" data-t="partyCall"></a></div>
+  </div>
+</section>
+
+<section class="wrap" id="pizzas">
+  <h2 data-t="galT"></h2>
+  <p class="lead" data-t="galL"></p>
+  <div class="gal" id="gal">
+    <button type="button"><img src="img/zucca.jpg" alt="" loading="lazy" width="675" height="900"></button>
+    <button type="button"><img src="img/salame.jpg" alt="" loading="lazy" width="675" height="900"></button>
+    <button type="button"><img src="img/fornopieno.jpg" alt="" loading="lazy" width="900" height="607"></button><button type="button"><img src="img/crudo.jpg" alt="" loading="lazy" width="900" height="560"></button><button type="button"><img src="img/hero.jpg" alt="" loading="lazy" width="1125" height="1500"></button>
+    <button type="button"><img src="img/calzone.jpg" alt="" loading="lazy" width="900" height="836"></button>
+    <button type="button"><img src="img/banco.jpg" alt="" loading="lazy" width="675" height="900"></button>
+    <button type="button"><img src="img/padella.jpg" alt="" loading="lazy" width="675" height="900"></button>
+    <button type="button"><img src="img/dolce.jpg" alt="" loading="lazy" width="900" height="745"></button>
+    <button type="button"><img src="img/mascotte.jpg" alt="" loading="lazy" width="675" height="900"></button>
+  </div>
+  <p style="margin:16px 0 0;text-align:center"><a class="btn red" style="max-width:320px;margin:0 auto" href="menu.html" data-t="seeMenu"></a></p>
+</section>
+
+<section class="wrap" id="nous">
+  <div class="about">
+    <div>
+            <h2 data-t="aboutT"></h2>
+      <p data-t="about1"></p>
+      <p data-t="about2"></p>
+      <p data-t="about3"></p>
+    </div>
+    <div class="ph"><img src="img/vetrina.jpg" alt="" loading="lazy"><img src="img/panetti.jpg" alt="" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="wrap" id="avis">
+  <h2 data-t="revT"></h2>
+  <p class="big1">« Les meilleures pizzas de la région »</p>
+  <div class="qs"><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Succulente! Une commande de 26 pizzas pour une soirée entre amis. 26 pizzas qui on été faites à l&#39;heure dite. Des pizzas succulentes 😋 très bien garnis comme toujours et chaude. Même pour un certain nombre, la qualité et la quantité était bien là. Bravo et encore merciiiii Les amis ont, évidemment, adoré! »</blockquote><figcaption>Sherpa · Tripadvisor</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Service impeccable. Personnel, pizzaiolo et patron toujours souriants. Les pizzas excellentes et très large choix 🥰… »</blockquote><figcaption>Nadia B. · Google</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Personnel accueillant, il ont des produits frais, nous avons été vite servi et c’était délicieux que demander de plus !… »</blockquote><figcaption>Maxence V. · Google</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Nous commandons régulièrement (2 à 3 fois par mois), nous n&#x27;avons jamais été déçus. Par expérience d&#x27;avoir fait plusieurs pizzeria de la région, pour nous c&#x27;est celle-ci qui se démarque par sa simplicité et la qualité des produits ! Un vrai régale. »</blockquote><figcaption>Avis client</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Pizzas incroyables, beaucoup de choix à la carte, produits de qualité, pâte excellente. L&#x27;établissement est très propre et le personnel très accueillant. A tester absolument. »</blockquote><figcaption>Avis client</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Une tuerie. Vrai pizza au feu de bois avec une pâte mœlleuse et une garniture bien fournie. Un délice nous y retournerons »</blockquote><figcaption>Avis client</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Délicieux, gérant avec le sourire, toujours super bien accueilli, je recommande ! Options pour les végétariens : toutes sortes de pizza Adapté aux enfants : toutes sortes de pizzas. »</blockquote><figcaption>Avis client</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Attention, vente à emporter uniquement ! Mais la pizza était délicieuse. Nous étions en Wallonie pour quelques jours et avons choisi cette pizzeria d&#x27;après les avis. Nous n&#x27;avons pas été déçus ! Nous nous sommes installés sur un banc de l&#x27;autre côté de la rue pour déguster notre pizza. J&#x27;ai pris la pizza pepperoni, je la recommande vivement ! »</blockquote><figcaption>Jolien P. · Google</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Très bon accueil du jeune et professionnel personnel et délicieux 😋 »</blockquote><figcaption>Cléa L. · Google</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Le patron est super cool et il y a une bonne ambiance »</blockquote><figcaption>Arthur D. · Google</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Rien a dire toujours aussi bon et un service au top 👌🏿 »</blockquote><figcaption>Jérôme R. · Google</figcaption></figure><figure class="q"><span class="st" aria-label="5/5">★★★★★</span><blockquote>« Chouette petit resto, toujours bien servis et pizzas délicieuses »</blockquote><figcaption>Fabienne P. · Google</figcaption></figure><figure class="q" lang="nl"><span class="st" aria-label="4/5">★★★★<span class="e">★</span></span><blockquote>« Pizza delivery in Thuin. Lekkere pizza met fijne bodem. Gratis levering. Contact verliep vriendelijk en vlot. Alles goed. Hoewel het ons niet stoorde was de wachttijd wel vrij lang. Elektronisch betalen was niet mogelijk - er werd gevraagd om over te schrijven. Aanrader 👍 »</blockquote><figcaption>Shaq (Kortrijk) · Tripadvisor</figcaption></figure></div>
+  <p class="revn"><span data-t="revN"></span></p>
+  <div class="rev">
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Pizzeria+Don+Giovanni+Grand%27Rue+1+6530+Thuin" target="_blank" rel="noopener"><span class="sc">4,8</span><span><span class="st" aria-hidden="true">★★★★★</span><br><span class="src">Google</span> <span class="sm" data-t="revG"></span></span></a>
+    <a href="https://www.facebook.com/share/19UA7LuqKC/" target="_blank" rel="noopener"><span class="sc">100&nbsp;%</span><span><span class="src">Facebook</span><br><span class="sm" data-t="revF"></span></span></a>
+  </div>
+</section>
+
+<section class="wrap" id="infos">
+  <h2 data-t="infoT"></h2>
+  <div class="info">
+    <div class="card"><h3 data-t="adrT"></h3><span class="big">Grand'Rue 1<br>6530 Thuin</span><a class="lk" href="https://www.google.com/maps/dir/?api=1&amp;destination=Pizzeria+Don+Giovanni%2C+Grand%27Rue+1%2C+6530+Thuin" target="_blank" rel="noopener" data-t="route"></a></div>
+    <div class="card"><h3 data-t="telT"></h3><span class="big"><a href="tel:+32455111677">0455 11 16 77</a></span><span class="sm" data-t="telC"></span><a class="lk" href="https://www.facebook.com/share/19UA7LuqKC/" target="_blank" rel="noopener">Facebook · Pizzeria Don Giovanni →</a></div>
+    <div class="card"><h3 data-t="moreT"></h3><a class="lk" href="menu.html" data-t="mMenu"></a><a class="lk" href="livraison.html" data-t="mLiv"></a><a class="lk" href="allergenes.html" data-t="mAlg"></a></div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  <p><b>Pizzeria Don Giovanni</b></p>
+  <p><span style="white-space:nowrap">Grand'Rue 1, 6530 Thuin</span> · <span style="white-space:nowrap">0455 11 16 77</span> · <a href="mailto:pizzeriadongiovannithuin@gmail.com" style="white-space:nowrap;color:inherit">pizzeriadongiovannithuin@gmail.com</a></p>
+  <p><span style="white-space:nowrap">New Don Giovanni SRL</span> · <span style="white-space:nowrap">BCE / TVA BE 1036.749.658</span></p>
+  <p data-t="privacy"></p>
+</footer>
+
+<nav class="bot" aria-label="Navigation">
+  <div class="in">
+    <a href="#top" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span class="t" data-t="nHome"></span></a>
+    <a href="menu.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 0 1 10 10H2A10 10 0 0 1 12 2z"/><path d="M2 12l10 10 10-10"/><circle cx="9" cy="7.5" r="1"/><circle cx="14.5" cy="8.5" r="1"/></svg><span class="t">Menu</span></a>
+    <a href="livraison.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span class="t" data-t="nLiv"></span></a>
+    <a href="#infos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><span class="t">Infos</span></a>
+    <a href="tel:+32455111677" class="tel"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="t" data-t="nCall"></span></a>
+  </div>
+</nav>
+
+<div class="lb" id="lb" hidden><img id="lbi" alt=""></div>
+
+<script>
+const CLOSED=[];const OPEN_EXTRA=[];
+const TX={
+fr:{revN:"Avis publiés sur Google et Tripadvisor, cités tels quels.",tag:"Pizzas au feu de bois, au cœur de Thuin",seeMenu:"Voir le menu",hoursT:"Horaires",hours:"Du mardi au dimanche, 17h00 – 22h00",closedMon:"Fermé le lundi",takeaway:"À emporter ou en livraison",delivT:"Livraison",deliv:"Du jeudi au dimanche, 17h30 – 21h30",delivC:"Dès 2 pizzas · prix selon les km · gratuite dès 5 pizzas (jusqu'à 10 km)",delivSee:"Tarifs de livraison →",partyT:"Fêtes & entreprises",partyB:"Anniversaire, repas d'entreprise, fête ?",party:"Pour une commande d'au moins 250 € (une vingtaine de pizzas), nous pouvons ouvrir spécialement pour vous, même à midi.",partyCall:"Appelez-nous →",galT:"Nos pizzas",galL:"Cuites dans notre four à bois.",aboutT:"Pizzeria Don Giovanni",about1:"Au cœur de Thuin, nous préparons nos pizzas artisanales à la main, à partir d'une pâte fraîche que nous faisons chaque jour avec beaucoup d'amour. Après un lent processus de levée, de fermentation et de maturation, qui donne à notre pâte tout son goût et ses arômes, nos pizzas sont cuites au feu de bois par nos pizzaïolos passionnés. Et pour varier les plaisirs, on vous propose aussi des pâtes, des desserts et des suggestions.",about2:"Chez nous, la fraîcheur et la qualité des produits passent avant tout.",about3:"À emporter ou livrées chez vous, du mardi au dimanche. Un petit coup de fil, et on s'occupe du reste !",revT:"Ce que disent nos clients",revG:"lire tous les avis →",revF:"recommandent · lire les avis →",infoT:"Infos pratiques",adrT:"Adresse",route:"Itinéraire →",telT:"Commander",telC:"Par téléphone, ou directement à la pizzeria.",moreT:"Voir aussi",mMenu:"Menu et prix →",mLiv:"Tarifs de livraison →",mAlg:"Allergènes →",nHome:"Accueil",nLiv:"Livraison",nCall:"Appeler",privacy:"Statistiques de visites anonymes, sans cookies.",stOpen:"Ouvert maintenant",stUntil:"jusqu'à {0}",stClosed:"Fermé",stOpensToday:"ouvre aujourd'hui à {0}",stOpensTom:"ouvre demain à {0}",stOpensDay:"ouvre {0} à {1}",stExc:"Fermeture exceptionnelle",days:["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"]},
+nl:{revN:"Reviews op Google en Tripadvisor, ongewijzigd geciteerd.",tag:"Pizza's uit de houtoven, in het hart van Thuin",seeMenu:"Bekijk het menu",hoursT:"Openingsuren",hours:"Dinsdag tot zondag, 17u00 – 22u00",closedMon:"Gesloten op maandag",takeaway:"Afhalen of laten leveren",delivT:"Levering",deliv:"Donderdag tot zondag, 17u30 – 21u30",delivC:"Vanaf 2 pizza's · prijs volgens km · gratis vanaf 5 pizza's (tot 10 km)",delivSee:"Leveringstarieven →",partyT:"Feesten & bedrijven",partyB:"Verjaardag, bedrijfsetentje, feest?",party:"Voor een bestelling van minstens 250 € (een twintigtal pizza's) kunnen we speciaal voor u opengaan, ook 's middags.",partyCall:"Bel ons →",galT:"Onze pizza's",galL:"Gebakken in onze houtoven.",aboutT:"Pizzeria Don Giovanni",about1:"In het hart van Thuin maken we onze ambachtelijke pizza's met de hand, met vers deeg dat we elke dag met veel liefde bereiden. Na een langzaam proces van rijzen, fermentatie en rijping, dat ons deeg al zijn smaak en aroma's geeft, worden onze pizza's door onze gepassioneerde pizzabakkers in de houtoven gebakken. En voor wat afwisseling hebben we ook pasta, desserts en suggesties.",about2:"Bij ons gaan versheid en kwaliteit van de producten boven alles.",about3:"Afhalen of aan huis geleverd, van dinsdag tot zondag. Eén telefoontje en wij doen de rest!",revT:"Wat onze klanten zeggen",revG:"alle reviews lezen →",revF:"bevelen ons aan · reviews lezen →",infoT:"Praktische info",adrT:"Adres",route:"Routebeschrijving →",telT:"Bestellen",telC:"Telefonisch of rechtstreeks in de pizzeria.",moreT:"Zie ook",mMenu:"Menu en prijzen →",mLiv:"Leveringstarieven →",mAlg:"Allergenen →",nHome:"Home",nLiv:"Levering",nCall:"Bellen",privacy:"Anonieme bezoekersstatistieken, zonder cookies.",stOpen:"Nu open",stUntil:"tot {0}",stClosed:"Gesloten",stOpensToday:"opent vandaag om {0}",stOpensTom:"opent morgen om {0}",stOpensDay:"opent {0} om {1}",stExc:"Uitzonderlijk gesloten",days:["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"]},
+de:{revN:"Bewertungen auf Google und Tripadvisor, unverändert zitiert.",tag:"Pizza aus dem Holzofen, im Herzen von Thuin",seeMenu:"Zum Menü",hoursT:"Öffnungszeiten",hours:"Dienstag bis Sonntag, 17:00 – 22:00 Uhr",closedMon:"Montags geschlossen",takeaway:"Zum Mitnehmen oder Lieferung",delivT:"Lieferung",deliv:"Donnerstag bis Sonntag, 17:30 – 21:30 Uhr",delivC:"Ab 2 Pizzen · Preis nach km · kostenlos ab 5 Pizzen (bis 10 km)",delivSee:"Liefertarife →",partyT:"Feiern & Firmen",partyB:"Geburtstag, Firmenessen, Feier?",party:"Für eine Bestellung ab 250 € (etwa zwanzig Pizzen) können wir extra für Sie öffnen, auch mittags.",partyCall:"Rufen Sie uns an →",galT:"Unsere Pizzen",galL:"Gebacken in unserem Holzofen.",aboutT:"Pizzeria Don Giovanni",about1:"Im Herzen von Thuin bereiten wir unsere Pizzen von Hand zu, aus frischem Teig, den wir jeden Tag mit viel Liebe machen. Nach einem langsamen Prozess aus Gehen, Fermentation und Reifung, der unserem Teig seinen vollen Geschmack und seine Aromen gibt, backen unsere leidenschaftlichen Pizzaioli die Pizzen im Holzofen. Und für Abwechslung sorgen auch Pasta, Desserts und Empfehlungen.",about2:"Bei uns stehen Frische und Qualität der Produkte an erster Stelle.",about3:"Zum Mitnehmen oder nach Hause geliefert, von Dienstag bis Sonntag. Ein kurzer Anruf, und wir kümmern uns um den Rest!",revT:"Das sagen unsere Kunden",revG:"alle Bewertungen lesen →",revF:"empfehlen uns · Bewertungen lesen →",infoT:"Praktische Infos",adrT:"Adresse",route:"Route →",telT:"Bestellen",telC:"Telefonisch oder direkt in der Pizzeria.",moreT:"Siehe auch",mMenu:"Menü und Preise →",mLiv:"Liefertarife →",mAlg:"Allergene →",nHome:"Start",nLiv:"Lieferung",nCall:"Anrufen",privacy:"Anonyme Besucherstatistik, ohne Cookies.",stOpen:"Jetzt geöffnet",stUntil:"bis {0} Uhr",stClosed:"Geschlossen",stOpensToday:"öffnet heute um {0} Uhr",stOpensTom:"öffnet morgen um {0} Uhr",stOpensDay:"öffnet {0} um {1} Uhr",stExc:"Ausnahmsweise geschlossen",days:["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"]},
+it:{revN:"Recensioni pubblicate su Google e Tripadvisor, citate così come sono.",tag:"Pizze cotte nel forno a legna, nel cuore di Thuin",seeMenu:"Vedi il menu",hoursT:"Orari",hours:"Dal martedì alla domenica, 17:00 – 22:00",closedMon:"Chiuso il lunedì",takeaway:"Da asporto o a domicilio",delivT:"Consegna",deliv:"Dal giovedì alla domenica, 17:30 – 21:30",delivC:"Da 2 pizze · prezzo secondo i km · gratuita da 5 pizze (fino a 10 km)",delivSee:"Tariffe di consegna →",partyT:"Feste e aziende",partyB:"Compleanno, cena aziendale, festa?",party:"Per un ordine di almeno 250 € (una ventina di pizze) possiamo aprire apposta per voi, anche a mezzogiorno.",partyCall:"Chiamateci →",galT:"Le nostre pizze",galL:"Cotte nel nostro forno a legna.",aboutT:"Pizzeria Don Giovanni",about1:"Nel cuore di Thuin prepariamo a mano le nostre pizze artigianali, con un impasto fresco che facciamo ogni giorno con tanto amore. Dopo un lento processo di lievitazione, fermentazione e maturazione, che dà al nostro impasto tutto il suo gusto e i suoi profumi, le pizze vengono cotte nel forno a legna dai nostri pizzaioli appassionati. E per variare, vi proponiamo anche pasta, dolci e suggerimenti.",about2:"Da noi la freschezza e la qualità dei prodotti vengono prima di tutto.",about3:"Da asporto o consegnate a casa vostra, dal martedì alla domenica. Basta una telefonata, al resto pensiamo noi!",revT:"Cosa dicono i nostri clienti",revG:"leggi tutte le recensioni →",revF:"ci consigliano · leggi le recensioni →",infoT:"Informazioni",adrT:"Indirizzo",route:"Indicazioni →",telT:"Ordinare",telC:"Per telefono o direttamente in pizzeria.",moreT:"Vedi anche",mMenu:"Menu e prezzi →",mLiv:"Tariffe di consegna →",mAlg:"Allergeni →",nHome:"Home",nLiv:"Consegna",nCall:"Chiama",privacy:"Statistiche di visita anonime, senza cookie.",stOpen:"Aperto ora",stUntil:"fino alle {0}",stClosed:"Chiuso",stOpensToday:"apre oggi alle {0}",stOpensTom:"apre domani alle {0}",stOpensDay:"apre {0} alle {1}",stExc:"Chiusura eccezionale",days:["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"]},
+en:{revN:"Reviews posted on Google and Tripadvisor, quoted as written.",tag:"Wood-fired pizzas in the heart of Thuin",seeMenu:"See the menu",hoursT:"Opening hours",hours:"Tuesday to Sunday, 5 pm – 10 pm",closedMon:"Closed on Mondays",takeaway:"Takeaway or delivery",delivT:"Delivery",deliv:"Thursday to Sunday, 5:30 pm – 9:30 pm",delivC:"From 2 pizzas · price by distance · free from 5 pizzas (up to 10 km)",delivSee:"Delivery rates →",partyT:"Parties & companies",partyB:"Birthday, company dinner, party?",party:"For an order of at least €250 (about twenty pizzas), we can open especially for you, even at lunchtime.",partyCall:"Call us →",galT:"Our pizzas",galL:"Baked in our wood-fired oven.",aboutT:"Pizzeria Don Giovanni",about1:"In the heart of Thuin, we make our pizzas by hand, from fresh dough we prepare every day with lots of love. After a slow process of rising, fermentation and maturation, which gives our dough all its flavour and aromas, our passionate pizzaioli bake the pizzas in our wood-fired oven. And for a change, we also offer pasta, desserts and specials.",about2:"For us, fresh, high-quality ingredients come first.",about3:"Takeaway or delivered to your door, Tuesday to Sunday. Just give us a call and we'll take care of the rest!",revT:"What our customers say",revG:"read all reviews →",revF:"recommend us · read reviews →",infoT:"Practical info",adrT:"Address",route:"Directions →",telT:"Order",telC:"By phone, or directly at the pizzeria.",moreT:"See also",mMenu:"Menu and prices →",mLiv:"Delivery rates →",mAlg:"Allergens →",nHome:"Home",nLiv:"Delivery",nCall:"Call",privacy:"Anonymous visitor statistics, no cookies.",stOpen:"Open now",stUntil:"until {0}",stClosed:"Closed",stOpensToday:"opens today at {0}",stOpensTom:"opens tomorrow at {0}",stOpensDay:"opens {0} at {1}",stExc:"Exceptionally closed",days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]},
+es:{revN:"Reseñas publicadas en Google y Tripadvisor, citadas tal cual.",tag:"Pizzas al horno de leña, en el corazón de Thuin",seeMenu:"Ver el menú",hoursT:"Horario",hours:"De martes a domingo, 17:00 – 22:00",closedMon:"Cerrado los lunes",takeaway:"Para llevar o a domicilio",delivT:"Entrega",deliv:"De jueves a domingo, 17:30 – 21:30",delivC:"Desde 2 pizzas · precio según los km · gratis desde 5 pizzas (hasta 10 km)",delivSee:"Tarifas de entrega →",partyT:"Fiestas y empresas",partyB:"¿Cumpleaños, comida de empresa, fiesta?",party:"Para un pedido de al menos 250 € (unas veinte pizzas) podemos abrir especialmente para vosotros, incluso al mediodía.",partyCall:"Llámanos →",galT:"Nuestras pizzas",galL:"Cocidas en nuestro horno de leña.",aboutT:"Pizzeria Don Giovanni",about1:"En el corazón de Thuin preparamos a mano nuestras pizzas artesanas, con una masa fresca que hacemos cada día con mucho cariño. Tras un lento proceso de levado, fermentación y maduración, que da a nuestra masa todo su sabor y sus aromas, nuestros apasionados pizzeros las cuecen en el horno de leña. Y para variar, también te proponemos pasta, postres y sugerencias.",about2:"Para nosotros, la frescura y la calidad de los productos son lo primero.",about3:"Para llevar o a domicilio, de martes a domingo. ¡Una llamada y nosotros nos encargamos del resto!",revT:"Lo que dicen nuestros clientes",revG:"leer todas las reseñas →",revF:"nos recomiendan · leer las reseñas →",infoT:"Información práctica",adrT:"Dirección",route:"Cómo llegar →",telT:"Pedir",telC:"Por teléfono o directamente en la pizzería.",moreT:"Ver también",mMenu:"Menú y precios →",mLiv:"Tarifas de entrega →",mAlg:"Alérgenos →",nHome:"Inicio",nLiv:"Entrega",nCall:"Llamar",privacy:"Estadísticas de visitas anónimas, sin cookies.",stOpen:"Abierto ahora",stUntil:"hasta las {0}",stClosed:"Cerrado",stOpensToday:"abre hoy a las {0}",stOpensTom:"abre mañana a las {0}",stOpensDay:"abre el {0} a las {1}",stExc:"Cierre excepcional",days:["domingo","lunes","martes","miércoles","jueves","viernes","sábado"]}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const trk=(n,d)=>{try{window.umami&&umami.track(n,d)}catch(e){}};
+const FIRST=!LS.get("dg_lang");let L=LS.get("dg_lang")||(navigator.language||"fr").slice(0,2);if(!TX[L])L="fr";
+const t=(k,...a)=>{let s=(TX[L][k]??TX.fr[k]??k);a.forEach((v,i)=>s=s.replace("{"+i+"}",v));return s};
+function bxNow(){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Brussels",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",weekday:"short",hourCycle:"h23"});
+  const o={};f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value);const wd={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[o.weekday];
+  return {iso:`${o.year}-${o.month}-${o.day}`,wd,min:+o.hour*60+ +o.minute}}
+const addDays=(iso,n)=>{const d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
+const closedOn=iso=>CLOSED.find(c=>iso>=c.from&&iso<=c.to);
+const openDay=(iso,wd)=>!closedOn(iso)&&(wd!==1||OPEN_EXTRA.includes(iso));
+const hhmm=m=>L==="en"?`${(Math.floor(m/60)+11)%12+1}:${String(m%60).padStart(2,"0")} ${m>=720?"pm":"am"}`:`${Math.floor(m/60)}${(L==="it"||L==="es"||L==="de")?":":L==="nl"?"u":"h"}${String(m%60).padStart(2,"0")}`;
+function status(){const n=bxNow(),O=17*60,C=22*60;let open=false,txt="",sub="";
+  if(openDay(n.iso,n.wd)&&n.min>=O&&n.min<C){open=true;txt=t("stOpen");sub=t("stUntil",hhmm(C))}
+  else{txt=closedOn(n.iso)?t("stExc"):t("stClosed");
+    if(openDay(n.iso,n.wd)&&n.min<O)sub=t("stOpensToday",hhmm(O));
+    else for(let i=1;i<=60;i++){const d=addDays(n.iso,i),wd=(n.wd+i)%7;if(openDay(d,wd)){sub=i===1?t("stOpensTom",hhmm(O)):t("stOpensDay",t("days")[wd],hhmm(O));break}}
+    const c=closedOn(n.iso);if(c&&c.note&&c.note[L])sub=c.note[L]+" · "+sub}
+  $("status").className="status "+(open?"open":"closed");$("stTxt").innerHTML=`${esc(txt)} <small>· ${esc(sub)}</small>`}
+function draw(){document.documentElement.lang=L;
+  document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+  document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===L&&!b.closest("#intro")?"true":"false"));
+  status()}
+if(FIRST||location.hash==="#langue"){const it=$("intro");if(it){it.hidden=false;document.documentElement.style.overflow="hidden"}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-l]");if(b){L=b.dataset.l;LS.set("dg_lang",L);const it=$("intro");trk("langue",{langue:L,premiere:!!(it&&!it.hidden)});if(it&&!it.hidden){it.hidden=true;document.documentElement.style.overflow="";scrollTo(0,0)}draw();return}
+  const g=e.target.closest("#gal button");if(g){$("lbi").src=g.querySelector("img").src;$("lb").hidden=false;return}
+  if(e.target.closest("#lb")){$("lb").hidden=true}});
+addEventListener("keydown",e=>{if(e.key==="Escape")$("lb").hidden=true});
+draw();setInterval(status,60000);
+</script>
+</body>
+</html>
