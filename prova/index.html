@@ -28,6 +28,17 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .flag{display:grid;grid-template-columns:1fr 1fr 1fr;height:6px}
 .flag i:nth-child(1){background:var(--green)}.flag i:nth-child(2){background:var(--fg)}.flag i:nth-child(3){background:var(--red)}
 button{font-family:inherit}
+.intro{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;overflow-y:auto;padding-block:calc(20px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.intro img{width:min(230px,52vw);height:auto}
+.ich{margin:0;font-size:16px;font-weight:600;line-height:1.5}
+.ibtn{display:grid;grid-template-columns:repeat(2,minmax(0,170px));gap:10px;width:100%;justify-content:center}
+.ibtn button{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 8px;color:var(--fg);cursor:pointer;font-family:var(--body)}
+.ibtn button:hover,.ibtn button:focus-visible{border-color:var(--amber)}
+.ibtn b{font-size:20px;letter-spacing:.08em}.ibtn small{color:var(--muted);font-size:13px}
+.fl{display:flex;gap:4px;height:24px}.fs{height:24px;width:36px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}.fs.uk{width:48px}
+.inote{margin:0;max-width:520px;color:var(--muted);font-size:12.5px;line-height:1.55}
+@media (min-width:760px){.ibtn{grid-template-columns:repeat(4,minmax(0,170px))}}
+@media (max-height:600px){.intro{justify-content:flex-start;gap:10px}.intro img{width:min(120px,30vw)}.ibtn{grid-template-columns:repeat(4,minmax(0,150px))}.ibtn button{padding:8px 6px}.inote{font-size:11.5px}}
 .langs{display:flex;justify-content:flex-end;gap:4px;padding-block:10px 0}
 .langs button{font:600 12px var(--body);letter-spacing:.06em;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 9px;cursor:pointer}
 .langs button[aria-pressed="true"]{color:var(--bg);background:var(--fg);border-color:var(--fg)}
@@ -157,6 +168,17 @@ textarea{min-height:64px;resize:vertical}
 
 
 <div class="flag" aria-hidden="true"><i></i><i></i><i></i></div>
+<div id="intro" class="intro" hidden role="dialog" aria-label="Langue · Taal · Language · Lingua">
+  <img src="logo-dark.png" alt="Pizzeria Don Giovanni" width="643" height="720">
+  <p class="ich">Choisissez votre langue · Kies uw taal<br>Choose your language · Scegli la lingua</p>
+  <div class="ibtn">
+    <button type="button" data-l="fr"><span class="fl"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#000"/><rect x="1" width="1" height="2" fill="#FDDA24"/><rect x="2" width="1" height="2" fill="#EF3340"/></svg></span><b>FR</b><small>Français</small></button>
+    <button type="button" data-l="nl"><span class="fl"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#000"/><rect x="1" width="1" height="2" fill="#FDDA24"/><rect x="2" width="1" height="2" fill="#EF3340"/></svg><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#21468B"/><rect width="3" height="1.333" fill="#fff"/><rect width="3" height=".667" fill="#AE1C28"/></svg></span><b>NL</b><small>Nederlands</small></button>
+    <button type="button" data-l="en"><span class="fl"><svg class="fs uk" viewBox="0 0 60 30" aria-hidden="true"><clipPath id="ukS"><path d="M0,0v30h60V0z"/></clipPath><clipPath id="ukT"><path d="M30,15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#ukS)"><path d="M0,0v30h60V0z" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#ukT)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></g></svg></span><b>EN</b><small>English</small></button>
+    <button type="button" data-l="it"><span class="fl"><svg class="fs" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#CE2B37"/></svg></span><b>IT</b><small>Italiano</small></button>
+  </div>
+  <p class="inote">Vous pourrez changer de langue à tout moment avec les boutons FR · NL · EN · IT en haut du menu.<br>U kunt altijd van taal wisselen met de knoppen bovenaan het menu.<br>You can change the language at any time with the buttons at the top of the menu.<br>Puoi cambiare lingua in qualsiasi momento con i pulsanti in alto nel menu.</p>
+</div>
 <div class="wrap langs" role="group" aria-label="Langue · Taal · Language · Lingua">
   <button type="button" data-l="fr">FR</button><button type="button" data-l="nl">NL</button><button type="button" data-l="en">EN</button><button type="button" data-l="it">IT</button>
 </div>
@@ -334,7 +356,8 @@ days:["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let L=LS.get("dg_lang")||(navigator.language||"fr").slice(0,2);if(!TX[L])L="fr";
+const FIRST=!LS.get("dg_lang");let L=LS.get("dg_lang")||(navigator.language||"fr").slice(0,2);if(!TX[L])L="fr";
+if(FIRST||location.hash==="#langue"){const it=document.getElementById("intro");if(it){it.hidden=false;document.documentElement.style.overflow="hidden"}}
 const t=(k,...a)=>{let s=(TX[L][k]??TX.fr[k]??k);a.forEach((v,i)=>s=s.replace("{"+i+"}",v));return s};
 const LI={fr:0,nl:1,en:2};
 const ingW=k=>L==="it"?(IT_I[k]||I[k][0]):I[k][LI[L]];
@@ -440,7 +463,7 @@ async function copyNum(btn){try{await navigator.clipboard.writeText(PHONE.replac
 
 /* eventi */
 document.addEventListener("click",e=>{const b=e.target.closest("button,a");if(!b)return;const d=b.dataset;
-  if(d.l){L=d.l;LS.set("dg_lang",L);draw();if(!$("sheet").hidden)cart();return}
+  if(d.l){L=d.l;LS.set("dg_lang",L);draw();if(!$("sheet").hidden)cart();const it=$("intro");if(it&&!it.hidden){it.hidden=true;document.documentElement.style.overflow="";scrollTo(0,0)}return}
   if(d.add){addItem(d.add);return}
   if(b.id==="openCart"){cart();return}
   if(b.id==="closeCart"){$("sheet").hidden=true;openPick=-1;return}
