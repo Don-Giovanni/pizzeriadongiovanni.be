@@ -421,7 +421,7 @@ function cart(){
   ${CART.length?`<div class="seg" role="group"><button type="button" data-m="take" aria-pressed="${MODE==="take"}">${esc(t("take"))}</button><button type="button" data-m="del" aria-pressed="${MODE==="del"}">${esc(t("del"))}</button></div>
   ${MODE==="del"?`<label class="f" for="adr">${esc(t("adrL"))}</label><div class="adrw"><input id="adr" type="text" autocomplete="off" enterkeyhint="search" placeholder="${esc(t("adrP"))}" value="${esc(ADR)}"><div id="sug" class="sug" role="listbox" hidden></div></div>
   <label class="f">${esc(t("kmL"))}</label><div class="kmbox${kmVal()>0?" on":""}" id="kmbox">${ADRST==="wait"?esc(t("adrWait")):kmVal()>0?fmtKm(kmVal())+" km":"— km"}</div>
-  ${ADRST==="err"?`<p class="msg">${esc(t("adrErr"))}</p>`:ADRST==="none"?`<p class="msg">${esc(t("adrNone"))}</p>`:""}
+  ${ADRST==="err"?`<p class="msg">${esc(t("adrErr"))}${DBG?`<br><small style="word-break:break-all">${esc(LASTDBG)}</small>`:""}</p>`:ADRST==="none"?`<p class="msg">${esc(t("adrNone"))}</p>`:""}
   <p class="note" style="margin-top:6px">${esc(t("adrNote"))}</p><p class="note" style="margin-top:6px">${esc(t("delivC"))} · ${esc(t("delivH"))}</p>`:""}
   <label class="f" for="nt">${esc(t("note"))}</label><textarea id="nt" placeholder="${esc(t("noteP"))}">${esc(NOTE)}</textarea>
   <div class="sum"><div><span>${esc(t("sub"))}</span><span>${price(T.sub)}</span></div>${T.sup?`<div><span>${esc(t("supT"))}</span><span>${price(T.sup)}</span></div>`:""}
@@ -453,7 +453,10 @@ document.addEventListener("click",e=>{const b=e.target.closest("button,a");if(!b
   if(b.id==="mcopy"||b.id==="copy"){copyNum(b);return}
 });
 let sugT=0,sugN=0,ORIG=null;try{ORIG=JSON.parse(LS.get("dg_orig")||"null")}catch(_){}
-const orsGet=async(path,params)=>{const u=new URL(ORS+path);u.searchParams.set("api_key",ORS_KEY);for(const[k,v]of Object.entries(params))u.searchParams.set(k,v);const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);try{const r=await fetch(u,{signal:ctl.signal});if(!r.ok)throw new Error("ors "+r.status);return await r.json()}finally{clearTimeout(tm)}};
+const DBG=location.hash==="#debug";let LASTDBG="";
+const orsGet=async(path,params)=>{const u=new URL(ORS+path);u.searchParams.set("api_key",ORS_KEY);for(const[k,v]of Object.entries(params))u.searchParams.set(k,v);const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);
+  try{const r=await fetch(u,{signal:ctl.signal});const txt=await r.text();LASTDBG=path+" → "+r.status+" · "+txt.slice(0,300);if(DBG)console.log(LASTDBG);if(!r.ok)throw new Error("ors "+r.status);return JSON.parse(txt)}
+  catch(e){if(!LASTDBG.startsWith(path))LASTDBG=path+" → "+(e.name||"")+" "+(e.message||e);throw e}finally{clearTimeout(tm)}};
 const BOX={"boundary.rect.min_lon":"3.95","boundary.rect.min_lat":"50.15","boundary.rect.max_lon":"4.65","boundary.rect.max_lat":"50.55","boundary.country":"BE","focus.point.lon":"4.287","focus.point.lat":"50.339"};
 async function origin(){if(ORIG)return ORIG;const j=await orsGet("/geocode/search",{text:"Grand'Rue 1, 6530 Thuin",size:"1",...BOX});const c=j.features&&j.features[0]&&j.features[0].geometry.coordinates;if(!c)throw new Error("orig");ORIG=c;LS.set("dg_orig",JSON.stringify(c));return c}
 function showSug(list){const b=$("sug");if(!b)return;if(!list.length){b.hidden=true;b.innerHTML="";return}b.innerHTML=list.map((f,i)=>`<button type="button" role="option" data-sg="${i}">${esc(f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,""))}</button>`).join("");b.hidden=false;b._list=list}
@@ -466,7 +469,7 @@ function refreshCart(){const sh=$("sheet");const sc=sh?sh.scrollTop:0;cart();if(
 document.addEventListener("input",e=>{if(e.target.id!=="adr")return;const q=e.target.value.trim();ADR=e.target.value;KM="";if(ADRST)ADRST="";save();bar();
   const kb=$("kmbox");if(kb){kb.textContent="— km";kb.classList.remove("on")}
   clearTimeout(sugT);if(q.length<4){showSug([]);return}
-  sugT=setTimeout(async()=>{const n=++sugN;try{const j=await orsGet("/geocode/autocomplete",{text:q,size:"5",layers:"address,street",...BOX});if(n!==sugN)return;const list=(j.features||[]);showSug(list);if(!list.length){const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrNone"))}</div>`;b.hidden=false}}}catch(err){if(n!==sugN)return;ADRST="err";refreshCart();const a=$("adr");if(a){a.focus();const l=a.value.length;try{a.setSelectionRange(l,l)}catch(_){}}}},400)});
+  sugT=setTimeout(async()=>{const n=++sugN;try{const j=await orsGet("/geocode/autocomplete",{text:q,size:"5",layers:"address,street",...BOX});if(n!==sugN)return;const list=(j.features||[]);showSug(list);if(!list.length){const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrNone"))}${DBG?`<br><small style="color:var(--muted);word-break:break-all">${esc(LASTDBG)}</small>`:""}</div>`;b.hidden=false}}}catch(err){if(n!==sugN)return;ADRST="err";refreshCart();const a=$("adr");if(a){a.focus();const l=a.value.length;try{a.setSelectionRange(l,l)}catch(_){}}}},400)});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-sg]");if(!b)return;const box=$("sug");const f=box&&box._list&&box._list[+b.dataset.sg];if(f){showSug([]);pick(f)}});
 document.addEventListener("input",e=>{if(e.target.id==="nt"){NOTE=e.target.value;save()}if(e.target.id==="q")draw()});
 $("sheet").addEventListener("click",e=>{if(e.target.id==="sheet"){$("sheet").hidden=true;openPick=-1}});
