@@ -460,7 +460,8 @@ const orsGet=async(path,params)=>{const u=new URL(ORS+path);u.searchParams.set("
 const BOX={"boundary.rect.min_lon":"3.95","boundary.rect.min_lat":"50.15","boundary.rect.max_lon":"4.65","boundary.rect.max_lat":"50.55","boundary.country":"BE","focus.point.lon":"4.287","focus.point.lat":"50.339"};
 const PH="https://photon.komoot.io/api/";
 const hav=(a,b)=>{const R=6371,r=x=>x*Math.PI/180,dl=r(b[1]-a[1]),dn=r(b[0]-a[0]);const h=Math.sin(dl/2)**2+Math.cos(r(a[1]))*Math.cos(r(b[1]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
-const phLabel=p=>{const st=[p.street||p.name,p.housenumber].filter(Boolean).join(" ");const loc=[p.postcode,p.city||p.district||p.locality||p.county].filter(Boolean).join(" ");return [st,loc].filter(Boolean).join(", ")};
+const CPV={"6531":"Biesme-sous-Thuin","6532":"Ragnies","6533":"Biercée","6534":"Gozée","6536":"Thuillies"};
+const phLabel=p=>{const st=[p.street||p.name,p.housenumber].filter(Boolean).join(" ");const d=p.district||p.locality;const place=(d&&d!==p.city?d:null)||CPV[p.postcode]||p.city||p.county;const loc=[p.postcode,place].filter(Boolean).join(" ");return [st,loc].filter(Boolean).join(", ")};
 async function photon(q,limit){try{return await photon1(q,limit)}catch(e){await new Promise(r=>setTimeout(r,900));return await photon1(q,limit)}}
 async function photon1(q,limit){const u=new URL(PH);u.searchParams.set("q",q);u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");u.searchParams.set("limit",String(limit||8));u.searchParams.set("lang","fr");u.searchParams.set("bbox","3.95,50.15,4.65,50.55");u.searchParams.append("layer","house");u.searchParams.append("layer","street");
   const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);
