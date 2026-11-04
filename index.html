@@ -77,6 +77,8 @@ li.it{padding:9px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;a
 .dots{flex:1;min-width:12px;border-bottom:2px dotted #4a413a;transform:translateY(-4px)}
 .pr{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ing{color:var(--muted);font-size:14px;margin-top:1px}
+a.alg{text-decoration:none}
+.lk{display:inline-block;margin-top:6px;color:var(--amber);font-weight:600;font-size:13px;text-decoration:none}
 .alg{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .alg span{font:600 10px/1 var(--body);color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:3px 5px}
 .alg span.v{color:var(--amber);border-color:rgba(242,179,61,.4)}
@@ -126,6 +128,10 @@ footer a{color:var(--fg)}
 label.f{display:block;font-size:13px;color:var(--muted);margin-top:10px}
 select,textarea,#km{width:100%;font:400 15px var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:4px}
 textarea{min-height:64px;resize:vertical}
+.adrw{position:relative}.sug{position:absolute;left:0;right:0;top:100%;z-index:5;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin-top:4px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45)}.sug button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);color:var(--fg);padding:10px 12px;font:400 14px var(--body);cursor:pointer}.sug button:last-child{border-bottom:0}.sug button:hover,.sug button:focus{background:var(--panel)}
+#adr{width:100%;font:400 15px var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:4px}
+.kmrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kmrow .kmbox{margin-top:4px}
+.kmbox{margin-top:4px;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font:700 18px var(--body);color:var(--muted);font-variant-numeric:tabular-nums}.kmbox.on{color:var(--fg);border-style:solid;border-color:var(--amber)}
 .maps{display:grid;grid-template-columns:1fr 1fr;gap:8px}.maps .btn{justify-content:center;text-decoration:none}
 #km{font-size:18px;font-variant-numeric:tabular-nums}
 .sum{margin-top:12px;font-variant-numeric:tabular-nums}
@@ -162,7 +168,7 @@ textarea{min-height:64px;resize:vertical}
   </div>
   <div class="facts">
     <div class="fact"><b data-t="open"></b><span class="status" id="status"><i></i><span id="stTxt"></span></span><span data-t="openH"></span><strong class="cday" data-t="closedMon"></strong><p class="party"><b data-t="partyT"></b> <span data-t="party"></span></p></div>
-    <div class="fact"><b data-t="deliv"></b><span class="dl" id="dlTxt"></span><span data-t="delivH"></span><small data-t="delivC"></small><small data-t="bigC"></small></div>
+    <div class="fact"><b data-t="deliv"></b><span class="dl" id="dlTxt"></span><span data-t="delivH"></span><small data-t="delivC"></small><small data-t="bigC"></small><a class="lk" href="livraison.html" data-t="livSee"></a></div>
   </div>
 </header>
 
@@ -176,7 +182,6 @@ textarea{min-height:64px;resize:vertical}
   </div>
   <div id="menu"></div>
   <p class="empty" id="none" hidden data-t="nothing"></p>
-  <section class="cat" id="allergenes"></section>
 </main>
 
 <footer class="wrap">
@@ -198,6 +203,7 @@ const OPEN_EXTRA=[]; // lunedì aperti eccezionalmente ["AAAA-MM-GG"]
 const ALLERGEN_DRAFT=true; // bozza da verificare con le etichette dei fornitori
 /* zone livraison: prezzo per 2,3,4 pizze; 5+ gratuite */
 const TIERS=[[3,[3,3,3]],[4,[4,4,3]],[6,[5,4,3]],[8,[6,5,4]],[10,[7,6,5]]]; /* [fino a km, [2,3,4 pizze]]; da 5 pizze gratuita */
+const ORS_KEY="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjdjMWM5ZTQ2NWE1YTQwYzNhODE3MjUzZTg5ZTk5M2MxIiwiaCI6Im11cm11cjY0In0=",ORS="https://api.openrouteservice.org";
 const MAPS_G="https://www.google.com/maps/dir/?api=1&destination=Grand%27Rue%201%2C%206530%20Thuin%2C%20Belgique&travelmode=driving",MAPS_W="https://www.waze.com/ul?q=Grand%27Rue%201%2C%206530%20Thuin&navigate=yes";
 /* paesi: [nome, cap, km su strada da Grand'Rue 1 (OSRM, 04.11.2026), zona; -1 = fuori zona] */
 
@@ -278,49 +284,49 @@ fr:{tel:"Tél.",copy:"Copier le numéro",copied:"Numéro copié",open:"Horaires"
 howto:"Touchez + pour préparer votre choix et voir le prix total, livraison comprise. Ce n'est pas une commande en ligne : pour commander, appelez-nous.",search:"Chercher une pizza ou un ingrédient…",white:"Pizzas blanches",nothing:"Rien trouvé. Essayez un autre mot (par ex. « chèvre », « scampis »).",
 mySel:"Ma sélection",cartT:"Ma sélection",notOrder:"<b>Ceci n'est pas une commande en ligne.</b> Ce menu vous aide à préparer votre choix et à connaître le prix (pizzas, suppléments et livraison). Pour commander, appelez-nous ou passez à la pizzeria.",
 empty:"Votre sélection est vide. Touchez + à côté d'un plat.",addSup:"+ Supplément",take:"À emporter",del:"Livraison",village:"Distance réelle jusqu'à la pizzeria (km)",choose:"Choisir…",out:"(hors zone)",note:"Remarque pour la pizzeria",noteP:"Ex. : sans oignons, bien cuite, sonner au 2e…",
-sub:"Plats",supT:"Suppléments",fee:"Livraison",free:"gratuite",total:"Total",min2:"Livraison à partir de 2 pizzas.",outZone:"Désolé, nous ne livrons pas au-delà de 15 km. À emporter, c'est possible !",pickV:"Indiquez les km pour voir le prix de la livraison.",noDelDay:"La livraison se fait du jeudi au dimanche, de 17h30 à 21h30.",
+sub:"Plats",supT:"Suppléments",fee:"Livraison",free:"gratuite",total:"Total",min2:"Livraison à partir de 2 pizzas.",outZone:"Désolé, nous ne livrons pas au-delà de 15 km. À emporter, c'est possible !",pickV:"Écrivez votre adresse pour voir le prix de la livraison.",noDelDay:"La livraison se fait du jeudi au dimanche, de 17h30 à 21h30.",
 ready:"Ma sélection est prête",clear:"Tout effacer",readyT:"Votre sélection est prête !",readyX:"Ce n'est pas encore une commande. <b>Appelez-nous pour commander</b> et lisez simplement votre récapitulatif.",call:"Appeler pour commander",close:"Fermer",
 firstAdd:"Votre sélection reste sur votre téléphone. Elle n'est pas envoyée à la pizzeria.",added:"ajouté",pz:"pizza(s)",
 stOpen:"Ouvert maintenant",stUntil:"jusqu'à {0}",stClosed:"Fermé",stOpensToday:"ouvre aujourd'hui à {0}",stOpensTom:"ouvre demain à {0}",stOpensDay:"ouvre {0} à {1}",stExc:"Fermeture exceptionnelle",
 dlNow:"Livraison en cours jusqu'à 21h30",dlNo:"Livraison du jeudi au dimanche, 17h30 – 21h30",dlToday:"Livraison aujourd'hui de 17h30 à 21h30",
 algT:"Allergènes",algIntro:"Les 14 allergènes à déclarer. Les numéros à côté de chaque plat renvoient à cette liste.",algDraft:"Liste en cours de vérification avec nos fournisseurs. En cas d'allergie, signalez-le toujours au moment de la commande.",algV:"* peut contenir d'autres allergènes selon le produit : demandez-nous.",algDish:"Plat",algList:"Allergènes",algNone:"aucun allergène majeur indiqué",
-bigC:"Grande commande (au moins 200 €) : livraison possible de 11 à 15 km, frais de livraison 10 €. Confirmation uniquement par téléphone.",bigOk:"Grande commande : livraison possible (10 €). Appelez-nous pour la confirmation.",kmP:"ex. 7,5",maps:"Calculez la distance :",kmNote:"Le prix est calculé sur les km indiqués et confirmé au téléphone.",bigOnly:"De 11 à 15 km : livraison uniquement pour une commande d'au moins 200 €. À emporter, c'est possible !",partyT:"Anniversaire, repas d'entreprise, fête ?",party:"Pour une commande d'au moins 250 € (une vingtaine de pizzas), nous pouvons ouvrir exprès pour vous, même le midi. Contactez-nous.",tagW:"blanche",free0:"Gratuit",cats:"Catégories",
+bigC:"Livraison de 11 à 15 km : possible uniquement pour les grandes commandes (15–20 pizzas), sur appel. À emporter, c'est toujours possible !",bigOk:"Grande commande : livraison possible (10 €). Appelez-nous pour la confirmation.",kmP:"ex. 7,5",maps:"Calculez la distance :",kmNote:"Le prix est calculé sur les km indiqués et confirmé au téléphone.",bigOnly:"De 11 à 15 km : livraison uniquement pour les grandes commandes (15–20 pizzas). Appelez-nous pour le prix. À emporter, c'est toujours possible !",partyT:"Anniversaire, repas d'entreprise, fête ?",party:"Pour une commande d'au moins 250 € (une vingtaine de pizzas), nous pouvons ouvrir exprès pour vous, même le midi. Contactez-nous.",algPrint:"Tableau des allergènes (à imprimer)",adrL:"Votre adresse de livraison",adrP:"Ex. : Rue de la Station 12, Lobbes",kmL:"Distance par la route",adrNote:"Distance calculée automatiquement jusqu'à la pizzeria (Grand'Rue 1, Thuin). Le prix est confirmé au téléphone.",adrErr:"Le calcul automatique ne répond pas pour le moment. Appelez-nous : nous vous donnons le prix de la livraison.",adrNone:"Adresse introuvable : essayez seulement la rue et la localité (ex. « Résidence du Tilleul, Biercée »), ou appelez-nous.",adrWait:"Calcul en cours…",adrBusy:"La recherche ne répond pas pour le moment. Réessayez dans un instant ou appelez-nous.",durL:"Temps de trajet (aller)",durNote:"Trajet seulement, hors préparation : le délai de livraison est confirmé au téléphone.",livT:"Livraison",livSee:"Voir les tarifs de livraison →",tagW:"blanche",free0:"Gratuit",cats:"Catégories",
 days:["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"]},
 nl:{tel:"Tel.",copy:"Nummer kopiëren",copied:"Nummer gekopieerd",open:"Openingsuren",openH:"Van dinsdag tot zondag, 17u00 – 22u00",closedMon:"Gesloten op maandag",deliv:"Levering",delivH:"Van donderdag tot zondag, 17u30 – 21u30",delivC:"Vanaf 2 pizza's · prijs volgens km · gratis vanaf 5 pizza's (tot 10 km)",
 howto:"Tik op + om uw keuze voor te bereiden en de totale prijs te zien, levering inbegrepen. Dit is geen online bestelling: bel ons om te bestellen.",search:"Zoek een pizza of een ingrediënt…",white:"Witte pizza's",nothing:"Niets gevonden. Probeer een ander woord (bv. « geitenkaas », « scampi »).",
 mySel:"Mijn selectie",cartT:"Mijn selectie",notOrder:"<b>Dit is geen online bestelling.</b> Dit menu helpt u uw keuze voor te bereiden en de prijs te kennen (pizza's, supplementen en levering). Om te bestellen: bel ons of kom langs in de pizzeria.",
 empty:"Uw selectie is leeg. Tik op + naast een gerecht.",addSup:"+ Supplement",take:"Afhalen",del:"Levering",village:"Werkelijke afstand tot de pizzeria (km)",choose:"Kiezen…",out:"(buiten zone)",note:"Opmerking voor de pizzeria",noteP:"Bv.: zonder ui, goed gebakken…",
-sub:"Gerechten",supT:"Supplementen",fee:"Levering",free:"gratis",total:"Totaal",min2:"Levering vanaf 2 pizza's.",outZone:"Sorry, we leveren niet verder dan 15 km. Afhalen kan wel!",pickV:"Vul de km in om de leveringsprijs te zien.",noDelDay:"We leveren van donderdag tot zondag, van 17u30 tot 21u30.",
+sub:"Gerechten",supT:"Supplementen",fee:"Levering",free:"gratis",total:"Totaal",min2:"Levering vanaf 2 pizza's.",outZone:"Sorry, we leveren niet verder dan 15 km. Afhalen kan wel!",pickV:"Vul uw adres in om de leveringsprijs te zien.",noDelDay:"We leveren van donderdag tot zondag, van 17u30 tot 21u30.",
 ready:"Mijn selectie is klaar",clear:"Alles wissen",readyT:"Uw selectie is klaar!",readyX:"Dit is nog geen bestelling. <b>Bel ons om te bestellen</b> en lees gewoon uw overzicht voor.",call:"Bellen om te bestellen",close:"Sluiten",
 firstAdd:"Uw selectie blijft op uw telefoon. Ze wordt niet naar de pizzeria gestuurd.",added:"toegevoegd",pz:"pizza('s)",
 stOpen:"Nu open",stUntil:"tot {0}",stClosed:"Gesloten",stOpensToday:"opent vandaag om {0}",stOpensTom:"opent morgen om {0}",stOpensDay:"opent {0} om {1}",stExc:"Uitzonderlijk gesloten",
 dlNow:"Levering tot 21u30",dlNo:"Levering van donderdag tot zondag, 17u30 – 21u30",dlToday:"Levering vandaag van 17u30 tot 21u30",
 algT:"Allergenen",algIntro:"De 14 allergenen die vermeld moeten worden. De nummers naast elk gerecht verwijzen naar deze lijst.",algDraft:"Lijst wordt nog nagekeken met onze leveranciers. Meld een allergie altijd bij het bestellen.",algV:"* kan andere allergenen bevatten afhankelijk van het product: vraag het ons.",algDish:"Gerecht",algList:"Allergenen",algNone:"geen belangrijke allergenen vermeld",
-bigC:"Grote bestelling (minstens 200 €): levering mogelijk van 11 tot 15 km, leveringskosten 10 €. Bevestiging enkel telefonisch.",bigOk:"Grote bestelling: levering mogelijk (10 €). Bel ons voor de bevestiging.",kmP:"bv. 7,5",maps:"Bereken de afstand:",kmNote:"De prijs wordt berekend op de opgegeven km en telefonisch bevestigd.",bigOnly:"Van 11 tot 15 km: levering enkel voor een bestelling van minstens 200 €. Afhalen kan wel!",partyT:"Verjaardag, bedrijfslunch, feest?",party:"Voor een bestelling van minstens 250 € (een twintigtal pizza's) kunnen we speciaal voor u openen, ook 's middags. Neem contact met ons op.",tagW:"wit",free0:"Gratis",cats:"Categorieën",
+bigC:"Levering van 11 tot 15 km: enkel mogelijk voor grote bestellingen (15–20 pizza's), op aanvraag. Afhalen kan altijd!",bigOk:"Grote bestelling: levering mogelijk (10 €). Bel ons voor de bevestiging.",kmP:"bv. 7,5",maps:"Bereken de afstand:",kmNote:"De prijs wordt berekend op de opgegeven km en telefonisch bevestigd.",bigOnly:"Van 11 tot 15 km: levering enkel voor grote bestellingen (15–20 pizza's). Bel ons voor de prijs. Afhalen kan altijd!",partyT:"Verjaardag, bedrijfslunch, feest?",party:"Voor een bestelling van minstens 250 € (een twintigtal pizza's) kunnen we speciaal voor u openen, ook 's middags. Neem contact met ons op.",algPrint:"Allergenentabel (om af te drukken)",adrL:"Uw leveringsadres",adrP:"Bv.: Stationsstraat 12, Lobbes",kmL:"Afstand via de weg",adrNote:"Afstand automatisch berekend tot de pizzeria (Grand'Rue 1, Thuin). De prijs wordt telefonisch bevestigd.",adrErr:"De automatische berekening werkt momenteel niet. Bel ons: wij geven u de leveringsprijs.",adrNone:"Adres niet gevonden: probeer enkel de straat en de gemeente (bv. « Résidence du Tilleul, Biercée »), of bel ons.",adrWait:"Berekenen…",adrBusy:"Het zoeken werkt momenteel niet. Probeer zo dadelijk opnieuw of bel ons.",durL:"Rijtijd (enkel)",durNote:"Enkel de rijtijd, zonder bereiding: de levertijd wordt telefonisch bevestigd.",livT:"Levering",livSee:"Bekijk de leveringstarieven →",tagW:"wit",free0:"Gratis",cats:"Categorieën",
 days:["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"]},
 en:{tel:"Tel.",copy:"Copy number",copied:"Number copied",open:"Opening hours",openH:"Tuesday to Sunday, 5:00 pm – 10:00 pm",closedMon:"Closed on Mondays",deliv:"Delivery",delivH:"Thursday to Sunday, 5:30 pm – 9:30 pm",delivC:"From 2 pizzas · price by distance · free from 5 pizzas (up to 10 km)",
 howto:"Tap + to prepare your choice and see the total price, delivery included. This is not an online order: to order, give us a call.",search:"Search a pizza or an ingredient…",white:"White pizzas",nothing:"Nothing found. Try another word (e.g. « goat », « scampi »).",
 mySel:"My selection",cartT:"My selection",notOrder:"<b>This is not an online order.</b> This menu helps you prepare your choice and know the price (pizzas, extras and delivery). To order, call us or come to the pizzeria.",
 empty:"Your selection is empty. Tap + next to a dish.",addSup:"+ Extra",take:"Takeaway",del:"Delivery",village:"Actual distance to the pizzeria (km)",choose:"Choose…",out:"(out of area)",note:"Note for the pizzeria",noteP:"E.g. no onions, well done…",
-sub:"Dishes",supT:"Extras",fee:"Delivery",free:"free",total:"Total",min2:"Delivery from 2 pizzas.",outZone:"Sorry, we don't deliver beyond 15 km. Takeaway is possible!",pickV:"Enter the km to see the delivery price.",noDelDay:"We deliver Thursday to Sunday, 5:30 pm – 9:30 pm.",
+sub:"Dishes",supT:"Extras",fee:"Delivery",free:"free",total:"Total",min2:"Delivery from 2 pizzas.",outZone:"Sorry, we don't deliver beyond 15 km. Takeaway is possible!",pickV:"Enter your address to see the delivery price.",noDelDay:"We deliver Thursday to Sunday, 5:30 pm – 9:30 pm.",
 ready:"My selection is ready",clear:"Clear all",readyT:"Your selection is ready!",readyX:"This is not an order yet. <b>Call us to order</b> and simply read out your summary.",call:"Call to order",close:"Close",
 firstAdd:"Your selection stays on your phone. It is not sent to the pizzeria.",added:"added",pz:"pizza(s)",
 stOpen:"Open now",stUntil:"until {0}",stClosed:"Closed",stOpensToday:"opens today at {0}",stOpensTom:"opens tomorrow at {0}",stOpensDay:"opens {0} at {1}",stExc:"Exceptionally closed",
 dlNow:"Delivering until 9:30 pm",dlNo:"Delivery Thursday to Sunday, 5:30 pm – 9:30 pm",dlToday:"Delivery today 5:30 pm – 9:30 pm",
 algT:"Allergens",algIntro:"The 14 allergens that must be declared. The numbers next to each dish refer to this list.",algDraft:"List being checked with our suppliers. If you have an allergy, always tell us when you order.",algV:"* may contain other allergens depending on the product: ask us.",algDish:"Dish",algList:"Allergens",algNone:"no major allergens listed",
-bigC:"Large order (at least €200): delivery possible from 11 to 15 km, delivery fee €10. Confirmation by phone only.",bigOk:"Large order: delivery possible (€10). Call us to confirm.",kmP:"e.g. 7.5",maps:"Check the distance:",kmNote:"The price is based on the km you enter and confirmed by phone.",bigOnly:"From 11 to 15 km: delivery only for orders of at least €200. Takeaway is possible!",partyT:"Birthday, business lunch, party?",party:"For an order of at least €250 (about twenty pizzas), we can open especially for you, even at lunchtime. Get in touch.",tagW:"white",free0:"Free",cats:"Categories",
+bigC:"Delivery from 11 to 15 km: only for large orders (15–20 pizzas), by phone. Takeaway is always possible!",bigOk:"Large order: delivery possible (€10). Call us to confirm.",kmP:"e.g. 7.5",maps:"Check the distance:",kmNote:"The price is based on the km you enter and confirmed by phone.",bigOnly:"From 11 to 15 km: delivery only for large orders (15–20 pizzas). Call us for the price. Takeaway is always possible!",partyT:"Birthday, business lunch, party?",party:"For an order of at least €250 (about twenty pizzas), we can open especially for you, even at lunchtime. Get in touch.",algPrint:"Allergen chart (printable)",adrL:"Your delivery address",adrP:"E.g. Rue de la Station 12, Lobbes",kmL:"Distance by road",adrNote:"Distance calculated automatically to the pizzeria (Grand'Rue 1, Thuin). The price is confirmed by phone.",adrErr:"Automatic calculation is not responding right now. Call us and we'll give you the delivery price.",adrNone:"Address not found: try just the street and town (e.g. “Résidence du Tilleul, Biercée”), or call us.",adrWait:"Calculating…",adrBusy:"The search isn't responding right now. Try again in a moment or call us.",durL:"Driving time (one way)",durNote:"Driving time only, not including preparation: the delivery time is confirmed by phone.",livT:"Delivery",livSee:"See delivery prices →",tagW:"white",free0:"Free",cats:"Categories",
 days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]},
 it:{tel:"Tel.",copy:"Copia il numero",copied:"Numero copiato",open:"Orari",openH:"Dal martedì alla domenica, 17:00 – 22:00",closedMon:"Chiuso il lunedì",deliv:"Consegna",delivH:"Dal giovedì alla domenica, 17:30 – 21:30",delivC:"Da 2 pizze · prezzo secondo i km · gratuita da 5 pizze (fino a 10 km)",
 howto:"Tocca + per preparare la tua scelta e vedere il prezzo totale, consegna compresa. Non è un ordine online: per ordinare, chiamaci.",search:"Cerca una pizza o un ingrediente…",white:"Pizze bianche",nothing:"Nessun risultato. Prova un'altra parola (es. « capra », « scampi »).",
 mySel:"La mia selezione",cartT:"La mia selezione",notOrder:"<b>Questo non è un ordine online.</b> Questo menu ti aiuta a preparare la tua scelta e a conoscere il prezzo (pizze, supplementi e consegna). Per ordinare, chiamaci o passa in pizzeria.",
 empty:"La tua selezione è vuota. Tocca + accanto a un piatto.",addSup:"+ Supplemento",take:"Da asporto",del:"Consegna",village:"Distanza reale fino alla pizzeria (km)",choose:"Scegli…",out:"(fuori zona)",note:"Nota per la pizzeria",noteP:"Es.: senza cipolla, ben cotta…",
-sub:"Piatti",supT:"Supplementi",fee:"Consegna",free:"gratuita",total:"Totale",min2:"Consegna da 2 pizze.",outZone:"Ci dispiace, non consegniamo oltre i 15 km. Da asporto si può!",pickV:"Scrivi i km per vedere il prezzo della consegna.",noDelDay:"Consegniamo dal giovedì alla domenica, dalle 17:30 alle 21:30.",
+sub:"Piatti",supT:"Supplementi",fee:"Consegna",free:"gratuita",total:"Totale",min2:"Consegna da 2 pizze.",outZone:"Ci dispiace, non consegniamo oltre i 15 km. Da asporto si può!",pickV:"Scrivi il tuo indirizzo per vedere il prezzo della consegna.",noDelDay:"Consegniamo dal giovedì alla domenica, dalle 17:30 alle 21:30.",
 ready:"La mia selezione è pronta",clear:"Cancella tutto",readyT:"La tua selezione è pronta!",readyX:"Non è ancora un ordine. <b>Chiamaci per ordinare</b> e leggi semplicemente il tuo riepilogo.",call:"Chiama per ordinare",close:"Chiudi",
 firstAdd:"La tua selezione resta sul tuo telefono. Non viene inviata alla pizzeria.",added:"aggiunto",pz:"pizza/e",
 stOpen:"Aperto ora",stUntil:"fino alle {0}",stClosed:"Chiuso",stOpensToday:"apre oggi alle {0}",stOpensTom:"apre domani alle {0}",stOpensDay:"apre {0} alle {1}",stExc:"Chiusura eccezionale",
 dlNow:"Consegne in corso fino alle 21:30",dlNo:"Consegna dal giovedì alla domenica, 17:30 – 21:30",dlToday:"Consegna oggi dalle 17:30 alle 21:30",
 algT:"Allergeni",algIntro:"I 14 allergeni da dichiarare. I numeri accanto a ogni piatto rimandano a questa lista.",algDraft:"Lista in corso di verifica con i nostri fornitori. In caso di allergia, segnalalo sempre quando ordini.",algV:"* può contenere altri allergeni a seconda del prodotto: chiedici.",algDish:"Piatto",algList:"Allergeni",algNone:"nessun allergene principale indicato",
-bigC:"Ordine grande (almeno 200 €): consegna possibile da 11 a 15 km, costo di consegna 10 €. Conferma solo per telefono.",bigOk:"Ordine grande: consegna possibile (10 €). Chiamaci per la conferma.",kmP:"es. 7,5",maps:"Calcola la distanza:",kmNote:"Il prezzo è calcolato sui km indicati e confermato al telefono.",bigOnly:"Da 11 a 15 km: consegna solo per ordini di almeno 200 €. Da asporto si può!",partyT:"Compleanno, pranzo aziendale, festa?",party:"Per un ordine di almeno 250 € (una ventina di pizze) possiamo aprire apposta per voi, anche a mezzogiorno. Contattateci.",tagW:"bianca",free0:"Gratis",cats:"Categorie",
+bigC:"Consegna da 11 a 15 km: possibile solo per ordini grandi (15–20 pizze), su chiamata. Da asporto si può sempre!",bigOk:"Ordine grande: consegna possibile (10 €). Chiamaci per la conferma.",kmP:"es. 7,5",maps:"Calcola la distanza:",kmNote:"Il prezzo è calcolato sui km indicati e confermato al telefono.",bigOnly:"Da 11 a 15 km: consegna solo per ordini grandi (15–20 pizze). Chiamaci per il prezzo. Da asporto si può sempre!",partyT:"Compleanno, pranzo aziendale, festa?",party:"Per un ordine di almeno 250 € (una ventina di pizze) possiamo aprire apposta per voi, anche a mezzogiorno. Contattateci.",algPrint:"Tabella degli allergeni (da stampare)",adrL:"Il tuo indirizzo di consegna",adrP:"Es.: Rue de la Station 12, Lobbes",kmL:"Distanza su strada",adrNote:"Distanza calcolata automaticamente fino alla pizzeria (Grand'Rue 1, Thuin). Il prezzo è confermato al telefono.",adrErr:"Il calcolo automatico ora non risponde. Chiamaci e ti diamo il prezzo della consegna.",adrNone:"Indirizzo non trovato: prova solo la via e il paese (es. « Résidence du Tilleul, Biercée »), oppure chiamaci.",adrWait:"Calcolo in corso…",adrBusy:"La ricerca ora non risponde. Riprova tra un attimo oppure chiamaci.",durL:"Tempo di guida (andata)",durNote:"Solo il tragitto, preparazione esclusa: il tempo di consegna è confermato al telefono.",livT:"Consegna",livSee:"Vedi le tariffe di consegna →",tagW:"bianca",free0:"Gratis",cats:"Categorie",
 days:["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"]}};
 
 /* ================= logica ================= */
@@ -347,19 +353,20 @@ const supName=s=>txt3(s.x);
 
 /* stato panier */
 let CART=[];try{CART=JSON.parse(LS.get("dg_cart")||"[]").filter(l=>byId[l.id])}catch(e){CART=[]}
-let MODE=LS.get("dg_mode")||"take",KM=LS.get("dg_km")||"",NOTE=LS.get("dg_note")||"",onlyWhite=false,openPick=-1;
-const save=()=>{LS.set("dg_cart",JSON.stringify(CART));LS.set("dg_mode",MODE);LS.set("dg_km",KM);LS.set("dg_note",NOTE)};
+let MODE=LS.get("dg_mode")||"take",KM=LS.get("dg_km")||"",ADR=LS.get("dg_adr")||"",DUR=+(LS.get("dg_dur")||0),ADRST="",NOTE=LS.get("dg_note")||"",onlyWhite=false,openPick=-1;
+const save=()=>{LS.set("dg_cart",JSON.stringify(CART));LS.set("dg_mode",MODE);LS.set("dg_km",KM);LS.set("dg_adr",ADR);LS.set("dg_dur",String(DUR||""));LS.set("dg_note",NOTE)};
 const lineUnit=l=>byId[l.id].p+(l.s||[]).reduce((a,sid)=>a+(SUPL.find(s=>s.id===sid)?.p||0),0);
+const fmtMin=s=>Math.max(1,Math.round(s/60))+" min";
+const fmtKm=v=>(Math.round(v*10)/10).toFixed(1).replace(".",L==="en"?".":",");
 const kmVal=()=>{const v=parseFloat(String(KM).replace(",","."));return isFinite(v)?v:NaN};
 function kmFee(km,npz){if(npz<2)return 0;if(km<=10){if(npz>=5)return 0;const tr=TIERS.find(x=>km<=x[0]);return tr[1][Math.min(npz,4)-2]}return npz>=6?0:8}
 function totals(){const sub=CART.reduce((a,l)=>a+byId[l.id].p*l.q,0),sup=CART.reduce((a,l)=>a+(lineUnit(l)-byId[l.id].p)*l.q,0);
   const npz=CART.reduce((a,l)=>a+(byId[l.id].pizza?l.q:0),0);let fee=0,msg="",ok=true;
-  if(MODE==="del"){const km=kmVal(),big=sub+sup>=200;
+  if(MODE==="del"){const km=kmVal();
     if(km>15){msg=t("outZone");ok=false}
-    else if(km>11&&!big){msg=t("bigOnly");ok=false}
-    else if(npz<2&&!big){msg=t("min2");ok=false}
+    else if(km>11){msg=t("bigOnly");ok=false}
+    else if(npz<2){msg=t("min2");ok=false}
     else if(!(km>0)){msg=t("pickV");ok=false}
-    else if(km>11){fee=10;msg=t("bigOk")}
     else fee=kmFee(km,npz);}
   return {sub,sup,fee,npz,msg,ok,tot:sub+sup+(ok?fee:0),n:CART.reduce((a,l)=>a+l.q,0)}}
 
@@ -388,21 +395,16 @@ function draw(){
   document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
   $("catsNav").setAttribute("aria-label",t("cats"));$("q").placeholder=t("search");$("q").setAttribute("aria-label",t("search"));
   document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===L));
-  $("chips").innerHTML=[...MENU.map(c=>`<a class="chip" href="#${c.id}" data-c="${c.id}">${esc(c.t[L])}</a>`),`<a class="chip" href="#allergenes" data-c="allergenes">${esc(t("algT"))}</a>`].join("");
+  $("chips").innerHTML=[...MENU.map(c=>`<a class="chip" href="#${c.id}" data-c="${c.id}">${esc(c.t[L])}</a>`),`<a class="chip" href="livraison.html">🚚 ${esc(t("livT"))}</a>`,`<a class="chip" href="allergenes.html">📄 ${esc(t("algT"))}</a>`].join("");
   const q=norm($("q").value.trim());let shown=0;const inCart=id=>CART.filter(l=>l.id===id).reduce((a,l)=>a+l.q,0);
   $("menu").innerHTML=MENU.map(c=>{
     if(c.sup){if(q||onlyWhite)return "";return `<section class="cat sup" id="${c.id}"><h2>${esc(c.t[L])}</h2><p class="note">${esc(c.note[L])}</p><ul class="items">${SUPS.map(([p,list])=>`<li class="it"><div class="itx"><div class="row"><span class="nm">${esc(list.map(x=>txt3(x)).join(", "))}</span><span class="dots"></span><span class="pr">${price(p)}</span></div></div></li>`).join("")}</ul></section>`}
     const its=ITEMS.filter(x=>x.cat===c.id).filter(x=>(!onlyWhite||x.w)&&(!q||norm(x.n+" "+nm(x)+" "+ingTxt(x)).includes(q)));
     if(!its.length)return "";shown+=its.length;
-    return `<section class="cat" id="${c.id}"><h2>${esc(c.t[L])}</h2>${c.note&&!q?`<p class="note">${esc(c.note[L])}</p>`:""}<ul class="items">${its.map(x=>{const n=inCart(x.id);return `<li class="it"><div class="itx"><div class="row"><span class="nm">${esc(nm(x))}${x.w?`<span class="tag">${esc(t("tagW"))}</span>`:""}</span><span class="dots"></span><span class="pr">${price(x.p)}</span></div>${ingTxt(x)?`<div class="ing">${esc(ingTxt(x))}</div>`:""}${x.al.length||x.v?`<div class="alg" aria-label="${esc(t("algT"))}">${x.al.map(a=>`<span title="${esc(ALG[L][a-1])}">${a}</span>`).join("")}${x.v?'<span class="v" title="*">*</span>':""}</div>`:""}</div><button class="add" type="button" data-add="${x.id}" aria-label="+ ${esc(nm(x))}"${n?` data-n="${n}"`:""}>+</button></li>`}).join("")}</ul></section>`}).join("");
+    return `<section class="cat" id="${c.id}"><h2>${esc(c.t[L])}</h2>${c.note&&!q?`<p class="note">${esc(c.note[L])}</p>`:""}<ul class="items">${its.map(x=>{const n=inCart(x.id);return `<li class="it"><div class="itx"><div class="row"><span class="nm">${esc(nm(x))}${x.w?`<span class="tag">${esc(t("tagW"))}</span>`:""}</span><span class="dots"></span><span class="pr">${price(x.p)}</span></div>${ingTxt(x)?`<div class="ing">${esc(ingTxt(x))}</div>`:""}${x.al.length||x.v?`<a class="alg" href="allergenes.html" aria-label="${esc(t("algT"))}">${x.al.map(a=>`<span title="${esc(ALG[L][a-1])}">${a}</span>`).join("")}${x.v?'<span class="v" title="*">*</span>':""}</a>`:""}</div><button class="add" type="button" data-add="${x.id}" aria-label="+ ${esc(nm(x))}"${n?` data-n="${n}"`:""}>+</button></li>`}).join("")}</ul></section>`}).join("");
   $("none").hidden=shown>0;
-  drawAllergens();bar();status();spy();
+  bar();status();spy();
 }
-function drawAllergens(){
-  $("allergenes").innerHTML=`<h2>${esc(t("algT"))}</h2><p class="note">${esc(t("algIntro"))}</p>${ALLERGEN_DRAFT?`<p class="info">${esc(t("algDraft"))}</p>`:""}
-  <ol class="legend">${ALG[L].map(a=>`<li>${esc(a)}</li>`).join("")}</ol>
-  <div class="atw"><table class="at"><thead><tr><th>${esc(t("algDish"))}</th><th>${esc(t("algList"))}</th></tr></thead><tbody>${ITEMS.map(x=>`<tr><td><b>${esc(nm(x))}</b></td><td>${x.al.length?esc(x.al.map(a=>a+" "+ALG[L][a-1]).join(", ")):esc(t("algNone"))}${x.v?" *":""}</td></tr>`).join("")}</tbody></table></div>
-  <p class="note" style="margin-top:8px">${esc(t("algV"))}</p>`}
 function bar(){const T=totals();$("bar").hidden=!T.n;$("barN").textContent=T.n;$("barT").textContent=price(T.tot)}
 
 /* panier */
@@ -418,7 +420,10 @@ function cart(){
   <div class="warn">${t("notOrder")}</div>
   ${CART.length?lines:`<p class="empty">${esc(t("empty"))}</p>`}
   ${CART.length?`<div class="seg" role="group"><button type="button" data-m="take" aria-pressed="${MODE==="take"}">${esc(t("take"))}</button><button type="button" data-m="del" aria-pressed="${MODE==="del"}">${esc(t("del"))}</button></div>
-  ${MODE==="del"?`<p class="note" style="margin:12px 0 6px">${esc(t("maps"))}</p><div class="maps"><a class="btn" href="${MAPS_G}" target="_blank" rel="noopener">Google Maps</a><a class="btn" href="${MAPS_W}" target="_blank" rel="noopener">Waze</a></div><label class="f" for="km">${esc(t("village"))}</label><input id="km" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t("kmP"))}" value="${esc(KM)}"><p class="note" style="margin-top:6px">${esc(t("kmNote"))}</p><p class="note" style="margin-top:6px">${esc(t("delivC"))} · ${esc(t("delivH"))}</p>`:""}
+  ${MODE==="del"?`<label class="f" for="adr">${esc(t("adrL"))}</label><div class="adrw"><input id="adr" type="text" autocomplete="off" enterkeyhint="search" placeholder="${esc(t("adrP"))}" value="${esc(ADR)}"><div id="sug" class="sug" role="listbox" hidden></div></div>
+  <div class="kmrow"><div><label class="f">${esc(t("kmL"))}</label><div class="kmbox${kmVal()>0?" on":""}" id="kmbox">${ADRST==="wait"?esc(t("adrWait")):kmVal()>0?fmtKm(kmVal())+" km":"— km"}</div></div><div><label class="f">${esc(t("durL"))}</label><div class="kmbox${DUR>0?" on":""}" id="durbox">${ADRST==="wait"?"…":DUR>0?fmtMin(DUR):"— min"}</div></div></div>${DUR>0?`<p class="note" style="margin-top:6px">${esc(t("durNote"))}</p>`:""}
+  ${ADRST==="err"?`<p class="msg">${esc(t("adrErr"))}${DBG?`<br><small style="word-break:break-all">${esc(LASTDBG)}</small>`:""}</p>`:ADRST==="none"?`<p class="msg">${esc(t("adrNone"))}</p>`:""}
+  <p class="note" style="margin-top:6px">${esc(t("adrNote"))}</p><p class="note" style="margin-top:6px">${esc(t("delivC"))} · ${esc(t("delivH"))} · <a class="lk" href="livraison.html">${esc(t("livSee"))}</a></p>`:""}
   <label class="f" for="nt">${esc(t("note"))}</label><textarea id="nt" placeholder="${esc(t("noteP"))}">${esc(NOTE)}</textarea>
   <div class="sum"><div><span>${esc(t("sub"))}</span><span>${price(T.sub)}</span></div>${T.sup?`<div><span>${esc(t("supT"))}</span><span>${price(T.sup)}</span></div>`:""}
   ${MODE==="del"&&T.ok?`<div><span>${esc(t("fee"))} · ${T.npz} ${esc(t("pz"))}</span><span>${T.fee?price(T.fee):esc(t("free"))}</span></div>`:""}
@@ -426,7 +431,7 @@ function cart(){
   <div class="actions"><button type="button" class="btn red big" id="ready">${esc(t("ready"))}</button><button type="button" class="btn" id="clear">${esc(t("clear"))}</button></div>`:""}`;
   $("sheet").hidden=false;
 }
-function recapTxt(){const T=totals();return CART.map(l=>{const it=byId[l.id];const s=(l.s||[]).map(sid=>SUPL.find(x=>x.id===sid)).filter(Boolean).map(supName);return `${l.q} × ${nm(it)}${s.length?" (+ "+s.join(", ")+")":""}`}).concat(MODE==="del"?[`${t("del")}: ${kmVal()>0?String(KM).replace(".",L==="en"?".":",")+" km":"—"}`]:[t("take")]).concat(NOTE?[`${t("note")}: ${NOTE}`]:[])}
+function recapTxt(){const T=totals();return CART.map(l=>{const it=byId[l.id];const s=(l.s||[]).map(sid=>SUPL.find(x=>x.id===sid)).filter(Boolean).map(supName);return `${l.q} × ${nm(it)}${s.length?" (+ "+s.join(", ")+")":""}`}).concat(MODE==="del"?[`${t("del")}: ${ADR&&kmVal()>0?ADR+" ("+fmtKm(kmVal())+" km"+(DUR>0?" · "+fmtMin(DUR):"")+")":"—"}`]:[t("take")]).concat(NOTE?[`${t("note")}: ${NOTE}`]:[])}
 function ready(){const T=totals();$("mbox").innerHTML=`<div class="mz">🍕</div><h3 class="mt" style="font:500 28px/1.1 var(--display);color:var(--red);margin:6px 0">${esc(t("readyT"))}</h3><p>${t("readyX")}</p>
   <div class="recap">${recapTxt().map(x=>`<div>${esc(x)}</div>`).join("")}<div style="border-top:1px solid var(--line);margin-top:6px;padding-top:6px;font-weight:700">${esc(t("total"))}: ${price(T.tot)}</div>${T.msg?`<div class="msg">${esc(T.msg)}</div>`:""}</div>
   <div class="num">${PHONE}</div><div class="actions"><a class="btn red big" href="tel:${TEL}">${esc(t("call"))}</a><button type="button" class="btn" id="mcopy">${esc(t("copy"))}</button><button type="button" class="btn" id="mclose">${esc(t("close"))}</button></div>`;$("modal").hidden=false}
@@ -448,7 +453,53 @@ document.addEventListener("click",e=>{const b=e.target.closest("button,a");if(!b
   if(b.id==="mclose"){$("modal").hidden=true;return}
   if(b.id==="mcopy"||b.id==="copy"){copyNum(b);return}
 });
-document.addEventListener("input",e=>{if(e.target.id==="km"){KM=e.target.value.replace(/[^0-9.,]/g,"").slice(0,5);save();bar();const sc=$("sheet").scrollTop;cart();$("sheet").scrollTop=sc;const k=$("km");k.focus();const n=k.value.length;try{k.setSelectionRange(n,n)}catch(_){}}});
+let sugT=0,sugN=0;const ORIG=[4.2871456,50.339311]; /* Grand'Rue 1, Thuin */
+const DBG=location.hash==="#debug";let LASTDBG="";
+const orsGet=async(path,params)=>{const u=new URL(ORS+path);u.searchParams.set("api_key",ORS_KEY);for(const[k,v]of Object.entries(params))u.searchParams.set(k,v);const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);
+  try{const r=await fetch(u,{signal:ctl.signal});const txt=await r.text();LASTDBG=path+" → "+r.status+" · "+txt.slice(0,300);if(DBG)console.log(LASTDBG);if(!r.ok)throw new Error("ors "+r.status);return JSON.parse(txt)}
+  catch(e){if(!LASTDBG.startsWith(path))LASTDBG=path+" → "+(e.name||"")+" "+(e.message||e);throw e}finally{clearTimeout(tm)}};
+const BOX={"boundary.rect.min_lon":"3.95","boundary.rect.min_lat":"50.15","boundary.rect.max_lon":"4.65","boundary.rect.max_lat":"50.55","boundary.country":"BE","focus.point.lon":"4.287","focus.point.lat":"50.339"};
+const PH="https://photon.komoot.io/api/";
+const hav=(a,b)=>{const R=6371,r=x=>x*Math.PI/180,dl=r(b[1]-a[1]),dn=r(b[0]-a[0]);const h=Math.sin(dl/2)**2+Math.cos(r(a[1]))*Math.cos(r(b[1]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+const CPV={"6530":[["Thuin",4.2870,50.3397],["Leers-et-Fosteau",4.2448,50.3042]],"6531":[["Biesme-sous-Thuin",4.3080,50.3207]],"6532":[["Ragnies",4.2838,50.3082]],"6533":[["Biercée",4.2591,50.3251]],"6534":[["Gozée",4.3516,50.3332]],"6536":[["Donstiennes",4.3120,50.2854],["Thuillies",4.3290,50.2947]]};
+const cpPlace=(cp,c)=>{const l=CPV[cp];if(!l||!c)return null;return l.reduce((b,v)=>hav([v[1],v[2]],c)<hav([b[1],b[2]],c)?v:b)[0]};
+const phLabel=(p,c)=>{const st=[p.street||p.name,p.housenumber].filter(Boolean).join(" ");const d=p.district||p.locality;const place=(d&&d!==p.city?d:null)||cpPlace(p.postcode,c)||p.city||p.county;const loc=[p.postcode,place].filter(Boolean).join(" ");return [st,loc].filter(Boolean).join(", ")};
+const VILL=[["Leers-et-Fosteau", "Thuin", "6530"], ["Biesme-sous-Thuin", "Thuin", "6531"], ["Ragnies", "Thuin", "6532"], ["Biercée", "Thuin", "6533"], ["Gozée", "Thuin", "6534"], ["Thuillies", "Thuin", "6536"], ["Donstiennes", "Thuin", "6536"], ["Mont-Sainte-Geneviève", "Lobbes", "6540"], ["Sars-la-Buissière", "Lobbes", "6542"], ["Bienne-lez-Happart", "Lobbes", "6543"], ["Ham-sur-Heure", "Ham-sur-Heure-Nalinnes", "6120"], ["Marbaix", "Ham-sur-Heure-Nalinnes", "6120"], ["Jamioulx", "Ham-sur-Heure-Nalinnes", "6120"], ["Cour-sur-Heure", "Ham-sur-Heure-Nalinnes", "6120"], ["Nalinnes", "Ham-sur-Heure-Nalinnes", "6120"], ["Fontaine-Valmont", "Merbes-le-Château", "6567"], ["Labuissière", "Merbes-le-Château", "6567"], ["Merbes-Sainte-Marie", "Merbes-le-Château", "6567"], ["Landelies", "Montigny-le-Tilleul", "6111"], ["Strée", "Beaumont", "6511"], ["Leernes", "Fontaine-l'Évêque", "6142"], ["Buvrinnes", "Binche", "7133"], ["Epinois", "Binche", "7134"], ["Hantes-Wihéries", "Erquelinnes", "6560"], ["Solre-sur-Sambre", "Erquelinnes", "6560"], ["Montignies-Saint-Christophe", "Erquelinnes", "6560"], ["Clermont", "Walcourt", "5650"]];
+const nrm=x=>x.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/['’,.-]/g," ").replace(/\s+/g," ").trim();
+const SKIP=["thuin","saint","sainte","mont","fontaine","merbes","montignies","sars","bienne","biesme","ham","cour","solre","hantes","sur","sous","lez","la","le","et","de"];
+function findVil(q){const n=nrm(q),toks=n.split(" ");const DE=["de","du","d","des","la"];
+  for(const[v,c,cp]of VILL){const vt=nrm(v).split(" ");for(let ti=0;ti+vt.length<=toks.length;ti++){if(vt.every((w,x)=>toks[ti+x]===w)&&!(ti>0&&DE.includes(toks[ti-1]))){const rest=toks.filter((_,x)=>x<ti||x>=ti+vt.length).join(" ");return {v,c,cp,rest}}}}
+  for(const[v,c,cp]of VILL){const vt=nrm(v).split(" ").filter(w=>!SKIP.includes(w));
+    for(let ti=0;ti<toks.length;ti++){const tk=toks[ti];if(tk.length<4||/^\d/.test(tk)||SKIP.includes(tk))continue;if(ti>0&&DE.includes(toks[ti-1]))continue;if(vt.some(w=>w.startsWith(tk))){const rest=toks.filter((_,x)=>x!==ti).join(" ");return {v,c,cp,rest}}}}
+  return null}
+
+async function photonQ(q,limit){const fv=findVil(q);if(!fv)return photon(q,limit);
+  const [a,b]=await Promise.allSettled([photon(q,limit),photon(fv.rest+" "+fv.c,limit)]);
+  if(a.status==="rejected"&&b.status==="rejected")throw a.reason;
+  const all=[...(a.value||[]),...(b.value||[])];const seen=new Set(),out=[];
+  for(const f of all){const p=f.properties;let lab=p.label;const cpok=p.cp===fv.cp&&(!CPV[p.cp]||cpPlace(p.cp,f.geometry.coordinates)===fv.v);
+    if(cpok&&!nrm(lab).includes(nrm(fv.v)))lab=lab.replace(/\d{4} [^,]+$/,fv.cp+" "+fv.v);
+    if(seen.has(lab))continue;seen.add(lab);out.push({properties:{label:lab,cp:p.cp},geometry:f.geometry,_m:cpok?0:1})}
+  out.sort((x,y)=>x._m-y._m);return out.slice(0,6)}
+async function photon(q,limit){try{return await photon1(q,limit)}catch(e){await new Promise(r=>setTimeout(r,900));return await photon1(q,limit)}}
+async function photon1(q,limit){const u=new URL(PH);u.searchParams.set("q",q);u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");u.searchParams.set("limit",String(limit||8));u.searchParams.set("lang","fr");u.searchParams.set("bbox","4.125,50.236,4.449,50.443");u.searchParams.append("layer","house");u.searchParams.append("layer","street");
+  const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);
+  try{const r=await fetch(u,{signal:ctl.signal});const txt=await r.text();LASTDBG="photon → "+r.status+" · "+txt.slice(0,300);if(!r.ok)throw new Error("photon "+r.status);const j=JSON.parse(txt);
+    const seen=new Set();return (j.features||[]).filter(f=>f.properties&&f.properties.countrycode==="BE"&&hav(ORIG,f.geometry.coordinates)<=11.5).map(f=>({properties:{label:phLabel(f.properties,f.geometry.coordinates),cp:f.properties.postcode},geometry:f.geometry})).filter(f=>{const k=f.properties.label;if(!k||seen.has(k))return false;seen.add(k);return true}).slice(0,5)}
+  catch(e){if(!LASTDBG.startsWith("photon"))LASTDBG="photon → "+(e.name||"")+" "+(e.message||e);throw e}finally{clearTimeout(tm)}}
+async function origin(){return ORIG}
+function showSug(list){const b=$("sug");if(!b)return;if(!list.length){b.hidden=true;b.innerHTML="";return}b.innerHTML=list.map((f,i)=>`<button type="button" role="option" data-sg="${i}">${esc(f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,""))}</button>`).join("");b.hidden=false;b._list=list}
+async function pick(f){ADR=f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,"");ADRST="wait";KM="";DUR=0;save();refreshCart();
+  try{const o=await origin(),d=f.geometry.coordinates;const j=await orsGet("/v2/directions/driving-car",{start:o.join(","),end:d.join(",")});
+    const sm=j.features[0].properties.summary,m=sm.distance;KM=String(Math.round(m/100)/10);DUR=Math.round(sm.duration||0);ADRST="";if(DBG)toast("orig "+o.join(",")+" · "+m+" m",8000)}
+  catch(e){ADRST="err";KM="";DUR=0}
+  save();bar();refreshCart()}
+function refreshCart(){const sh=$("sheet");const sc=sh?sh.scrollTop:0;cart();if(sh)sh.scrollTop=sc}
+document.addEventListener("input",e=>{if(e.target.id!=="adr")return;const q=e.target.value.trim();ADR=e.target.value;KM="";DUR=0;if(ADRST)ADRST="";save();bar();
+  const kb=$("kmbox");if(kb){kb.textContent="— km";kb.classList.remove("on")}const db=$("durbox");if(db){db.textContent="— min";db.classList.remove("on")}
+  clearTimeout(sugT);if(q.length<4){showSug([]);return}
+  sugT=setTimeout(async()=>{const n=++sugN;try{const list=await photonQ(q,10);if(n!==sugN)return;showSug(list);if(!list.length){const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrNone"))}${DBG?`<br><small style="color:var(--muted);word-break:break-all">${esc(LASTDBG)}</small>`:""}</div>`;b.hidden=false}}}catch(err){if(n!==sugN)return;const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrBusy"))}${DBG?`<br><small style="color:var(--muted);word-break:break-all">${esc(LASTDBG)}</small>`:""}</div>`;b.hidden=false}}},400)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-sg]");if(!b)return;const box=$("sug");const f=box&&box._list&&box._list[+b.dataset.sg];if(f){showSug([]);pick(f)}});
 document.addEventListener("input",e=>{if(e.target.id==="nt"){NOTE=e.target.value;save()}if(e.target.id==="q")draw()});
 $("sheet").addEventListener("click",e=>{if(e.target.id==="sheet"){$("sheet").hidden=true;openPick=-1}});
 $("modal").addEventListener("click",e=>{if(e.target.id==="modal")$("modal").hidden=true});
