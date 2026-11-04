@@ -1,0 +1,23 @@
+#!/bin/bash
+# deploy.sh main|prova  — pubblica menu + pagine (main con statistiche Umami, prova senza e noindex)
+set -e
+S=$(cd "$(dirname "$0")" && pwd)
+R=$(dirname "$S")
+UM='<script defer src="https://cloud.umami.is/script.js" data-website-id="8402e497-f6e1-4759-8890-e445a13ff93b" data-domains="pizzeriadongiovanni.be"></script>'
+git -C $R pull -q
+if [ "$1" = main ]; then D=$R; EXTRA="$UM
+"; else D=$R/prova; EXTRA='<meta name="robots" content="noindex">
+'; fi
+python3 $S/make_site.py $S/menu/index.html $D/menu.html "$EXTRA"; python3 $S/site/menu_page.py $D/menu.html
+python3 $S/site/gen_home.py $S/menu/index.html $D/index.html "$EXTRA"; mkdir -p $D/img; cp $S/site/img/*.jpg $D/img/
+for f in allergenes.html livraison.html; do
+  if [ "$1" = main ]; then python3 - "$S/menu/$f" "$D/$f" "$UM" <<'P'
+import sys;s=open(sys.argv[1]).read();s=s.replace('<meta name="description"',sys.argv[3]+'\n<meta name="description"',1).replace('id="back" href="index.html"','id="back" href="menu.html"');open(sys.argv[2],'w').write(s)
+P
+  else python3 - "$S/menu/$f" "$D/$f" <<'P'
+import sys;s=open(sys.argv[1]).read();s=s.replace('<meta name="description"','<meta name="robots" content="noindex">\n<meta name="description"',1).replace('id="back" href="index.html"','id="back" href="menu.html"');open(sys.argv[2],'w').write(s)
+P
+  fi
+done
+cp $S/menu/logo-dark.png $S/menu/logo-light.png $S/menu/favicon.ico $S/menu/icon-512.png $S/menu/apple-touch-icon.png $D/
+if [ "$1" = main ]; then cp $S/menu/favicon.ico $S/qr/og-image.jpg $R/; fi
