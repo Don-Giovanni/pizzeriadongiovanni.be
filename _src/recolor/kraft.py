@@ -24,7 +24,9 @@ for i in range(1,n):
 n,lab,st,_=cv2.connectedComponentsWithStats(sat,8);pz=np.zeros_like(sat)
 for i in range(1,n):
     if st[i,4]>20000: pz[lab==i]=1
-box=((inbox>0)&~skin&~green&(pz==0)).astype(np.uint8)
+palm=np.zeros((h,w),np.uint8)   # palmo della mano sinistra (segnalato dal titolare 05.11)
+cv2.fillPoly(palm,[np.array([(330,60),(402,60),(402,84),(410,108),(398,130),(386,150),(379,170),(372,192),(330,200)],np.int32)],1)
+box=((inbox>0)&~skin&~green&(pz==0)&(palm==0)).astype(np.uint8)
 box=cv2.morphologyEx(box,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
 n,lab,st,_=cv2.connectedComponentsWithStats(box,8);k=np.zeros_like(box)
 for i in range(1,n):
