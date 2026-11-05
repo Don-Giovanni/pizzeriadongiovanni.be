@@ -422,11 +422,11 @@ const fmtKm=v=>(Math.round(v*10)/10).toFixed(1).replace(".",L==="en"?".":",");
 const kmVal=()=>{const v=parseFloat(String(KM).replace(",","."));return isFinite(v)?v:NaN};
 function kmFee(km,npz){if(npz<2)return 0;if(km<=10){if(npz>=5)return 0;const tr=TIERS.find(x=>km<=x[0]);return tr[1][Math.min(npz,4)-2]}return npz>=6?0:8}
 function totals(){const sub=CART.reduce((a,l)=>a+byId[l.id].p*l.q,0),sup=CART.reduce((a,l)=>a+(lineUnit(l)-byId[l.id].p)*l.q,0);
-  const npz=CART.reduce((a,l)=>a+(byId[l.id].dish?l.q:0),0),onePz=CART.some(l=>byId[l.id].dish&&byId[l.id].cat!=="pates"),food=sub+sup;let fee=0,msg="",ok=true;
+  const npz=CART.reduce((a,l)=>a+(byId[l.id].dish?l.q:0),0),food=sub+sup;let fee=0,msg="",ok=true;
   if(MODE==="del"){const km=kmVal();
     if(km>15){msg=t("outZone");ok=false}
     else if(km>11){msg=t("bigOnly");ok=false}
-    else if(npz<2&&!(onePz&&food>=30)){msg=t("min2");ok=false}
+    else if(npz<2&&!(npz>=1&&food>=30)){msg=t("min2");ok=false}
     else if(!(km>0)){msg=t("pickV");ok=false}
     else fee=kmFee(km,Math.max(npz,2));}
   const st=MODE!=="del"?"take":ok?"ok":(kmVal()>0||npz<2)?"no":"wait";
