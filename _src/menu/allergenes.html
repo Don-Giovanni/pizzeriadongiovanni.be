@@ -41,7 +41,8 @@ td.x{color:var(--red);font-weight:700}
 @media (max-height:600px) and (min-width:561px){.legend{grid-template-columns:repeat(5,1fr);font-size:11px}.draft{font-size:12px;padding:4px 9px}}
 /* pagina che scorre normalmente (05.11): con le note lunghe la tabella fissa non aveva più spazio */
 html,body{height:auto}body{display:block}.wrap{display:block}.tw{overflow:visible;flex:none}
-@media print{html,body{height:auto}body{display:block}.wrap{display:block;height:auto}.tw{overflow:visible;flex:none}@page{size:A4;margin:9mm}.noprint{display:none!important}body{font-size:11px}.wrap{max-width:none;padding:0}table{font-size:9.5px;min-width:0}th,td{padding:2px 3px}.tw{overflow:visible;border:0}th{position:static}h1{font-size:17px}header img{width:52px}tr{break-inside:avoid}}
+.lgs{position:sticky;top:0;z-index:3;background:#fff;padding:6px 8px 4px;border-bottom:1px solid var(--line)}.lgs .legend{margin:0}.tw{border-radius:10px}th{top:var(--lh,0px)!important;z-index:2}
+@media print{.lgs{position:static}th{top:0!important}html,body{height:auto}body{display:block}.wrap{display:block;height:auto}.tw{overflow:visible;flex:none}@page{size:A4;margin:9mm}.noprint{display:none!important}body{font-size:11px}.wrap{max-width:none;padding:0}table{font-size:9.5px;min-width:0}th,td{padding:2px 3px}.tw{overflow:visible;border:0}th{position:static}h1{font-size:17px}header img{width:52px}tr{break-inside:avoid}}
 </style></head><body>
 <div class="flag"><i></i><i></i><i></i></div>
 <div class="wrap">
@@ -65,11 +66,11 @@ function draw(){const g=DATA.d.langs[L],u=DATA.ui[L];document.documentElement.la
  document.getElementById("fx").innerHTML=`${DATA.d.draft?`<p class="draft">${esc(g.T.draft)}</p>`:""}
  <p class="intro" style="margin:6px 0 0">${esc(g.T.intro)}</p>
  <p class="intro" style="margin:4px 0 0;font-size:12px">${esc(g.T.tr)}</p>
- <p class="intro" style="margin:4px 0 0;font-size:12px">${esc(g.T.resp).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}</p>
- <ol class="legend">${g.alg.map((a,i)=>`<li><b>${i+1}</b>${esc(a)}</li>`).join("")}</ol>`;
- document.getElementById("tw").innerHTML=`<table><thead>${head}</thead><tbody>${body}</tbody></table>
+ <p class="intro" style="margin:4px 0 0;font-size:12px">${esc(g.T.resp).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}</p>`;
+ document.getElementById("tw").innerHTML=`<div class="lgs"><ol class="legend">${g.alg.map((a,i)=>`<li><b>${i+1}</b>${esc(a)}</li>`).join("")}</ol></div><table><thead>${head}</thead><tbody>${body}</tbody></table>
  <p class="foot">${esc(u.x)} · <span class="v">*</span> ${esc(g.T.v.replace(/^\*\s*/,""))}<br>${esc(u.upd)} : ${UPD}</p>`;}
 document.addEventListener("click",e=>{const l=e.target.closest("[data-l]");if(l){L=l.dataset.l;try{localStorage.setItem("dg_lang",L)}catch(_){ }draw()}});
 try{if(window.self===window.top){const pr=document.getElementById("pr");pr.hidden=false;pr.onclick=()=>window.print()}}catch(e){}
 draw();
+function lh(){const e=document.querySelector(".lgs");if(e)document.documentElement.style.setProperty("--lh",e.offsetHeight+"px")}lh();addEventListener("resize",lh);document.addEventListener("click",()=>setTimeout(lh,50));
 </script></body></html>
