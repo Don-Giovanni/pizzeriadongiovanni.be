@@ -34,7 +34,7 @@ UI = {
                   "The distance is <b>calculated automatically</b> in “My selection” when you enter your address. The price is confirmed by phone.",
                   "Takeaway is always possible!"], 'upd': 'Updated'},
  'de': {'title': 'Liefertarife', 'back': '← Menü', 'print': 'Drucken', 'dist': 'Entfernung über die Straße',
-        'pz': ['2 Pizzen', '3 Pizzen', '4 Pizzen', '5 Pizzen', '6+ Pizzen'], 'free': 'kostenlos',
+        'pz': ['2 Pizzen', '3 Pizzen', '4 Pizzen', '5 Pizzen', '6+ Pizzen'], 'free': 'gratis',
         'city': 'Thuin Stadt · bis 3 km', 'km': 'km',
         'big': 'Nur große Bestellungen (15–20 Pizzen), auf Anfrage', 'no': 'Keine Lieferung', 'more15': 'über 15 km',
         'notes': ["Mindestens <b>2 Pizzen oder Pasta</b> pro Lieferung.", "Lieferung <b>Donnerstag bis Sonntag, 17:30 – 21:30 Uhr</b>.",
@@ -93,7 +93,9 @@ ul.notes{margin:14px 0 0;padding-left:20px}ul.notes li{margin:4px 0}
 .foot{margin-top:12px;color:var(--muted);font-size:12.5px}
 @media (max-width:560px){table{font-size:12.5px}th{font-size:11px}th,td{padding:8px 3px}th:first-child,td:first-child{padding-left:6px}header img{width:48px}h1{font-size:19px}header p{font-size:11.5px}}
 @media print{@page{size:A4;margin:12mm}.noprint{display:none!important}.wrap{max-width:none;padding:0}.tw{border:0}}
-</style></head><body>
+
+th.pz{white-space:nowrap;line-height:1.25}th.pz .pn{font-size:1.15em}
+table{table-layout:fixed}thead th:first-child{width:31%}td.f{overflow-wrap:anywhere;font-size:.92em}@media (max-width:560px){td.f{font-size:11px}}</style></head><body>
 <div class="flag"><i></i><i></i><i></i></div>
 <div class="wrap">
 <div class="top noprint"><a class="b" id="back" href="index.html"></a><div class="btns" id="langs"></div><button class="b" id="pr" type="button" hidden></button></div>
@@ -109,7 +111,7 @@ function lab(k,u){if(k==="city")return u.city;const [a,b]=k.split("-");return a+
 function draw(){const u=UI[L];document.documentElement.lang=L;document.getElementById("h1").textContent=u.title;document.title=u.title+" · Don Giovanni";
  document.getElementById("back").textContent=u.back;document.getElementById("pr").textContent=u.print;
  document.getElementById("langs").innerHTML=["fr","nl","de","it","en","es"].map(l=>`<button class="b" type="button" data-l="${l}" aria-pressed="${l===L}">${l.toUpperCase()}</button>`).join("");
- const head=`<tr><th>${esc(u.dist)}</th>${u.pz.map(p=>`<th>${esc(p)}</th>`).join("")}</tr>`;
+ const head=`<tr><th>${esc(u.dist)}</th>${u.pz.map(p=>{const i=p.indexOf(" ");return `<th class="pz"><span class="pn">${esc(p.slice(0,i))}</span><br>${esc(p.slice(i+1))}</th>`}).join("")}</tr>`;
  const body=ROWS.map(([k,ps])=>`<tr><td>${esc(lab(k,u))}</td>${ps.map(v=>v==null?`<td class="f">${esc(u.free)}</td>`:`<td>${eur(v)}</td>`).join("")}</tr>`).join("")
   +`<tr class="big"><td>11 – 15 ${u.km}</td><td colspan="5"><b>${esc(u.big)}</b></td></tr><tr class="no"><td>${esc(u.more15)}</td><td colspan="5">${esc(u.no)}</td></tr>`;
  document.getElementById("main").innerHTML=`<div class="tw"><table><thead>${head}</thead><tbody>${body}</tbody></table></div><ul class="notes">${u.notes.map(n=>`<li>${n}</li>`).join("")}</ul><p class="foot">${esc(u.upd)} : ${UPD}</p>`}
