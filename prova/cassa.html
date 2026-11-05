@@ -24,7 +24,7 @@ td.f{color:var(--green);font-weight:700}td.w{color:var(--amber);font-weight:700}
 <p class="sub">Depuis Grand'Rue 1, Thuin · distance et temps par la route jusqu'au centre du village · calculés le <span id="dt">—</span></p>
 <div class="bar noprint"><button class="p" id="go" type="button">Calculer</button><button id="pr" type="button">Imprimer / PDF</button><span id="st"></span></div>
 <table><thead><tr><th>Village</th><th>km</th><th>min</th><th>2 plats</th><th>3 plats</th><th>4 plats</th><th>5 plats</th><th>6+ plats</th></tr></thead><tbody id="tb"></tbody></table>
-<p class="note">Plats = pizzas ou pâtes · 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = proche d'une limite de prix : pour une rue au bout du village, vérifiez l'adresse exacte sur le site.<br>Au-delà de 11 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
+<p class="note">Plats = pizzas ou pâtes · 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = village proche d'une limite de prix : le prix dépend de la rue, d'où la fourchette (ex. 4–5 €). Si la différence est grande, vérifiez l'adresse exacte sur le site.<br>Au-delà de 11 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
 </div>
 <script>
 const ORS_KEY="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjdjMWM5ZTQ2NWE1YTQwYzNhODE3MjUzZTg5ZTk5M2MxIiwiaCI6Im11cm11cjY0In0=",ORS="https://api.openrouteservice.org",ORIG=[4.2871456,50.339311];
@@ -39,7 +39,7 @@ async function geo(v){const u=new URL("https://photon.komoot.io/api/");u.searchP
 async function route(d){const u=new URL(ORS+"/v2/directions/driving-car");u.searchParams.set("api_key",ORS_KEY);u.searchParams.set("start",ORIG.join(","));u.searchParams.set("end",d.join(","));
   const r=await fetch(u);if(!r.ok)throw new Error("route "+r.status);const s=(await r.json()).features[0].properties.summary;return [s.distance/1000,s.duration/60]}
 function draw(R,dt){R=R.filter(r=>r.km!=null);R.sort((a,b)=>a.km-b.km);const near=R.filter(r=>r.km<=11),far=R.filter(r=>r.km>11);
-  $("tb").innerHTML=near.map(r=>{const w=LIM.some(l=>Math.abs(r.km-l)<=0.5);const c=[2,3,4,5,6].map(n=>{const f=fee(r.km,n);return `<td class="${f?"":"f"}">${eur(f)}</td>`}).join("");
+  $("tb").innerHTML=near.map(r=>{const w=LIM.some(l=>Math.abs(r.km-l)<=0.5);const c=[2,3,4,5,6].map(n=>{const lo=fee(Math.max(0.1,r.km-0.5),n),hi=fee(Math.min(11,r.km+0.5),n);if(w&&lo!==hi)return `<td class="w">${lo&&hi?lo+"–"+hi+" €":(lo?lo+" €":"gratuit")+" ou "+(hi?hi+" €":"gratuit")}</td>`;const f=fee(r.km,n);return `<td class="${f?"":"f"}">${eur(f)}</td>`}).join("");
     return `<tr><td>${w?"⚠️ ":""}${r.n}<br><span class="cp">${r.cp} ${r.c}</span></td><td class="${w?"w":""}">${r.km.toFixed(1).replace(".",",")}</td><td>${Math.round(r.min)}</td>${c}</tr>`}).join("");
   $("far").textContent=far.length?"Plus de 11 km : "+far.map(r=>r.n+" ("+r.km.toFixed(1).replace(".",",")+" km)").join(", ")+".":"";
   $("dt").textContent=dt}
