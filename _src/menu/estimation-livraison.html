@@ -40,14 +40,15 @@ td.f{color:var(--green);font-weight:700}td.w{color:var(--amber);font-weight:700}
 <p class="sub">Pour une rue au bout du village ou entre deux prix : tapez la rue (et le village), puis choisissez l'adresse.</p>
 <input id="adr" type="text" autocomplete="off" placeholder="Ex. : Rue de la Station 12, Lobbes"><div id="sug"></div><div id="res"></div></section>
 <table><thead><tr><th>Village</th><th>km</th><th>min</th><th>2<br>plats<span class="hs"> €</span></th><th>3<br>plats<span class="hs"> €</span></th><th>4<br>plats<span class="hs"> €</span></th><th>5<br>plats<span class="hs"> €</span></th><th>6<br>plats<span class="hs"> €</span></th></tr></thead><tbody id="tb"></tbody></table>
-<p class="note printonly">Plats = pizzas ou pâtes · jusqu'à 10 km, 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = village proche d'une limite de prix : le prix dépend de la rue (ex. 4–5 €). 0 = gratuit (sur téléphone, les prix sont en €). Si l'écart est grand (ex. 0–8 €), vérifiez l'adresse exacte sur le site. Jusqu'à 10 km : gratuit dès 5 plats. De 10 à 12 km : minimum 3 plats (— = pas possible), 8 € (3 à 5 plats), 7 € (6 plats), gratuit dès 7 ; pas de règle des 30 €.<br>De 12 à 15 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
+<p class="note printonly">Plats = pizzas ou pâtes · jusqu'à 10 km, 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = village proche d'une limite de prix : le prix dépend de la rue (ex. 4–5 €). 0 = gratuit (sur téléphone, les prix sont en €). Si l'écart est grand (ex. 0–8 €), vérifiez l'adresse exacte sur le site. Hors de Thuin : au minimum le prix de 2–4 km. Jusqu'à 10 km : gratuit dès 5 plats. De 10 à 12 km : minimum 3 plats (— = pas possible), 8 € (3 à 5 plats), 7 € (6 plats), gratuit dès 7 ; pas de règle des 30 €.<br>De 12 à 15 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
 </div>
 <script>
 const ORS_KEY="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjdjMWM5ZTQ2NWE1YTQwYzNhODE3MjUzZTg5ZTk5M2MxIiwiaCI6Im11cm11cjY0In0=",ORS="https://api.heigit.org/openrouteservice",ORIG=[4.2871456,50.339311];
-const TIERS=[[2.5,[3,3,3]],[4,[4,4,4]],[6,[5,5,4]],[8,[6,6,5]],[10,[7,7,6]]],LIM=[2.5,4,6,8,10,12],NP=[2,3,4,5,6];
+const TIERS=[[2,[3,3,3]],[4,[4,4,4]],[6,[5,5,4]],[8,[6,6,5]],[10,[7,7,6]]],LIM=[2,4,6,8,10,12],NP=[2,3,4,5,6];
 const V=[["Thuin (centre)", "Thuin", "6530"], ["Lobbes", "Lobbes", "6540"], ["Montigny-le-Tilleul", "Montigny-le-Tilleul", "6110"], ["Merbes-le-Château", "Merbes-le-Château", "6567"], ["Leers-et-Fosteau", "Thuin", "6530"], ["Biesme-sous-Thuin", "Thuin", "6531"], ["Ragnies", "Thuin", "6532"], ["Biercée", "Thuin", "6533"], ["Gozée", "Thuin", "6534"], ["Thuillies", "Thuin", "6536"], ["Donstiennes", "Thuin", "6536"], ["Mont-Sainte-Geneviève", "Lobbes", "6540"], ["Sars-la-Buissière", "Lobbes", "6542"], ["Bienne-lez-Happart", "Lobbes", "6543"], ["Ham-sur-Heure", "Ham-sur-Heure-Nalinnes", "6120"], ["Marbaix", "Ham-sur-Heure-Nalinnes", "6120"], ["Cour-sur-Heure", "Ham-sur-Heure-Nalinnes", "6120"], ["Fontaine-Valmont", "Merbes-le-Château", "6567"], ["Labuissière", "Merbes-le-Château", "6567"], ["Merbes-Sainte-Marie", "Merbes-le-Château", "6567"], ["Landelies", "Montigny-le-Tilleul", "6111"], ["Strée", "Beaumont", "6511"], ["Leernes", "Fontaine-l'Évêque", "6142"], ["Buvrinnes", "Binche", "7133"], ["Epinois", "Binche", "7134"], ["Hantes-Wihéries", "Erquelinnes", "6560"], ["Solre-sur-Sambre", "Erquelinnes", "6560"], ["Montignies-Saint-Christophe", "Erquelinnes", "6560"], ["Clermont", "Walcourt", "5650"]];
 const $=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const fee=(km,n)=>{if(km<=10){if(n>=5)return 0;return TIERS.find(t=>km<=t[0])[1][Math.min(n,4)-2]}if(n<3)return null;return n>=7?0:n>=6?7:8};
+const kmE=(km,thuin)=>km<=2&&!thuin?2.001:km;
 const fx=v=>v==null?"—":String(v);
 const norm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\(centre\)/,"").replace(/[^a-z]/g,"");
 const eur=v=>v?v+'<span class="e"> €</span>':'<span class="gl">gratuit</span><span class="gs">0</span>';
@@ -58,7 +59,7 @@ async function route(d){const u=new URL(ORS+"/v2/directions/driving-car");u.sear
   const r=await fetch(u);if(!r.ok)throw new Error("route "+r.status);const s=(await r.json()).features[0].properties.summary;return [s.distance/1000,s.duration/60]}
 function draw(R,dt){R=R.filter(r=>r.km!=null);R.sort((a,b)=>a.km-b.km);const near=R.filter(r=>r.km<=12),far=R.filter(r=>r.km>12);
   {const n=Math.max(near.length,8),rh=Math.min(16,208/n);const st=document.documentElement.style;st.setProperty("--rh",rh.toFixed(2)+"mm");st.setProperty("--fs",Math.min(15,rh*2.835*0.4).toFixed(1)+"pt")}
-  $("tb").innerHTML=near.map(r=>{const w=LIM.some(l=>Math.abs(r.km-l)<=0.5);const c=NP.map(n=>{const lo=fee(Math.max(0.1,r.km-0.5),n),hi=fee(Math.min(12,r.km+0.5),n);if(w&&lo!==hi)return `<td class="w">${fx(lo)+"–"+fx(hi)}<span class="e"> €</span></td>`;const f=fee(r.km,n);return f==null?`<td>—</td>`:`<td class="${f?"":"f"}">${eur(f)}</td>`}).join("");
+  $("tb").innerHTML=near.map(r=>{const w=LIM.some(l=>Math.abs(r.km-l)<=0.5);const th=r.n==="Thuin (centre)",c=NP.map(n=>{const lo=fee(kmE(Math.max(0.1,r.km-0.5),th),n),hi=fee(kmE(Math.min(12,r.km+0.5),th),n);if(w&&lo!==hi)return `<td class="w">${fx(lo)+"–"+fx(hi)}<span class="e"> €</span></td>`;const f=fee(kmE(r.km,th),n);return f==null?`<td>—</td>`:`<td class="${f?"":"f"}">${eur(f)}</td>`}).join("");
     return `<tr data-v="${norm(r.n)}"><td>${w?"⚠️ ":""}${r.n}<br><span class="cp">${r.cp}<span class="cc"> ${r.c}</span></span></td><td class="${w?"w":""}">${r.km.toFixed(1).replace(".",",")}</td><td>${Math.round(r.min)}</td>${c}</tr>`}).join("");
   $("far").textContent=far.length?"Plus de 12 km : "+far.map(r=>r.n+" ("+r.km.toFixed(1).replace(".",",")+" km)").join(", ")+".":"";
   $("dt").textContent=dt}
@@ -81,8 +82,8 @@ function compare(p,km){document.querySelectorAll("tr.hok,tr.hno").forEach(t=>t.c
   if(!r)return'<div class="cmp no">Village pas trouvé dans le tableau.</div>';
   const tr=document.querySelector(`tr[data-v="${norm(r.n)}"]`);
   if(r.km>12||km>12){const same=(r.km>12)===(km>12);if(tr)tr.classList.add(same?"hok":"hno");return `<div class="cmp ${same?"ok":"no"}">${r.n} (centre) : ${r.km.toFixed(1).replace(".",",")} km${same?" · même cas":" · différent du tableau"}</div>`}
-  const d=NP.filter(n=>fee(r.km,n)!==fee(km,n));const ok=!d.length;if(tr)tr.classList.add(ok?"hok":"hno");
-  return ok?`<div class="cmp ok">✓ Même prix que ${r.n} dans le tableau.</div>`:`<div class="cmp no">✗ Différent de ${r.n} (centre) : ${d.map(n=>`${n} plats ${eur2(fee(r.km,n))} → ${eur2(fee(km,n))}`).join(" · ")}</div>`}
+  const th=r.n==="Thuin (centre)",ta=p.postcode==="6530"&&!/leers|fosteau/i.test(String([p.district,p.locality,p.city].join(" ")));const d=NP.filter(n=>fee(kmE(r.km,th),n)!==fee(kmE(km,ta),n));const ok=!d.length;if(tr)tr.classList.add(ok?"hok":"hno");
+  return ok?`<div class="cmp ok">✓ Même prix que ${r.n} dans le tableau.</div>`:`<div class="cmp no">✗ Différent de ${r.n} (centre) : ${d.map(n=>`${n} plats ${eur2(fee(kmE(r.km,th),n))} → ${eur2(fee(kmE(km,ta),n))}`).join(" · ")}</div>`}
 const eur2=v=>v==null?"pas possible":v?v+" €":"gratuit";
 let sugT=0,seq=0;
 async function search(q){const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",q);u.searchParams.set("limit","6");u.searchParams.set("lang","fr");
@@ -95,9 +96,9 @@ $("adr").addEventListener("input",()=>{clearTimeout(sugT);const q=$("adr").value
     $("sug")._f=F}catch(e){$("sug").innerHTML='<p class="sub err">Recherche indisponible, réessayez.</p>'}},450)});
 $("sug").addEventListener("click",async e=>{const b=e.target.closest("button[data-i]");if(!b)return;const f=$("sug")._f[+b.dataset.i];const [a,c]=lab(f.properties);
   $("sug").innerHTML="";$("adr").value=a+", "+c;$("res").innerHTML='<p class="sub">Calcul…</p>';
-  try{const [km,min]=await route(f.geometry.coordinates);const K=km.toFixed(1).replace(".",",");
+  try{const [km,min]=await route(f.geometry.coordinates);const K=km.toFixed(1).replace(".",","),pp=f.properties,ta=pp.postcode==="6530"&&!/leers|fosteau/i.test(String([pp.district,pp.locality,pp.city].join(" "))),kf=kmE(km,ta);
     let body;if(km>15)body='<p class="m">Plus de 15 km : pas de livraison.</p>';else if(km>12)body='<p class="m">De 12 à 15 km : uniquement grandes commandes (15–20 pizzas), sur appel.</p>';
-    else body='<div class="pg">'+NP.map(n=>{const v=fee(km,n);if(v==null)return `<div><b>—</b><small>${n} plats</small></div>`;return `<div><b class="${v?"":"f"}" style="${v?"":"color:var(--green)"}">${v?v+" €":"gratuit"}</b><small>${n} plats</small></div>`}).join("")+'</div>';
+    else body='<div class="pg">'+NP.map(n=>{const v=fee(kf,n);if(v==null)return `<div><b>—</b><small>${n} plats</small></div>`;return `<div><b class="${v?"":"f"}" style="${v?"":"color:var(--green)"}">${v?v+" €":"gratuit"}</b><small>${n} plats</small></div>`}).join("")+'</div>';
     const cmp=compare(f.properties,km);
     $("res").innerHTML=`<div class="rbox ${km>12?"no":"ok"}"><div class="a">${a}<br><small class="cp">${c}</small></div><div class="k"><span>${K} km<small>par la route</small></span><span>${Math.round(min)} min<small>trajet aller</small></span></div>${body}${cmp}</div>`;const hr=document.querySelector("tr.hok,tr.hno");if(hr)hr.scrollIntoView({block:"nearest"})}
   catch(e){$("res").innerHTML='<p class="sub err">Calcul impossible pour le moment, réessayez.</p>'}});
