@@ -32,7 +32,7 @@ td.f{color:var(--green);font-weight:700}td.w{color:var(--amber);font-weight:700}
 </style></head><body><div class="wrap">
 <h1>Estimation des tarifs de livraison</h1>
 <p class="sub">Depuis Grand'Rue 1, Thuin · distance et temps par la route jusqu'au centre du village · calculés le <span id="dt">—</span></p>
-<div class="bar noprint"><button class="p" id="go" type="button">Calculer</button><button id="pr" type="button">Imprimer / PDF</button><span id="st"></span></div>
+<div class="bar noprint"><button class="p" id="go" type="button">Calculer</button><button id="pr" type="button">Imprimer / PDF</button><button id="clr" type="button">Effacer</button><span id="st"></span></div>
 <table><thead><tr><th>Village</th><th>km</th><th>min</th><th>2<br>plats<span class="hs"> €</span></th><th>3<br>plats<span class="hs"> €</span></th><th>4<br>plats<span class="hs"> €</span></th><th>5<br>plats<span class="hs"> €</span></th></tr></thead><tbody id="tb"></tbody></table>
 <p class="note">Plats = pizzas ou pâtes · 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = village proche d'une limite de prix : le prix dépend de la rue (ex. 4–5 €). 0 = gratuit (sur téléphone, les prix sont en €). Si l'écart est grand (ex. 0–8 €), vérifiez l'adresse exacte sur le site. 6 plats ou plus : toujours gratuit.<br>Au-delà de 11 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
 <section class="calc noprint"><h2>Adresse exacte</h2>
@@ -81,6 +81,7 @@ $("sug").addEventListener("click",async e=>{const b=e.target.closest("button[dat
     else body='<div class="pg">'+[2,3,4,5].map(n=>{const v=fee(km,n);return `<div><b class="${v?"":"f"}" style="${v?"":"color:var(--green)"}">${v?v+" €":"gratuit"}</b><small>${n} plats</small></div>`}).join("")+'</div>';
     $("res").innerHTML=`<div class="rbox ${km>11?"no":"ok"}"><div class="a">${a}<br><small class="cp">${c}</small></div><div class="k"><span>${K} km<small>par la route</small></span><span>${Math.round(min)} min<small>trajet aller</small></span></div>${body}</div>`}
   catch(e){$("res").innerHTML='<p class="sub err">Calcul impossible pour le moment, réessayez.</p>'}});
+$("clr").onclick=()=>{if(!confirm("Effacer le tableau enregistré sur ce téléphone ?"))return;try{localStorage.removeItem("dg_estim");localStorage.removeItem("dg_caisse")}catch(e){}$("tb").innerHTML="";$("far").textContent="";$("dt").textContent="—";$("st").textContent="Tableau effacé · « Calculer » pour refaire"};
 $("go").onclick=run;$("pr").onclick=()=>print();
 try{const s=JSON.parse(localStorage.getItem("dg_estim")||localStorage.getItem("dg_caisse")||"null");if(s){draw(s.R,s.dt);$("st").textContent="Dernier calcul enregistré · « Calculer » pour refaire"}}catch(e){}
 </script></body></html>
