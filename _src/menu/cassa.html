@@ -20,7 +20,7 @@ td.f{color:var(--green);font-weight:700}td.w{color:var(--amber);font-weight:700}
 .note{color:var(--muted);font-size:12px;margin-top:10px}.err{color:var(--red)}
 .gs,.hs{display:none}
 @media (max-width:420px){table{font-size:12px}th,td{padding:5px 2px}.cp{font-size:10px}.e,.gl{display:none}.gs,.hs{display:inline}th:first-child,td:first-child{width:31%}}
-@media print{@page{size:A4;margin:8mm}.noprint{display:none!important}.wrap{max-width:none;padding:0}body{font-size:10px}h1{font-size:15px}.sub{font-size:10px;margin:0 0 4px}table{font-size:10.5px}th,td{padding:2.5px 3px}td:first-child br{display:none}.cp{margin-left:6px}tr{break-inside:avoid}.note{font-size:9.5px;margin-top:4px}}
+@media print{@page{size:A4;margin:9mm}.noprint{display:none!important}.wrap{max-width:none;padding:0}body{font-size:var(--fs,11pt)}h1{font-size:18pt;margin:0}.sub{font-size:9.5pt;margin:0 0 3mm}table{font-size:var(--fs,11pt)}thead th{font-size:10.5pt;padding:1.5mm 1mm}tbody td{height:var(--rh,9mm);padding:0 1.5mm;vertical-align:middle}td:first-child br{display:none}.cp{margin-left:2mm;font-size:.72em}.cc{display:none}td:first-child{white-space:nowrap}tr{break-inside:avoid}td.w,td.f{font-weight:700}.note{font-size:9pt;margin-top:2.5mm;line-height:1.3}}
 </style></head><body><div class="wrap">
 <h1>Tarifs de livraison · caisse</h1>
 <p class="sub">Depuis Grand'Rue 1, Thuin · distance et temps par la route jusqu'au centre du village · calculés le <span id="dt">—</span></p>
@@ -41,8 +41,9 @@ async function geo(v){const u=new URL("https://photon.komoot.io/api/");u.searchP
 async function route(d){const u=new URL(ORS+"/v2/directions/driving-car");u.searchParams.set("api_key",ORS_KEY);u.searchParams.set("start",ORIG.join(","));u.searchParams.set("end",d.join(","));
   const r=await fetch(u);if(!r.ok)throw new Error("route "+r.status);const s=(await r.json()).features[0].properties.summary;return [s.distance/1000,s.duration/60]}
 function draw(R,dt){R=R.filter(r=>r.km!=null);R.sort((a,b)=>a.km-b.km);const near=R.filter(r=>r.km<=11),far=R.filter(r=>r.km>11);
+  {const n=Math.max(near.length,8),rh=Math.min(16,208/n);const st=document.documentElement.style;st.setProperty("--rh",rh.toFixed(2)+"mm");st.setProperty("--fs",Math.min(15,rh*2.835*0.4).toFixed(1)+"pt")}
   $("tb").innerHTML=near.map(r=>{const w=LIM.some(l=>Math.abs(r.km-l)<=0.5);const c=[2,3,4,5].map(n=>{const lo=fee(Math.max(0.1,r.km-0.5),n),hi=fee(Math.min(11,r.km+0.5),n);if(w&&lo!==hi)return `<td class="w">${(lo||"0")+"–"+(hi||"0")}<span class="e"> €</span></td>`;const f=fee(r.km,n);return `<td class="${f?"":"f"}">${eur(f)}</td>`}).join("");
-    return `<tr><td>${w?"⚠️ ":""}${r.n}<br><span class="cp">${r.cp} ${r.c}</span></td><td class="${w?"w":""}">${r.km.toFixed(1).replace(".",",")}</td><td>${Math.round(r.min)}</td>${c}</tr>`}).join("");
+    return `<tr><td>${w?"⚠️ ":""}${r.n}<br><span class="cp">${r.cp}<span class="cc"> ${r.c}</span></span></td><td class="${w?"w":""}">${r.km.toFixed(1).replace(".",",")}</td><td>${Math.round(r.min)}</td>${c}</tr>`}).join("");
   $("far").textContent=far.length?"Plus de 11 km : "+far.map(r=>r.n+" ("+r.km.toFixed(1).replace(".",",")+" km)").join(", ")+".":"";
   $("dt").textContent=dt}
 async function run(){$("go").disabled=true;const R=[];let i=0,errs=[];
