@@ -25,7 +25,7 @@ th:first-child,td:first-child{text-align:left;width:34%}th:nth-child(2),th:nth-c
 tbody tr:nth-child(even) td{background:var(--zebra)}
 td.f{color:var(--green);font-weight:700}td.w{color:var(--amber);font-weight:700}
 .cp{color:var(--muted);font-size:11px}
-.note{color:var(--muted);font-size:12px;margin-top:10px}.err{color:var(--red)}
+.note{color:var(--muted);font-size:12px;margin-top:10px}.printonly{display:none}@media print{.printonly{display:block}}.err{color:var(--red)}
 .gs,.hs{display:none}
 @media (max-width:420px){table{font-size:12px}th,td{padding:5px 2px}.cp{font-size:10px}.e,.gl{display:none}.gs,.hs{display:inline}th:first-child,td:first-child{width:31%}}
 @media print{@page{size:A4;margin:9mm}.noprint{display:none!important}.wrap{max-width:none;padding:0}body{font-size:var(--fs,11pt)}h1{font-size:18pt;margin:0}.sub{font-size:9.5pt;margin:0 0 3mm}table{font-size:var(--fs,11pt)}thead th{font-size:10.5pt;padding:1.5mm 1mm}tbody td{height:var(--rh,9mm);padding:0 1.5mm;vertical-align:middle}td:first-child br{display:none}.cp{margin-left:2mm;font-size:.72em}.cc{display:none}td:first-child{white-space:nowrap}tr{break-inside:avoid}td.w,td.f{font-weight:700}.note{font-size:9pt;margin-top:2.5mm;line-height:1.3}}
@@ -34,7 +34,7 @@ td.f{color:var(--green);font-weight:700}td.w{color:var(--amber);font-weight:700}
 <p class="sub">Depuis Grand'Rue 1, Thuin · distance et temps par la route jusqu'au centre du village · calculés le <span id="dt">—</span></p>
 <div class="bar noprint"><button class="p" id="go" type="button">Calculer</button><button id="pr" type="button">Imprimer / PDF</button><button id="clr" type="button">Effacer</button><span id="st"></span></div>
 <table><thead><tr><th>Village</th><th>km</th><th>min</th><th>2<br>plats<span class="hs"> €</span></th><th>3<br>plats<span class="hs"> €</span></th><th>4<br>plats<span class="hs"> €</span></th><th>5<br>plats<span class="hs"> €</span></th></tr></thead><tbody id="tb"></tbody></table>
-<p class="note">Plats = pizzas ou pâtes · 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = village proche d'une limite de prix : le prix dépend de la rue (ex. 4–5 €). 0 = gratuit (sur téléphone, les prix sont en €). Si l'écart est grand (ex. 0–8 €), vérifiez l'adresse exacte sur le site. 6 plats ou plus : toujours gratuit.<br>Au-delà de 11 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
+<p class="note printonly">Plats = pizzas ou pâtes · 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = village proche d'une limite de prix : le prix dépend de la rue (ex. 4–5 €). 0 = gratuit (sur téléphone, les prix sont en €). Si l'écart est grand (ex. 0–8 €), vérifiez l'adresse exacte sur le site. 6 plats ou plus : toujours gratuit.<br>Au-delà de 11 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
 <section class="calc noprint"><h2>Adresse exacte</h2>
 <p class="sub">Pour une rue au bout du village ou entre deux prix : tapez la rue (et le village), puis choisissez l'adresse.</p>
 <input id="adr" type="text" autocomplete="off" placeholder="Ex. : Rue de la Station 12, Lobbes"><div id="sug"></div><div id="res"></div></section>
