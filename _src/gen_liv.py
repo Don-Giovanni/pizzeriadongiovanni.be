@@ -96,7 +96,8 @@ ul.notes{margin:14px 0 0;padding-left:20px}ul.notes li{margin:4px 0}
 
 th.pz{white-space:nowrap;line-height:1.25}th.pz .pn{font-size:1.15em}
 table{table-layout:fixed}thead th:first-child{width:31%}td.f{overflow-wrap:anywhere;font-size:.92em}@media (max-width:560px){td.f{font-size:11px}}
-table.l-de thead th:first-child{width:25%}table.l-de thead th:nth-child(n+2):nth-child(-n+4){width:13%}table.l-de thead th:nth-child(n+5){width:18%}table.l-de td.f{overflow-wrap:normal;white-space:nowrap}</style></head><body>
+thead th:first-child{width:25%!important}thead th:nth-child(n+2):nth-child(-n+4){width:13%}thead th:nth-child(n+5){width:18%}td.f{overflow-wrap:normal;white-space:nowrap}
+@media (max-width:340px){th,td{padding:7px 2px}td.f{font-size:9.5px}th.pz{font-size:10.5px}}</style></head><body>
 <div class="flag"><i></i><i></i><i></i></div>
 <div class="wrap">
 <div class="top noprint"><a class="b" id="back" href="index.html"></a><div class="btns" id="langs"></div><button class="b" id="pr" type="button" hidden></button></div>
