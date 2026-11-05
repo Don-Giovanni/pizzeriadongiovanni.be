@@ -64,7 +64,7 @@ function draw(R,dt){R=R.filter(r=>r.km!=null);R.sort((a,b)=>a.km-b.km);const nea
   $("dt").textContent=dt}
 async function run(){$("go").disabled=true;const R=[];let i=0,errs=[],why="";
   for(const v of V){i++;$("st").textContent=`Calcul ${i} / ${V.length} : ${v[0]}…`;
-    try{const d=await geo(v);await sleep(300);const [km,min]=await route(d);R.push({n:v[0],c:v[1],cp:v[2],km,min})}catch(e){errs.push(v[0]);if(!why)why=String(e&&e.message||e);if(!R.length&&errs.length>=3)break;await sleep(1500)}
+    try{let d;try{d=await geo(v)}catch(e){throw new Error("village: "+(e&&e.message||e))}await sleep(300);let km,min;try{[km,min]=await route(d)}catch(e){throw new Error("km: "+(e&&e.message||e))}R.push({n:v[0],c:v[1],cp:v[2],km,min})}catch(e){errs.push(v[0]);if(!why)why=String(e&&e.message||e);if(!R.length&&errs.length>=3)break;await sleep(1500)}
     await sleep(1700)}
   if(!R.length){$("st").innerHTML=`<span class="err">Service de calcul indisponible (${why}). Le tableau enregistré n'a pas été effacé. Réessayez plus tard.</span>`;$("go").disabled=false;return}
   let S=null;try{S=JSON.parse(localStorage.getItem("dg_estim")||"null")}catch(e){}
