@@ -32,7 +32,7 @@ n,lab,st,_=cv2.connectedComponentsWithStats(box,8);k=np.zeros_like(box)
 for i in range(1,n):
     if st[i,4]>300: k[lab==i]=1
 box=k
-a=cv2.GaussianBlur(box.astype(np.float32),(0,0),0.8)[...,None]
+a=cv2.GaussianBlur(box.astype(np.float32),(0,0),2.0)[...,None]   # bordi sfumati
 target=np.array([138,170,196],np.float32)          # BGR craft (fondo vicino alla Z)
 vref=np.median(V[box>0]);r=np.clip(V/vref,0,1.6)
 r=np.where(r<0.6,r,0.6+(r-0.6)*0.45)               # luci uniformi, disegni neri restano
