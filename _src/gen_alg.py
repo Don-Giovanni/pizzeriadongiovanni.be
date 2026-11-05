@@ -72,6 +72,7 @@ function draw(){const g=DATA.d.langs[L],u=DATA.ui[L];document.documentElement.la
  document.getElementById("fx").innerHTML=`${DATA.d.draft?`<p class="draft">${esc(g.T.draft)}</p>`:""}
  <p class="intro" style="margin:6px 0 0">${esc(g.T.intro)}</p>
  <p class="intro" style="margin:4px 0 0;font-size:12px">${esc(g.T.tr)}</p>
+ <p class="intro" style="margin:4px 0 0;font-size:12px">${esc(g.T.resp)}</p>
  <ol class="legend">${g.alg.map((a,i)=>`<li><b>${i+1}</b>${esc(a)}</li>`).join("")}</ol>`;
  document.getElementById("tw").innerHTML=`<table><thead>${head}</thead><tbody>${body}</tbody></table>
  <p class="foot">${esc(u.x)} · <span class="v">*</span> ${esc(g.T.v.replace(/^\\*\\s*/,""))}<br>${esc(u.upd)} : ${UPD}</p>`;}
