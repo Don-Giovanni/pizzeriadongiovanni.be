@@ -453,7 +453,7 @@ function addItem(id){const l=CART.find(l=>l.id===id&&!(l.s||[]).length);if(l)l.q
 let tt;function toast(m,ms){const e=$("toast");e.textContent=m;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,ms)}
 
 let TIPSEL={};
-const TIPIT={vin:()=>ITEMS.find(x=>/^Vin rouge/i.test(String(x.n))),nut:()=>ITEMS.find(x=>/Nutella et pistache/i.test(String(x.n))),tc:()=>ITEMS.find(x=>/^Tiramis/i.test(String(x.n))),ts:()=>ITEMS.find(x=>/^Tiramis/i.test(String(x.n)))};
+const TIPIT={vin:()=>ITEMS.find(x=>/^Vin rouge/i.test(String(x.n))),nut:()=>ITEMS.find(x=>/Nutella et pistache/i.test(String(x.n))),nut2:()=>ITEMS.find(x=>/Nutella et fruits/i.test(String(x.n))),tc:()=>ITEMS.find(x=>/^Tiramis/i.test(String(x.n))),ts:()=>ITEMS.find(x=>/^Tiramis/i.test(String(x.n)))};
 const TIPV={tc:"tiraC",ts:"tiraS"};
 function tipChips(keys){const n=keys.reduce((a,k)=>a+(TIPSEL[k]||0),0);
   return `<div class="tipc">${keys.map(k=>{const it=TIPIT[k]();if(!it)return"";const c=TIPSEL[k]||0;return `<button type="button" class="tchip${c?" on":""}" data-tp="${k}">+ ${esc(nm(it)+(TIPV[k]?" "+t(TIPV[k]):""))} · ${price(it.p)}${c?` <b>×${c}</b>`:""}</button>`}).join("")}
@@ -463,7 +463,7 @@ function tips(T){if(MODE!=="del")return"";const km=kmVal();if(!(km>0)||km>11)ret
   if(T.npz===0)return `<div class="tip">${esc(t("tipNone"))}${go}</div>`;
   if(!T.ok&&T.npz===1)return `<div class="tip">${esc(t("tipMiss",price(Math.max(0,30-T.sub-T.sup))))}${tipChips(["vin","nut","tc","ts"])}</div>`;
   if(T.ok&&T.npz===4&&km<=10&&T.fee>0)return `<div class="tip">${esc(t("tipFree"))}${go}</div>`;
-  if(T.ok&&!CART.some(l=>/^Tiramis/i.test(String(byId[l.id].n))))return `<div class="tip">${esc(t("tipDes"))}${tipChips(["tc","ts"])}</div>`;
+  if(T.ok&&!CART.some(l=>/^Tiramis|Nutella/i.test(String(byId[l.id].n))))return `<div class="tip">${esc(t("tipDes"))}${tipChips(["tc","ts","nut","nut2"])}</div>`;
   return""}
 function tipAdd(){for(const[k,c]of Object.entries(TIPSEL)){if(!c)continue;const it=TIPIT[k]();if(!it)continue;const v=TIPV[k]||"";
   const l=CART.find(l=>l.id===it.id&&(l.v||"")===v&&!(l.s||[]).length);if(l)l.q+=c;else CART.push(v?{id:it.id,q:c,s:[],v}:{id:it.id,q:c,s:[]})}
