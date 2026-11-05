@@ -1,0 +1,54 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Tarifs caisse</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<style>
+:root{--fg:#17120f;--muted:#5f5650;--line:#ddd3c8;--red:#c8231c;--green:#1f8a4c;--zebra:#f7f2ec;--amber:#8a5a00;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--fg);font:14px/1.35 Poppins,system-ui,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:14px 16px}
+h1{font-size:20px;margin:0 0 2px}.sub{color:var(--muted);font-size:12.5px;margin:0 0 10px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
+button{font:600 14px Poppins,sans-serif;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;cursor:pointer}
+button.p{background:var(--red);border-color:var(--red);color:#fff}
+#st{font-size:13px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px;table-layout:fixed}
+th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:center}
+th{background:var(--fg);color:#fff;font-weight:600;line-height:1.2}
+th:first-child,td:first-child{text-align:left;width:30%}
+tbody tr:nth-child(even) td{background:var(--zebra)}
+td.f{color:var(--green);font-weight:700}td.w{color:var(--amber);font-weight:700}
+.cp{color:var(--muted);font-size:11px}
+.note{color:var(--muted);font-size:12px;margin-top:10px}.err{color:var(--red)}
+@media print{@page{size:A4;margin:10mm}.noprint{display:none!important}body{font-size:11px}table{font-size:11px}th,td{padding:3px 3px}tr{break-inside:avoid}}
+</style></head><body><div class="wrap">
+<h1>Tarifs de livraison · caisse</h1>
+<p class="sub">Depuis Grand'Rue 1, Thuin · distance et temps par la route jusqu'au centre du village · calculés le <span id="dt">—</span></p>
+<div class="bar noprint"><button class="p" id="go" type="button">Calculer</button><button id="pr" type="button">Imprimer / PDF</button><span id="st"></span></div>
+<table><thead><tr><th>Village</th><th>km</th><th>min</th><th>2 plats</th><th>3 plats</th><th>4 plats</th><th>5 plats</th><th>6+ plats</th></tr></thead><tbody id="tb"></tbody></table>
+<p class="note">Plats = pizzas ou pâtes · 1 seul plat : livraison si le total atteint 30 € (prix comme 2 plats).<br>⚠️ = proche d'une limite de prix : pour une rue au bout du village, vérifiez l'adresse exacte sur le site.<br>Au-delà de 11 km : uniquement grandes commandes (15–20 pizzas), sur appel. <span id="far"></span></p>
+</div>
+<script>
+const ORS_KEY="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjdjMWM5ZTQ2NWE1YTQwYzNhODE3MjUzZTg5ZTk5M2MxIiwiaCI6Im11cm11cjY0In0=",ORS="https://api.openrouteservice.org",ORIG=[4.2871456,50.339311];
+const TIERS=[[3,[3,3,3]],[4,[4,4,3]],[6,[5,4,3]],[8,[6,5,4]],[10,[7,6,5]]],LIM=[3,4,6,8,10,11];
+const V=[["Thuin (centre)", "Thuin", "6530"], ["Lobbes", "Lobbes", "6540"], ["Montigny-le-Tilleul", "Montigny-le-Tilleul", "6110"], ["Merbes-le-Château", "Merbes-le-Château", "6567"], ["Leers-et-Fosteau", "Thuin", "6530"], ["Biesme-sous-Thuin", "Thuin", "6531"], ["Ragnies", "Thuin", "6532"], ["Biercée", "Thuin", "6533"], ["Gozée", "Thuin", "6534"], ["Thuillies", "Thuin", "6536"], ["Donstiennes", "Thuin", "6536"], ["Mont-Sainte-Geneviève", "Lobbes", "6540"], ["Sars-la-Buissière", "Lobbes", "6542"], ["Bienne-lez-Happart", "Lobbes", "6543"], ["Ham-sur-Heure", "Ham-sur-Heure-Nalinnes", "6120"], ["Marbaix", "Ham-sur-Heure-Nalinnes", "6120"], ["Cour-sur-Heure", "Ham-sur-Heure-Nalinnes", "6120"], ["Fontaine-Valmont", "Merbes-le-Château", "6567"], ["Labuissière", "Merbes-le-Château", "6567"], ["Merbes-Sainte-Marie", "Merbes-le-Château", "6567"], ["Landelies", "Montigny-le-Tilleul", "6111"], ["Strée", "Beaumont", "6511"], ["Leernes", "Fontaine-l'Évêque", "6142"], ["Buvrinnes", "Binche", "7133"], ["Epinois", "Binche", "7134"], ["Hantes-Wihéries", "Erquelinnes", "6560"], ["Solre-sur-Sambre", "Erquelinnes", "6560"], ["Montignies-Saint-Christophe", "Erquelinnes", "6560"], ["Clermont", "Walcourt", "5650"]];
+const $=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fee=(km,n)=>{if(km<=10){if(n>=5)return 0;return TIERS.find(t=>km<=t[0])[1][Math.min(n,4)-2]}return n>=6?0:8};
+const eur=v=>v?v+" €":"gratuit";
+async function geo(v){const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",v[0].replace(" (centre)","")+" "+v[2]);u.searchParams.set("limit","5");u.searchParams.set("lang","fr");
+  u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");["city","locality","district","other"].forEach(l=>u.searchParams.append("layer",l));
+  const j=await (await fetch(u)).json();const f=(j.features||[]).find(f=>f.properties.countrycode==="BE")||j.features[0];if(!f)throw new Error("introuvable");return f.geometry.coordinates}
+async function route(d){const u=new URL(ORS+"/v2/directions/driving-car");u.searchParams.set("api_key",ORS_KEY);u.searchParams.set("start",ORIG.join(","));u.searchParams.set("end",d.join(","));
+  const r=await fetch(u);if(!r.ok)throw new Error("route "+r.status);const s=(await r.json()).features[0].properties.summary;return [s.distance/1000,s.duration/60]}
+function draw(R,dt){R=R.filter(r=>r.km!=null);R.sort((a,b)=>a.km-b.km);const near=R.filter(r=>r.km<=11),far=R.filter(r=>r.km>11);
+  $("tb").innerHTML=near.map(r=>{const w=LIM.some(l=>Math.abs(r.km-l)<=0.5);const c=[2,3,4,5,6].map(n=>{const f=fee(r.km,n);return `<td class="${f?"":"f"}">${eur(f)}</td>`}).join("");
+    return `<tr><td>${w?"⚠️ ":""}${r.n}<br><span class="cp">${r.cp} ${r.c}</span></td><td class="${w?"w":""}">${r.km.toFixed(1).replace(".",",")}</td><td>${Math.round(r.min)}</td>${c}</tr>`}).join("");
+  $("far").textContent=far.length?"Plus de 11 km : "+far.map(r=>r.n+" ("+r.km.toFixed(1).replace(".",",")+" km)").join(", ")+".":"";
+  $("dt").textContent=dt}
+async function run(){$("go").disabled=true;const R=[];let i=0,errs=[];
+  for(const v of V){i++;$("st").textContent=`Calcul ${i} / ${V.length} : ${v[0]}…`;
+    try{const d=await geo(v);await sleep(300);const [km,min]=await route(d);R.push({n:v[0],c:v[1],cp:v[2],km,min})}catch(e){errs.push(v[0]);await sleep(1500)}
+    await sleep(1700)}
+  const dt=new Date().toLocaleDateString("fr-BE");draw(R,dt);try{localStorage.setItem("dg_caisse",JSON.stringify({R,dt}))}catch(e){}
+  $("st").innerHTML=errs.length?`<span class="err">Pas trouvé : ${errs.join(", ")} (réessayez)</span>`:"Terminé ✓";$("go").disabled=false}
+$("go").onclick=run;$("pr").onclick=()=>print();
+try{const s=JSON.parse(localStorage.getItem("dg_caisse")||"null");if(s){draw(s.R,s.dt);$("st").textContent="Dernier calcul enregistré · « Calculer » pour refaire"}}catch(e){}
+</script></body></html>
