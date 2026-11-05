@@ -87,9 +87,9 @@ function compare(p,km){document.querySelectorAll("tr.hok,tr.hno").forEach(t=>t.c
 const eur2=v=>v==null?"pas possible":v?v+" €":"gratuit";
 let sugT=0,seq=0;
 async function search(q){const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",q);u.searchParams.set("limit","6");u.searchParams.set("lang","fr");
-  u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");u.searchParams.set("bbox","4.0,50.2,4.6,50.5");["house","street"].forEach(l=>u.searchParams.append("layer",l));
+  u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");u.searchParams.set("bbox","4.0,50.2,4.6,50.5");["house","street","other"].forEach(l=>u.searchParams.append("layer",l));
   const j=await (await fetch(u)).json();return (j.features||[]).filter(f=>f.properties.countrycode==="BE")}
-const lab=p=>{const a=[p.street||p.name,p.housenumber].filter(Boolean).join(" ");return [a,[p.postcode,p.district||p.locality||p.city].filter(Boolean).join(" ")]};
+const lab=p=>{let a=[p.street||p.name,p.housenumber].filter(Boolean).join(" ");if(p.name&&p.street&&p.name!==p.street)a=p.name+" ("+a+")";return [a,[p.postcode,p.district||p.locality||p.city].filter(Boolean).join(" ")]};
 $("adr").addEventListener("input",()=>{clearTimeout(sugT);const q=$("adr").value.trim();if(q.length<3){$("sug").innerHTML="";return}
   sugT=setTimeout(async()=>{const my=++seq;try{const F=await search(q);if(my!==seq)return;
     $("sug").innerHTML=F.length?F.map((f,i)=>{const [a,b]=lab(f.properties);return `<button type="button" data-i="${i}">${a}<br><small>${b}</small></button>`}).join(""):'<p class="sub">Aucune adresse trouvée : essayez « rue + village ».</p>';
