@@ -109,7 +109,9 @@ nav.bot a span.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-w
 @media (orientation:landscape) and (max-height:520px){.hero{min-height:100vh}.hin{padding-block:56px 18px;gap:8px}.hin .logo{width:110px}}
 
 .status[hidden]{display:none!important}
-.stw{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:stretch;max-width:100%}
+.stw{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:440px;margin-inline:auto;align-items:stretch}
+.stw:not(:has(.dlv:not([hidden]))){grid-template-columns:1fr}
+.stw .status{width:100%;box-sizing:border-box;min-width:0}
 .stw .status{border-radius:14px;padding:7px 14px 7px 12px;margin:0;gap:9px;text-align:left;align-items:center}
 .stw .status>span{display:flex;flex-direction:column;line-height:1.2}
 .stw .status b{font-weight:600}
