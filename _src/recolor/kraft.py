@@ -18,8 +18,16 @@ k2=np.zeros_like(keep)
 for i in range(1,n):
     if st[i,4]>400: k2[lab==i]=1
 keep=cv2.morphologyEx(k2,cv2.MORPH_CLOSE,np.ones((5,5),np.uint8));keep[pz>0]=0;keep[inbox==0]=0
+# zone indicate dal titolare (05.11): bordo dietro, vicino alla mano, sotto la pizza -> soglia più larga
+pzi=cv2.erode(pz,np.ones((13,13),np.uint8))
+for (x0,y0,x1,y1) in [(430,52,672,132),(325,92,490,240),(352,440,445,540)]:
+    r=np.zeros((h,w),np.uint8);r[y0:y1,x0:x1]=1
+    keep[(r>0)&(S<80)&(V>110)&(inbox>0)&(pz==0)]=1
+    keep[(r>0)&(S<50)&(V>140)&(inbox>0)&(pzi==0)]=1   # bordo chiaro attorno al cornicione
 a=cv2.GaussianBlur(keep.astype(np.float32),(0,0),1.2)[...,None]
 kraft=np.array([128,172,212],np.float32)/255   # BGR del craft chiaro
-res=im.astype(np.float32)*(1-a)+(im.astype(np.float32)*kraft)*a
+L=V/255.0;Lc=np.where(L<0.45,L,0.45+(L-0.45)*0.65)   # schiarite compresse: interno uguale all'esterno, disegni neri invariati
+kr=(kraft*255)[None,None,:]*Lc[...,None]
+res=im.astype(np.float32)*(1-a)+kr*a
 cv2.imwrite(sys.argv[2],res.clip(0,255).astype(np.uint8),[cv2.IMWRITE_JPEG_QUALITY,90])
 if len(sys.argv)>3: cv2.imwrite(sys.argv[3],np.hstack([im,res.clip(0,255).astype(np.uint8)]))
