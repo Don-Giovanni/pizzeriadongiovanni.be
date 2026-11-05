@@ -34,7 +34,7 @@ UI = {
                   "The distance is <b>calculated automatically</b> in “My selection” when you enter your address. The price is confirmed by phone.",
                   "Takeaway is always possible!"], 'upd': 'Updated'},
  'de': {'title': 'Liefertarife', 'back': '← Menü', 'print': 'Drucken', 'dist': 'Entfernung über die Straße',
-        'pz': ['2 Pizzen', '3 Pizzen', '4 Pizzen', '5 Pizzen', '6+ Pizzen'], 'free': 'gratis',
+        'pz': ['2 Pizzen', '3 Pizzen', '4 Pizzen', '5 Pizzen', '6+ Pizzen'], 'free': 'kostenlos',
         'city': 'Thuin Stadt · bis 3 km', 'km': 'km',
         'big': 'Nur große Bestellungen (15–20 Pizzen), auf Anfrage', 'no': 'Keine Lieferung', 'more15': 'über 15 km',
         'notes': ["Mindestens <b>2 Pizzen oder Pasta</b> pro Lieferung.", "Lieferung <b>Donnerstag bis Sonntag, 17:30 – 21:30 Uhr</b>.",
@@ -95,7 +95,8 @@ ul.notes{margin:14px 0 0;padding-left:20px}ul.notes li{margin:4px 0}
 @media print{@page{size:A4;margin:12mm}.noprint{display:none!important}.wrap{max-width:none;padding:0}.tw{border:0}}
 
 th.pz{white-space:nowrap;line-height:1.25}th.pz .pn{font-size:1.15em}
-table{table-layout:fixed}thead th:first-child{width:31%}td.f{overflow-wrap:anywhere;font-size:.92em}@media (max-width:560px){td.f{font-size:11px}}</style></head><body>
+table{table-layout:fixed}thead th:first-child{width:31%}td.f{overflow-wrap:anywhere;font-size:.92em}@media (max-width:560px){td.f{font-size:11px}}
+table.l-de thead th:first-child{width:25%}table.l-de thead th:nth-child(n+2):nth-child(-n+4){width:13%}table.l-de thead th:nth-child(n+5){width:18%}table.l-de td.f{overflow-wrap:normal;white-space:nowrap}</style></head><body>
 <div class="flag"><i></i><i></i><i></i></div>
 <div class="wrap">
 <div class="top noprint"><a class="b" id="back" href="index.html"></a><div class="btns" id="langs"></div><button class="b" id="pr" type="button" hidden></button></div>
@@ -114,7 +115,7 @@ function draw(){const u=UI[L];document.documentElement.lang=L;document.getElemen
  const head=`<tr><th>${esc(u.dist)}</th>${u.pz.map(p=>{const i=p.indexOf(" ");return `<th class="pz"><span class="pn">${esc(p.slice(0,i))}</span><br>${esc(p.slice(i+1))}</th>`}).join("")}</tr>`;
  const body=ROWS.map(([k,ps])=>`<tr><td>${esc(lab(k,u))}</td>${ps.map(v=>v==null?`<td class="f">${esc(u.free)}</td>`:`<td>${eur(v)}</td>`).join("")}</tr>`).join("")
   +`<tr class="big"><td>11 – 15 ${u.km}</td><td colspan="5"><b>${esc(u.big)}</b></td></tr><tr class="no"><td>${esc(u.more15)}</td><td colspan="5">${esc(u.no)}</td></tr>`;
- document.getElementById("main").innerHTML=`<div class="tw"><table><thead>${head}</thead><tbody>${body}</tbody></table></div><ul class="notes">${u.notes.map(n=>`<li>${n}</li>`).join("")}</ul><p class="foot">${esc(u.upd)} : ${UPD}</p>`}
+ document.getElementById("main").innerHTML=`<div class="tw"><table class="l-${L}"><thead>${head}</thead><tbody>${body}</tbody></table></div><ul class="notes">${u.notes.map(n=>`<li>${n}</li>`).join("")}</ul><p class="foot">${esc(u.upd)} : ${UPD}</p>`}
 document.addEventListener("click",e=>{const l=e.target.closest("[data-l]");if(l){L=l.dataset.l;try{localStorage.setItem("dg_lang",L)}catch(_){ }draw()}});
 try{if(window.self===window.top){const pr=document.getElementById("pr");pr.hidden=false;pr.onclick=()=>window.print()}}catch(e){}
 draw();
