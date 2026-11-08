@@ -25,11 +25,12 @@ if [ "$1" = main ]; then cp $S/menu/favicon.ico $S/qr/og-image.jpg $R/; fi
 # Assistance (assistente IA): dati pubblici del menu + pulsante. Sul sito vero solo se esiste _src/assist/ONLINE (ok del titolare)
 node $S/assist/gen_kb.js $S/menu/index.html $D/assistance-kb.txt
 if [ "$1" != main ] || [ -f $S/assist/ONLINE ]; then
-  cp $S/assist/assist.js $D/assist.js; AV=$(md5sum $S/assist/assist.js | cut -c1-8)
+  cp $S/assist/assist.js $S/assist/confidentialite.html $D/; AV=$(md5sum $S/assist/assist.js | cut -c1-8)
   for f in index.html menu.html; do python3 - "$D/$f" "$AV" <<'P'
 import sys,re;p=sys.argv[1];s=open(p).read();s=re.sub(r'<script src="assist.js[^"]*" defer></script>\n','',s)
 s=s.replace('</body>','<script src="assist.js?v='+sys.argv[2]+'" defer></script>\n</body>',1)
 open(p,'w').write(s)
 P
   done
+  if [ "$1" != main ]; then sed -i 's|<meta name="description"|<meta name="robots" content="noindex">\n<meta name="description"|' $D/confidentialite.html; fi
 fi
