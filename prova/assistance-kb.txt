@@ -1,0 +1,94 @@
+# MENU (prix en euros, TVA comprise)
+
+## Pour commencer
+- Pain pizza : 7,00 € — nature ou ail-parmesan | allergènes : Gluten, Lait
+
+## Pizzas — « Blanche » = sans sauce tomate.
+- Margherita : 11,00 € — tomate, mozzarella, basilic, huile d'olive | allergènes : Gluten, Lait
+- Prosciutto : 13,00 € — tomate, mozzarella, jambon blanc | allergènes : Gluten, Soja, Lait
+- Genova : 13,00 € — tomate, mozzarella, salami non piquant | allergènes : Gluten, Lait
+- Salami : 13,00 € — tomate, mozzarella, salami piquant | allergènes : Gluten, Lait
+- Ciliegino : 13,50 € — tomate, mozzarella, tomates cerises, grana padano râpé, ail, basilic | allergènes : Gluten, Œufs, Lait
+- Esotica : 14,00 € — tomate, mozzarella, jambon blanc, ananas | allergènes : Gluten, Soja, Lait
+- Tonno : 14,00 € — tomate, mozzarella, thon, oignons | allergènes : Gluten, Poisson, Lait
+- Tonno 2.0 (blanche) : 14,00 € — mozzarella, pomme de terre, thon, oignons | allergènes : Gluten, Poisson, Lait
+- Casereccia : 14,00 € — tomate, anchois, olives, grana padano râpé, oignons | allergènes : Gluten, Œufs, Poisson, Lait
+- Napoli : 14,00 € — tomate, mozzarella, anchois, olives | allergènes : Gluten, Poisson, Lait
+- Regina : 14,00 € — tomate, mozzarella, jambon blanc, champignons | allergènes : Gluten, Soja, Lait
+- Campagnola : 14,00 € — tomate, mozzarella, chèvre, tomates cerises, ail | allergènes : Gluten, Lait
+- Sfiziosa : 14,50 € — tomate, mozzarella, lardons, oignons, crème, ail | allergènes : Gluten, Lait
+- Sole mio : 14,50 € — tomate, mozzarella, jambon blanc, champignons, œuf | allergènes : Gluten, Œufs, Soja, Lait
+- Fantasia : 14,50 € — tomate, mozzarella, lardons, champignons, poivrons | allergènes : Gluten, Lait
+- Chicon : 14,50 € — tomate, mozzarella, chicons, noix, grana padano râpé | allergènes : Gluten, Œufs, Lait, Fruits à coque
+- Parmigiana : 15,00 € — tomate, mozzarella, aubergines, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Braccio di ferro : 15,00 € — tomate, mozzarella, épinards, champignons, œuf dur, crème, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Capra : 15,00 € — tomate, mozzarella, lardons, chèvre, miel, noix | allergènes : Gluten, Lait, Fruits à coque
+- Quattro Stagioni : 15,00 € — tomate, mozzarella, jambon blanc, champignons, artichauts, olives | allergènes : Gluten, Soja, Lait
+- Carbonara : 15,00 € — tomate, mozzarella, lardons, crème, œuf, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Porchetta : 15,00 € — tomate, mozzarella, porchetta, oignons, taleggio | allergènes : Gluten, Lait
+- Patatina (blanche) : 15,00 € — mozzarella, pomme de terre, chair à saucisse, gorgonzola | allergènes : Gluten, Lait
+- Bufalina : 15,00 € — tomate, mozzarella di bufala, copeaux de grana, basilic, huile d'olive, origan | allergènes : Gluten, Œufs, Lait
+- Siciliana : 15,00 € — tomate, mozzarella, anchois, olives, poivrons, câpres | allergènes : Gluten, Poisson, Lait
+- Ricotta e Spinaci : 15,00 € — tomate, mozzarella, ricotta, épinards, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Monte Bianco (blanche) : 15,00 € — mozzarella, jambon blanc, ricotta, grana padano râpé | allergènes : Gluten, Œufs, Soja, Lait
+- Quattro formaggi : 15,50 € — tomate, mozzarella, gorgonzola, taleggio, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Parma : 15,50 € — tomate, mozzarella, jambon cru, copeaux de grana | allergènes : Gluten, Œufs, Lait
+- Norma : 15,50 € — tomate, mozzarella, aubergines, ricotta salata, basilic | allergènes : Gluten, Lait
+- Vegetariana : 15,50 € — tomate, mozzarella, champignons, artichauts, poivrons, aubergines, oignons | allergènes : Gluten, Lait
+- Don Giovanni : 16,00 € — tomate, mozzarella, ricotta, chair à saucisse, oignons, copeaux de grana | allergènes : Gluten, Œufs, Lait
+- Peperoni : 16,00 € — tomate, mozzarella, salami piquant, poivrons, oignons, olives | allergènes : Gluten, Lait
+- Calzone tradizionale : 16,00 € — tomate, mozzarella, jambon blanc, champignons | allergènes : Gluten, Soja, Lait
+- Capricciosa : 16,00 € — tomate, mozzarella, jambon, champignons, poivrons, artichauts, œuf | allergènes : Gluten, Œufs, Soja, Lait
+- Pizza du chef : 16,00 € — moitié pizza, moitié calzone (choix du chef) | allergènes : Gluten, Lait (À VÉRIFIER : liste pas encore complète)
+- Chicon gratin (blanche) : 16,50 € — mozzarella, porchetta, chicons, taleggio, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Carrettiera : 17,00 € — mozzarella, chair à saucisse, friarielli (brocoli-rave), tomates cerises, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Frutti di mare : 17,00 € — tomate, mozzarella, fruits de mer, ail | allergènes : Gluten, Crustacés, Lait, Mollusques
+- Calzone special : 17,00 € — tomate, mozzarella et 3 ingrédients au choix | allergènes : Gluten, Lait (À VÉRIFIER : liste pas encore complète)
+- Scampi : 17,00 € — tomate, mozzarella, scampis, ail | allergènes : Gluten, Crustacés, Lait
+- Salmone : 17,00 € — tomate, mozzarella, saumon, crème, ail | allergènes : Gluten, Poisson, Lait
+- Melanzane : 17,50 € — tomate, mozzarella, aubergines, jambon cru, copeaux de grana | allergènes : Gluten, Œufs, Lait
+- Primavera : 17,50 € — tomate, mozzarella, jambon cru, roquette, tomates cerises, balsamique, copeaux de grana | allergènes : Gluten, Œufs, Lait, Sulfites
+- Bresaola : 17,50 € — tomate, mozzarella, bresaola, roquette, tomates cerises, balsamique, copeaux de grana | allergènes : Gluten, Œufs, Lait, Sulfites
+- Bomba : 17,50 € — tomate, mozzarella, jambon blanc, champignons, salami piquant, gorgonzola, grana padano râpé, oignons | allergènes : Gluten, Œufs, Soja, Lait
+- Gamberoni : 17,50 € — tomate, mozzarella, scampis, ail, courgettes, tomates cerises, pistaches | allergènes : Gluten, Crustacés, Lait, Fruits à coque
+- Gamberoni e pesto : 17,50 € — mozzarella, scampis, ail, tomates cerises, pesto | allergènes : Gluten, Crustacés, Lait, Fruits à coque
+- Maialina : 17,50 € — tomate, mozzarella, jambon blanc, porchetta, salami piquant et non piquant, lardons, chair à saucisse | allergènes : Gluten, Soja, Lait
+- Mortadella (blanche) : 17,50 € — mozzarella, grana padano râpé, mortadella, burrata, pistaches | allergènes : Gluten, Œufs, Lait, Fruits à coque
+
+## Pâtes
+- Pasta Napoli : 14,00 € — sauce tomate, basilic | allergènes : Gluten, Céleri
+- Pasta all'Amatriciana : 15,00 € — sauce tomate, lardons, oignons | allergènes : Gluten
+- Pasta Carrettiera : 15,00 € — filets d'anchois, tomates cerises, ail, basilic | allergènes : Gluten, Poisson (À VÉRIFIER : liste pas encore complète)
+- Pasta Carbonara : 15,00 € — lardons, crème, jaune d'œuf, poivre, grana padano râpé | allergènes : Gluten, Œufs, Lait
+- Pasta Panna e prosciutto : 15,00 € — jambon, grana padano râpé, crème | allergènes : Gluten, Œufs, Soja, Lait
+- Pasta ai Quattro Formaggi : 15,00 € — 4 fromages, crème | allergènes : Gluten, Œufs, Lait, Céleri
+- Pasta alla Norma : 15,00 € — sauce tomate, aubergines, ricotta salata, basilic | allergènes : Gluten, Lait, Céleri
+- Pasta Funghi e Salsiccia : 16,00 € — chair à saucisse, champignons, crème | allergènes : Gluten, Lait
+- Pasta al Salmone : 17,00 € — saumon, crème, sauce tomate | allergènes : Gluten, Poisson, Lait (À VÉRIFIER : liste pas encore complète)
+- Pasta frutti di mare : 17,00 € — fruits de mer, ail, tomates cerises, persil | allergènes : Gluten, Crustacés, Mollusques (À VÉRIFIER : liste pas encore complète)
+- Pasta Scampi : 17,00 € — scampis, crème, tomates cerises, persil | allergènes : Gluten, Crustacés, Lait (À VÉRIFIER : liste pas encore complète)
+
+## Desserts
+- Tiramisù : 7,00 € — traditionnel ou speculoos | allergènes : Gluten, Œufs, Lait
+- Pizza Nutella et pistache : 12,50 € — Nutella, pistaches | allergènes : Gluten, Soja, Lait, Fruits à coque
+- Pizza Nutella et fruits : 12,50 € — Nutella, fruits | allergènes : Gluten, Soja, Lait, Fruits à coque
+
+## Boissons
+- Coca-Cola, Fanta, Ice Tea : 2,50 € — canette 33 cl | allergènes : aucun connu
+- Coca-Cola, Fanta, Ice Tea : 6,00 € — bouteille 1,5 L | allergènes : aucun connu
+- Eau : 2,50 € — 50 cl | allergènes : aucun connu
+- Jupiler : 2,50 € — canette 33 cl | allergènes : Gluten
+- Résilience : 5,00 € | allergènes : Gluten (À VÉRIFIER : liste pas encore complète)
+- Vin rouge / rosé : 16,00 € — bouteille 75 cl | allergènes : Sulfites
+
+## Suppléments (sur les pizzas)
+- gratuit : origan, huile d'olive, basilic
+- 0,50 € : crème de balsamique, miel, ail
+- 1,00 € : tomate, champignons, artichauts, courgettes, oignons, tomates cerises, ananas, pomme de terre, poivrons, épinards, friarielli (brocoli-rave), chicons, crème, câpres, olives, pesto, roquette, œuf
+- 2,50 € : charcuterie, grana padano râpé, aubergines, anchois, mozzarella fior di latte, mozzarella di bufala, thon, lardons, ricotta
+- 4,50 € : scampis, fruits de mer, jambon cru italien, bresaola, burrata, saumon
+
+# FERMETURES EXCEPTIONNELLES
+- aucune annoncée sur le site
+
+Téléphone : 0455 11 16 77

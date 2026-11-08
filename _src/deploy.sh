@@ -22,3 +22,14 @@ done
 cp $S/menu/estimation-livraison.html $D/
 cp $S/menu/logo-dark.png $S/menu/logo-light.png $S/menu/logo-mix.png $S/menu/logo-glow.png $S/menu/favicon.ico $S/menu/icon-512.png $S/menu/apple-touch-icon.png $D/
 if [ "$1" = main ]; then cp $S/menu/favicon.ico $S/qr/og-image.jpg $R/; fi
+# Assistance (assistente IA): dati pubblici del menu + pulsante. Sul sito vero solo se esiste _src/assist/ONLINE (ok del titolare)
+node $S/assist/gen_kb.js $S/menu/index.html $D/assistance-kb.txt
+if [ "$1" != main ] || [ -f $S/assist/ONLINE ]; then
+  cp $S/assist/assist.js $D/assist.js
+  for f in index.html menu.html; do python3 - "$D/$f" <<'P'
+import sys;p=sys.argv[1];s=open(p).read()
+if 'src="assist.js' not in s: s=s.replace('</body>','<script src="assist.js?v=1" defer></script>\n</body>',1)
+open(p,'w').write(s)
+P
+  done
+fi
