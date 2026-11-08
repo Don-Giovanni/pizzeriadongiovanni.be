@@ -54,7 +54,7 @@ const norm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u03
 const eur=v=>v?v+'<span class="e"> €</span>':'<span class="gl">gratuit</span><span class="gs">0</span>';
 async function geo(v){if(v[0]==="Thuin (centre)")return [4.2885,50.3425]; /* punto fisso: gare de Thuin (ville basse); il punto medio del comune dato da Photon è a 2,5 km */const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",v[0].replace(" (centre)","")+" "+v[2]);u.searchParams.set("limit","5");u.searchParams.set("lang","fr");
   u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");["city","locality","district","other"].forEach(l=>u.searchParams.append("layer",l));
-  const j=await (await fetch(u)).json();const f=(j.features||[]).find(f=>f.properties.countrycode==="BE")||j.features[0];if(!f)throw new Error("introuvable");return f.geometry.coordinates}
+  let j=await (await fetch(u)).json();let f=(j.features||[]).find(f=>f.properties.countrycode==="BE");if(!f&&v[1]&&v[1]!==v[0]){u.searchParams.set("q",v[0]+" "+v[1]);j=await (await fetch(u)).json();f=(j.features||[]).find(f=>f.properties.countrycode==="BE")} /* es. Clermont: OSM senza CAP → nome + comune */if(!f)throw new Error("introuvable");return f.geometry.coordinates}
 async function route(d){const u=new URL(ORS+"/v2/directions/driving-car");u.searchParams.set("api_key",ORS_KEY);u.searchParams.set("start",ORIG.join(","));u.searchParams.set("end",d.join(","));
   const r=await fetch(u);if(!r.ok)throw new Error("route "+r.status);const s=(await r.json()).features[0].properties.summary;return [s.distance/1000,s.duration/60]}
 function draw(R,dt){R=R.filter(r=>r.km!=null);R.sort((a,b)=>a.km-b.km);const near=R.filter(r=>r.km<=12),far=R.filter(r=>r.km>12);
@@ -76,14 +76,14 @@ async function run(){$("go").disabled=true;const R=[];let i=0,errs=[],why="";
 /* calcolatore indirizzo esatto */
 function compare(p,km){document.querySelectorAll("tr.hok,tr.hno").forEach(t=>t.classList.remove("hok","hno"));
   let S=null;try{S=JSON.parse(localStorage.getItem("dg_estim")||"null")}catch(e){}if(!S||!S.R)return`<div class="cmp no">Pas de tableau : appuyez d'abord sur « Calculer ».</div>`;
-  const cand=[p.district,p.locality,p.city,p.name].map(norm).filter(Boolean);let r=null;
-  for(const c of cand){r=S.R.find(x=>norm(x.n)===c);if(r)break}
-  if(!r&&p.postcode){const L=S.R.filter(x=>x.cp===p.postcode);if(L.length===1)r=L[0]}
+  let r=null;for(const c of [p.district,p.locality,p.name].map(norm).filter(Boolean)){r=S.R.find(x=>norm(x.n)===c);if(r)break}
+  if(!r&&p.postcode){const L=S.R.filter(x=>x.cp===p.postcode);if(L.length===1)r=L[0]} /* CAP unico (es. 6534 = Gozée, anche per Aulne) prima del comune */
+  if(!r&&p.city){const c=norm(p.city);r=S.R.find(x=>norm(x.n)===c)||null}
   if(!r)return'<div class="cmp no">Village pas trouvé dans le tableau.</div>';
   const tr=document.querySelector(`tr[data-v="${norm(r.n)}"]`);
-  if(r.km>12||km>12){const same=(r.km>12)===(km>12);if(tr)tr.classList.add(same?"hok":"hno");return `<div class="cmp ${same?"ok":"no"}">${r.n} (centre) : ${r.km.toFixed(1).replace(".",",")} km${same?" · même cas":" · différent du tableau"}</div>`}
+  if(r.km>12||km>12){const same=(r.km>12)===(km>12);if(tr)tr.classList.add(same?"hok":"hno");return `<div class="cmp ${same?"ok":"no"}">${r.n.replace(" (centre)","")} (centre) : ${r.km.toFixed(1).replace(".",",")} km${same?" · même cas":" · différent du tableau"}</div>`}
   const th=r.n==="Thuin (centre)",ta=p.postcode==="6530"&&!/leers|fosteau/i.test(String([p.district,p.locality,p.city].join(" ")));const d=NP.filter(n=>fee(kmE(r.km,th),n)!==fee(kmE(km,ta),n));const ok=!d.length;if(tr)tr.classList.add(ok?"hok":"hno");
-  return ok?`<div class="cmp ok">✓ Même prix que ${r.n} dans le tableau.</div>`:`<div class="cmp no">✗ Différent de ${r.n} (centre) : ${d.map(n=>`${n} plats ${eur2(fee(kmE(r.km,th),n))} → ${eur2(fee(kmE(km,ta),n))}`).join(" · ")}</div>`}
+  return ok?`<div class="cmp ok">✓ Même prix que ${r.n} dans le tableau.</div>`:`<div class="cmp no">✗ Différent de ${r.n.replace(" (centre)","")} (centre) : ${d.map(n=>`${n} plats ${eur2(fee(kmE(r.km,th),n))} → ${eur2(fee(kmE(km,ta),n))}`).join(" · ")}</div>`}
 const eur2=v=>v==null?"pas possible":v?v+" €":"gratuit";
 let sugT=0,seq=0;
 async function search(q){const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",q);u.searchParams.set("limit","6");u.searchParams.set("lang","fr");
