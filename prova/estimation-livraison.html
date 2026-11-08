@@ -52,7 +52,7 @@ const kmE=(km,thuin)=>km<=2&&!thuin?2.001:km;
 const fx=v=>v==null?"—":String(v);
 const norm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\(centre\)/,"").replace(/[^a-z]/g,"");
 const eur=v=>v?v+'<span class="e"> €</span>':'<span class="gl">gratuit</span><span class="gs">0</span>';
-async function geo(v){const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",v[0].replace(" (centre)","")+" "+v[2]);u.searchParams.set("limit","5");u.searchParams.set("lang","fr");
+async function geo(v){if(v[0]==="Thuin (centre)")return [4.2885,50.3425]; /* punto fisso: gare de Thuin (ville basse); il punto medio del comune dato da Photon è a 2,5 km */const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",v[0].replace(" (centre)","")+" "+v[2]);u.searchParams.set("limit","5");u.searchParams.set("lang","fr");
   u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");["city","locality","district","other"].forEach(l=>u.searchParams.append("layer",l));
   const j=await (await fetch(u)).json();const f=(j.features||[]).find(f=>f.properties.countrycode==="BE")||j.features[0];if(!f)throw new Error("introuvable");return f.geometry.coordinates}
 async function route(d){const u=new URL(ORS+"/v2/directions/driving-car");u.searchParams.set("api_key",ORS_KEY);u.searchParams.set("start",ORIG.join(","));u.searchParams.set("end",d.join(","));
