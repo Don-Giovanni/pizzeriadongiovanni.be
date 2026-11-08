@@ -118,7 +118,7 @@
     if (sess) return sess;
     const tok = await turnstile();
     const r = await post("/start", { ts: tok });
-    if (!r.s) throw new Error(r.err || "start");
+    if (!r.s) { console.log("assist start", JSON.stringify(r)); window.DG_ASSIST_LAST = r; throw new Error(r.err || "start"); }
     return sess = r.s;
   }
 
@@ -146,7 +146,7 @@
           if (off >= 3) { LS.set("dg_assist_block", String(Date.now() + 3600000)); end(t("ended")); }
         } else if (r.action === "demande") { req = { title: r.title, resume: txt }; reqButtons(); }
       }
-    } catch (e) { w.remove(); MSGS.pop(); callBox(t("down")); }
+    } catch (e) { console.log("assist", e && e.message); window.DG_ASSIST_ERR = String(e && e.message); w.remove(); MSGS.pop(); callBox(t("down")); }
     busy = false; if (S) S.f.querySelector("button").disabled = false;
   }
 
