@@ -47,7 +47,7 @@
 .dga-p{padding:6px 12px;font-size:11px;color:#b7ab98;border-bottom:1px solid #2c2622}.dga-p a,.dga-p2 a{color:#f2b33d}
 .dga-p2{font-size:11px;color:#b7ab98}`;
 
-  let S = null, MSGS = [], busy = false, sess = null, idleT = null, startT = 0, off = 0, req = null, ended = false;
+  let S = null, MSGS = [], busy = false, sess = null, idleT = null, startT = 0, off = 0, req = null, addMode = false, ended = false;
 
   function placeBtn(b) {
     let h = 0;
@@ -114,7 +114,7 @@
 
   function open() {
     if (S) return;
-    ended = false; MSGS = []; sess = null; off = 0; req = null; startT = Date.now();
+    ended = false; MSGS = []; sess = null; off = 0; req = null; addMode = false; startT = Date.now();
     const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-x" type="button" aria-label="${esc(t("close"))}">×</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="1" maxlength="600" placeholder="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
     document.body.appendChild(box);
     S = { box, m: box.querySelector(".dga-m"), f: box.querySelector(".dga-f"), ta: box.querySelector("textarea") };
@@ -178,7 +178,8 @@
           off++;
           if (off === 2) sys(t("off2"));
           if (off >= 3) { const n = +(LS.get("dg_assist_blockn") || 0) + 1; LS.set("dg_assist_blockn", String(n)); LS.set("dg_assist_block", String(Date.now() + (n === 1 ? 1 : 5) * 3600000)); end(t("ended")); } /* 1° blocco 1 h, poi 5 h */
-        } else if (r.action === "demande") { req = { title: r.title, resume: txt }; reqButtons(); }
+        } else if (r.action === "demande") { req = { title: r.title, resume: txt }; addMode = false; reqButtons(); }
+        else if (req && addMode) { addMode = false; reqButtons(); } /* dopo «Ajouter des détails» i pulsanti tornano sempre */
       }
     } catch (e) { console.log("assist", e && e.message); window.DG_ASSIST_ERR = String(e && e.message); w.remove(); MSGS.pop(); callBox(t("down") + (PAGE === "prova" ? " [" + String(e && e.message) + " " + JSON.stringify(window.DG_ASSIST_LAST || "") + "]" : "")); }
     busy = false; if (S) S.f.querySelector("button").disabled = false;
@@ -188,7 +189,7 @@
     const c = el('<div class="dga-c"></div>');
     const b1 = el(`<button type="button" class="dga-k p">${esc(t("sendReq"))}</button>`), b2 = el(`<button type="button" class="dga-k">${esc(t("addDet"))}</button>`), b3 = el(`<button type="button" class="dga-k">${esc(t("cancel"))}</button>`);
     b1.onclick = () => { c.remove(); reqForm() };
-    b2.onclick = () => { c.remove(); S.ta.focus() };
+    b2.onclick = () => { c.remove(); addMode = true; S.ta.focus() };
     b3.onclick = () => { c.remove(); req = null };
     c.append(b1, b2, b3); addNode(c);
   }
