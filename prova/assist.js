@@ -63,6 +63,22 @@
 
   function init() {
     const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+    // Confidentialité in «Voir aussi» (pagina di arrivo)
+    const alg = document.querySelector('.card a.lk[href="allergenes.html"]');
+    if (alg && !document.querySelector('.card a.lk[href="confidentialite.html"]')) {
+      const a = document.createElement("a"); a.className = "lk"; a.href = "confidentialite.html"; alg.after(a);
+      const pl = () => a.textContent = t("priv") + " →"; pl(); setInterval(pl, 800);
+    }
+    // Barra in basso (pagina di arrivo): voce «Assistance» a sinistra di «Appeler»
+    const bar = document.querySelector("nav.bot .in"), tel = bar && bar.querySelector("a.tel");
+    if (bar && tel) {
+      const a = document.createElement("a"); a.href = "#"; a.className = "dga-nav";
+      a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/><circle cx="8.5" cy="12" r=".6" fill="currentColor"/><circle cx="12" cy="12" r=".6" fill="currentColor"/><circle cx="15.5" cy="12" r=".6" fill="currentColor"/></svg><span class="t"></span>';
+      bar.insertBefore(a, tel); bar.style.gridTemplateColumns = "repeat(6,1fr)";
+      const lbl = () => { a.querySelector(".t").textContent = t("btn"); a.setAttribute("aria-label", t("btn")) }; lbl(); setInterval(lbl, 800);
+      a.addEventListener("click", e => { e.preventDefault(); open() });
+      return;
+    }
     const b = document.createElement("button");
     b.type = "button"; b.className = "dga-btn"; b.setAttribute("aria-label", t("btn"));
     b.innerHTML = '<span aria-hidden="true">💬</span><span class="dga-bl"></span>';
