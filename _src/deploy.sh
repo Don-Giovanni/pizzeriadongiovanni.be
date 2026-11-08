@@ -20,6 +20,7 @@ P
   fi
 done
 cp $S/menu/estimation-livraison.html $D/
+mkdir -p $D/fonts; cp $S/menu/fonts/* $D/fonts/
 cp $S/menu/logo-dark.png $S/menu/logo-light.png $S/menu/logo-mix.png $S/menu/logo-glow.png $S/menu/favicon.ico $S/menu/icon-512.png $S/menu/apple-touch-icon.png $D/
 if [ "$1" = main ]; then cp $S/menu/favicon.ico $S/qr/og-image.jpg $R/; fi
 # Assistance (assistente IA): dati pubblici del menu + pulsante. Sul sito vero solo se esiste _src/assist/ONLINE (ok del titolare)

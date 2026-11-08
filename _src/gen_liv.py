@@ -64,7 +64,7 @@ html = r'''<!doctype html>
 <title>Livraison Don Giovanni</title>
 <meta name="description" content="Tarifs de livraison de la Pizzeria Don Giovanni, Thuin : prix selon les km et le nombre de pizzas.">
 <link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-512.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 :root{--bg:#ffffff;--fg:#17120f;--muted:#5f5650;--line:#ddd3c8;--red:#c8231c;--green:#1f8a4c;--zebra:#f7f2ec;color-scheme:light}
 *{box-sizing:border-box}
