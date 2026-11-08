@@ -146,7 +146,7 @@
           if (off >= 3) { LS.set("dg_assist_block", String(Date.now() + 3600000)); end(t("ended")); }
         } else if (r.action === "demande") { req = { title: r.title, resume: txt }; reqButtons(); }
       }
-    } catch (e) { console.log("assist", e && e.message); window.DG_ASSIST_ERR = String(e && e.message); w.remove(); MSGS.pop(); callBox(t("down")); }
+    } catch (e) { console.log("assist", e && e.message); window.DG_ASSIST_ERR = String(e && e.message); w.remove(); MSGS.pop(); callBox(t("down") + (PAGE === "prova" ? " [" + String(e && e.message) + " " + JSON.stringify(window.DG_ASSIST_LAST || "") + "]" : "")); }
     busy = false; if (S) S.f.querySelector("button").disabled = false;
   }
 
