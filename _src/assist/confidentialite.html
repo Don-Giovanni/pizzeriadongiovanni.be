@@ -24,7 +24,7 @@ ul{padding-left:20px}
 </head>
 <body>
 <div class="wrap">
-<div class="top"><a class="back" href="index.html" onclick="if(document.referrer.indexOf(location.origin)===0){history.back();return false}">← retour</a><span class="langs" id="langs"></span></div>
+<div class="top"><a class="back" href="index.html" onclick="return goBack()">← retour</a><span class="langs" id="langs"></span></div>
 <div id="c"></div>
 </div>
 <script>
@@ -91,6 +91,7 @@ s:[["Estadísticas","Estadísticas de visitas anónimas (Umami), sin cookies y s
 ["Fuera de la Unión Europea","Anthropic, Cloudflare y Resend son empresas estadounidenses: algunos datos pueden tratarse fuera de la UE, con las garantías del RGPD (cláusulas contractuales tipo)."],
 ["Sus derechos","Puede pedir el acceso, la corrección o el borrado de sus datos, u oponerse: info@pizzeriadongiovanni.be. También puede reclamar ante la Autoridad belga de Protección de Datos (www.autoriteprotectiondonnees.be)."]]}
 };
+function goBack(){const r=document.referrer;if(r&&r.indexOf(location.origin)===0&&history.length>1){history.back();return false}location.href=r&&r.indexOf(location.origin)===0?r.split("#")[0]:"index.html";return false}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let L=new URLSearchParams(location.search).get("l")||LS.get("dg_lang")||(navigator.language||"fr").slice(0,2);if(!T[L])L="fr";

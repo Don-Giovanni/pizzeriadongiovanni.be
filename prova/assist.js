@@ -79,6 +79,22 @@
       a.addEventListener("click", e => { e.preventDefault(); open() });
       return;
     }
+    // Pagina Menu: chip «💬 Assistance» nella barra in alto, accanto ad Allergènes (resta bloccata in alto)
+    const chips = document.getElementById("chips");
+    if (chips) {
+      const ensure = () => {
+        let c = chips.querySelector(".dga-chip");
+        if (!c) {
+          c = document.createElement("a"); c.className = "chip dga-chip"; c.href = "#";
+          c.addEventListener("click", e => { e.preventDefault(); open() });
+          const alg = chips.querySelector('a[href="allergenes.html"]');
+          if (alg) alg.after(c); else chips.appendChild(c);
+        }
+        const txt = "💬 " + t("btn"); if (c.textContent !== txt) c.textContent = txt;
+      };
+      ensure(); new MutationObserver(ensure).observe(chips, { childList: true }); setInterval(ensure, 800);
+      return;
+    }
     const b = document.createElement("button");
     b.type = "button"; b.className = "dga-btn"; b.setAttribute("aria-label", t("btn"));
     b.innerHTML = '<span aria-hidden="true">💬</span><span class="dga-bl"></span>';
