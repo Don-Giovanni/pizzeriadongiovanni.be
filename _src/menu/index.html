@@ -421,7 +421,7 @@ function totals(){const sub=CART.reduce((a,l)=>a+byId[l.id].p*l.q,0),sup=CART.re
     if(km>15){msg=t("outZone");ok=false}
     else if(km>12){msg=t("bigOnly");ok=false}
     else if(km>8&&npz<3){msg=t("min3");ok=false}
-    else if(npz<2&&!(npz>=1&&food>=30)){msg=t("min2");ok=false}
+    else if(npz<2&&!(npz>=1&&food>=35)){msg=t("min2");ok=false}
     else if(!(km>0)){msg=t("pickV");ok=false}
     else fee=kmFee(km<=2&&!inThuin()?2.001:km,Math.max(npz,2));}
   const st=MODE!=="del"?"take":ok?"ok":(kmVal()>0||npz<2)?"no":"wait";
@@ -485,7 +485,7 @@ function tips(T){if(MODE!=="del")return"";const km=kmVal();if(!(km>0)||km>12)ret
   const go=`<div class="tipc"><button type="button" class="tchip" data-goto="pizzas">${esc(t("seePz"))}</button><button type="button" class="tchip" data-goto="pates">${esc(t("seePa"))}</button></div>`;
   if(T.npz===0)return `<div class="tip">${esc(t("tipNone"))}${go}</div>`;
   if(!T.ok&&km>8&&T.npz<3)return `<div class="tip">${esc(t("tipMin3",3-T.npz))}${go}</div>`;
-  if(!T.ok&&T.npz===1)return `<div class="tip">${esc(t("tipMiss",price(Math.max(0,30-T.sub-T.sup))))}${tipChips(["vin","nut","tc","ts"])}</div>`;
+  if(!T.ok&&T.npz===1)return `<div class="tip">${esc(t("tipMiss",price(Math.max(0,35-T.sub-T.sup))))}${tipChips(["vin","nut","tc","ts"])}</div>`;
   if(T.ok&&T.fee>0&&((km<=8&&T.npz===4)||(km>8&&km<=10&&T.npz===5)||(km>10&&T.npz===6)))return `<div class="tip">${esc(t("tipFree"))}${go}</div>`;
   if(T.ok&&!CART.some(l=>/^Tiramis|Nutella/i.test(String(byId[l.id].n))))return `<div class="tip">${esc(t("tipDes"))}${tipChips(["tc","ts","nut","nut2"])}</div>`;
   return""}
