@@ -247,7 +247,7 @@ const CLOSED=[];   // [{from:"AAAA-MM-GG",to:"AAAA-MM-GG",note:{fr:"",nl:"",en:"
 const OPEN_EXTRA=[]; // lunedì aperti eccezionalmente ["AAAA-MM-GG"]
 const ALLERGEN_DRAFT=true; // bozza da verificare con le etichette dei fornitori
 /* zone livraison: prezzo per 2,3,4 pizze; 5+ gratuite */
-const TIERS=[[2,[3,3,3]],[4,[4,4,4]],[6,[5,5,4]],[8,[6,6,5]],[10,[7,7,6]]]; /* [fino a km, [2,3,4 piatti]]; fino a 8 km min 2 e gratuita da 5. 8-10 km (dal 10.11.2026): min 3, 7 € (3), 6 € (4-5), gratuita da 6. Fuori da Thuin almeno la fascia 2-4 km. 10-12 km: min 3 piatti, 8 € (3-5), 7 € (6), gratuita da 7; 12-15 solo grandi ordini */
+const TIERS=[[2,[3,3,3]],[4,[4,4,4]],[6,[5,5,4]],[8,[6,6,5]],[10,[7,7,6]]]; /* [fino a km, [2,3,4 piatti]]; fino a 8 km min 2 e gratuita da 5. 8-10 km (dal 10.11.2026): min 3, 7 € (3-4), 6 € (5), gratuita da 6. Fuori da Thuin almeno la fascia 2-4 km. 10-12 km: min 3 piatti, 8 € (3-5), 7 € (6), gratuita da 7; 12-15 solo grandi ordini */
 const ORS_KEY="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjdjMWM5ZTQ2NWE1YTQwYzNhODE3MjUzZTg5ZTk5M2MxIiwiaCI6Im11cm11cjY0In0=",ORS="https://api.heigit.org/openrouteservice";
 const MAPS_G="https://www.google.com/maps/dir/?api=1&destination=Grand%27Rue%201%2C%206530%20Thuin%2C%20Belgique&travelmode=driving",MAPS_W="https://www.waze.com/ul?q=Grand%27Rue%201%2C%206530%20Thuin&navigate=yes";
 /* paesi: [nome, cap, km su strada da Grand'Rue 1 (OSRM, 04.11.2026), zona; -1 = fuori zona] */
@@ -414,7 +414,7 @@ const fmtMin=s=>Math.max(1,Math.round(s/60))+" min";
 const fmtKm=v=>(Math.round(v*10)/10).toFixed(1).replace(".",L==="en"?".":",");
 const kmVal=()=>{const v=parseFloat(String(KM).replace(",","."));return isFinite(v)?v:NaN};
 function inThuin(){const mm=ADR.match(/(\d{4}) ([^,]+)$/);return !mm||(mm[1]==="6530"&&!/leers|fosteau/i.test(mm[2]))}
-function kmFee(km,npz){if(npz<2)return 0;if(km<=8){if(npz>=5)return 0;const tr=TIERS.find(x=>km<=x[0]);return tr[1][Math.min(npz,4)-2]}if(km<=10)return npz>=6?0:npz>=4?6:7;return npz>=7?0:npz>=6?7:8}
+function kmFee(km,npz){if(npz<2)return 0;if(km<=8){if(npz>=5)return 0;const tr=TIERS.find(x=>km<=x[0]);return tr[1][Math.min(npz,4)-2]}if(km<=10)return npz>=6?0:npz>=5?6:7;return npz>=7?0:npz>=6?7:8}
 function totals(){const sub=CART.reduce((a,l)=>a+byId[l.id].p*l.q,0),sup=CART.reduce((a,l)=>a+(lineUnit(l)-byId[l.id].p)*l.q,0);
   const npz=CART.reduce((a,l)=>a+(byId[l.id].dish?l.q:0),0),food=sub+sup;let fee=0,msg="",ok=true;
   if(MODE==="del"){const km=kmVal();
