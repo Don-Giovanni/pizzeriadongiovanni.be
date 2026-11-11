@@ -204,7 +204,8 @@
       if (!/^(\+3[23]|\+31|\+49|\+352|0)\d{8,12}$/.test(d)) return err(t("errPhone"));
       const btn = f.querySelector("button"); btn.disabled = true;
       try {
-        const r = await post("/code", { s: sess, email: f.e.value.trim(), phone, lang: lang() });
+        const ts = await turnstile(); /* nuovo controllo anti-robot per ogni email col codice */
+        const r = await post("/code", { s: sess, ts, email: f.e.value.trim(), phone, lang: lang() });
         if (r.err) { btn.disabled = false; return err(r.err === "email" ? t("errEmail") : r.err === "phone" ? t("errPhone") : t("err")) }
         const data = { name: f.n.value.trim(), phone, email: f.e.value.trim().toLowerCase(), note: f.x.value.trim().slice(0, 300), c: r.c };
         f.remove(); codeForm(data);
