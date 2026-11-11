@@ -444,13 +444,14 @@ const supName=s=>txt3(s.x);
 
 /* stato panier */
 let CART=[];try{CART=JSON.parse(LS.get("dg_cart")||"[]").filter(l=>byId[l.id])}catch(e){CART=[]}
-let MODE=LS.get("dg_mode")||"take",KM=LS.get("dg_km")||"",ADR=LS.get("dg_adr")||"",DUR=+(LS.get("dg_dur")||0),ADRST="",NOTE=LS.get("dg_note")||"",onlyWhite=false,openPick=-1;
-const save=()=>{LS.set("dg_cart",JSON.stringify(CART));LS.set("dg_mode",MODE);LS.set("dg_km",KM);LS.set("dg_adr",ADR);LS.set("dg_dur",String(DUR||""));LS.set("dg_note",NOTE)};
+let MODE=LS.get("dg_mode")||"take",KM=LS.get("dg_km")||"",ADR=LS.get("dg_adr")||"",ADRCP=LS.get("dg_cp")||"",DUR=+(LS.get("dg_dur")||0),ADRST="",NOTE=LS.get("dg_note")||"",onlyWhite=false,openPick=-1;
+const save=()=>{LS.set("dg_cart",JSON.stringify(CART));LS.set("dg_mode",MODE);LS.set("dg_km",KM);LS.set("dg_adr",ADR);LS.set("dg_cp",ADRCP);LS.set("dg_dur",String(DUR||""));LS.set("dg_note",NOTE)};
 const lineUnit=l=>byId[l.id].p+(l.s||[]).reduce((a,sid)=>a+(SUPL.find(s=>s.id===sid)?.p||0),0);
 const fmtMin=s=>Math.max(1,Math.round(s/60))+" min";
 const fmtKm=v=>(Math.round(v*10)/10).toFixed(1).replace(".",L==="en"?".":",");
 const kmVal=()=>{const v=parseFloat(String(KM).replace(",","."));return isFinite(v)?v:NaN};
-function inThuin(){const mm=ADR.match(/(\d{4}) ([^,]+)$/);return !mm||(mm[1]==="6530"&&!/leers|fosteau/i.test(mm[2]))}
+/* Dentro Thuin (3 € fino a 2 km) solo se il codice postale è 6530 (dato del servizio mappe, altrimenti quello scritto nell'indirizzo) e non è Leers-et-Fosteau. Senza codice postale: fuori Thuin (tariffa prudente). */
+function inThuin(){const mm=ADR.match(/(\d{4}) ([^,]+)$/),cp=ADRCP||(mm?mm[1]:"");return cp==="6530"&&!/leers|fosteau/i.test(ADR)}
 function kmFee(km,npz){if(npz<2)return 0;if(km<=8){if(npz>=5)return 0;const tr=TIERS.find(x=>km<=x[0]);return tr[1][Math.min(npz,4)-2]}if(km<=10)return npz>=6?0:npz>=5?6:7;return npz>=7?0:npz>=6?7:8}
 function totals(){const sub=CART.reduce((a,l)=>a+byId[l.id].p*l.q,0),sup=CART.reduce((a,l)=>a+(lineUnit(l)-byId[l.id].p)*l.q,0);
   const npz=CART.reduce((a,l)=>a+(byId[l.id].dish?l.q:0),0),food=sub+sup;let fee=0,msg="",ok=true;
@@ -669,13 +670,13 @@ async function photon1(q,limit){const u=new URL(PH);u.searchParams.set("q",q);u.
 async function origin(){return ORIG}
 function showSug(list){const b=$("sug");if(!b)return;if(!list.length){b.hidden=true;b.innerHTML="";return}b.innerHTML=list.map((f,i)=>`<button type="button" role="option" data-sg="${i}">${esc(f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,""))}</button>`).join("");b.hidden=false;b._list=list}
 const trk=(n,d)=>{try{if(window.umami&&umami.track)umami.track(n,d)}catch(_){}};
-async function pick(f){ADR=f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,"");ADRST="wait";KM="";DUR=0;save();refreshCart();
+async function pick(f){ADR=f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,"");ADRCP=/^\d{4}$/.test(String(f.properties.cp||""))?String(f.properties.cp):"";ADRST="wait";KM="";DUR=0;save();refreshCart();
   try{const o=await origin(),d=f.geometry.coordinates;const j=await orsGet("/v2/directions/driving-car",{start:o.join(","),end:d.join(",")});
     const sm=j.features[0].properties.summary,m=sm.distance;KM=String(Math.round(m)/1000);DUR=Math.round(sm.duration||0);{const mm=ADR.match(/(\d{4}) ([^,]+)$/);trk("livraison-village",{village:mm?mm[2]:"?",cp:mm?mm[1]:"?",km:Math.round(+KM)})}ADRST="";if(DBG)toast("orig "+o.join(",")+" · "+m+" m",8000)}
   catch(e){ADRST="err";KM="";DUR=0}
   save();bar();refreshCart()}
 function refreshCart(){const sh=$("sheet");const sc=sh?sh.scrollTop:0;cart();if(sh)sh.scrollTop=sc}
-document.addEventListener("input",e=>{if(e.target.id!=="adr")return;const q=e.target.value.trim();ADR=e.target.value;KM="";DUR=0;if(ADRST)ADRST="";save();bar();
+document.addEventListener("input",e=>{if(e.target.id!=="adr")return;const q=e.target.value.trim();ADR=e.target.value;ADRCP="";KM="";DUR=0;if(ADRST)ADRST="";save();bar();
   const kb=$("kmbox");if(kb){kb.textContent="— km";kb.classList.remove("on")}const db=$("durbox");if(db){db.textContent="— min";db.classList.remove("on")}
   clearTimeout(sugT);if(q.length<4){showSug([]);return}
   sugT=setTimeout(async()=>{const n=++sugN;try{const list=await photonQ(q,10);if(n!==sugN)return;showSug(list);if(!list.length){const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrNone"))}${DBG?`<br><small style="color:var(--muted);word-break:break-all">${esc(LASTDBG)}</small>`:""}</div>`;b.hidden=false}}}catch(err){if(n!==sugN)return;const b=$("sug");if(b){b.innerHTML=`<div style="padding:10px 12px;color:var(--amber);font-size:13px">${esc(t("adrBusy"))}${DBG?`<br><small style="color:var(--muted);word-break:break-all">${esc(LASTDBG)}</small>`:""}</div>`;b.hidden=false}}},400)});
