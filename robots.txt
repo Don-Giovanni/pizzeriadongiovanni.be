@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /_src/
+Sitemap: https://pizzeriadongiovanni.be/sitemap.xml
