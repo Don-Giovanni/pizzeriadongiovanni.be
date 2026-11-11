@@ -91,4 +91,7 @@
 # FERMETURES EXCEPTIONNELLES
 - aucune annoncée sur le site
 
+# SOIRS SANS LIVRAISON, EXCEPTIONNELLEMENT (pizzeria ouverte : à emporter seulement, jusqu'à 22h00)
+- aucun annoncé sur le site
+
 Téléphone : 0455 11 16 77
