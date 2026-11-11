@@ -133,7 +133,8 @@
   function escKey(e) { if (e.key === "Escape") close() }
   function close() { if (!S) return; S.box.remove(); S = null; clearTimeout(idleT); document.removeEventListener("keydown", escKey) }
   function end(msg) { ended = true; if (!S) return; sys(msg); S.f.hidden = true; clearTimeout(idleT) }
-  function resetIdle() { clearTimeout(idleT); idleT = setTimeout(() => end(t("idle")), 10 * 60000) }
+  /* mentre il modulo (dati o codice) è aperto la conversazione non si chiude per inattività: il cliente sta aspettando l'email */
+  function resetIdle() { clearTimeout(idleT); idleT = setTimeout(() => { if (S && S.m.querySelector(".dga-form")) resetIdle(); else end(t("idle")) }, 10 * 60000) }
 
   function turnstile() {
     return new Promise((res, rej) => {
@@ -204,8 +205,10 @@
       if (!/^(\+3[23]|\+31|\+49|\+352|0)\d{8,12}$/.test(d)) return err(t("errPhone"));
       const btn = f.querySelector("button"); btn.disabled = true;
       try {
-        const ts = await turnstile(); /* nuovo controllo anti-robot per ogni email col codice */
-        const r = await post("/code", { s: sess, ts, email: f.e.value.trim(), phone, lang: lang() });
+        const ask1 = async () => post("/code", { s: sess, ts: await turnstile() /* nuovo controllo anti-robot per ogni email col codice */, email: f.e.value.trim(), phone, lang: lang() });
+        if (!sess) await session();
+        let r = await ask1();
+        if (r.err === "expired") { sess = null; await session(); r = await ask1(); } /* sessione di 30 minuti scaduta: se ne prende una nuova e si riprova */
         if (r.err) { btn.disabled = false; return err(r.err === "email" ? t("errEmail") : r.err === "phone" ? t("errPhone") : t("err")) }
         const data = { name: f.n.value.trim(), phone, email: f.e.value.trim().toLowerCase(), note: f.x.value.trim().slice(0, 300), c: r.c };
         f.remove(); codeForm(data);
@@ -220,7 +223,9 @@
     f.onsubmit = async e => {
       e.preventDefault(); err(""); const btn = f.querySelector("button"); btn.disabled = true;
       try {
-        const r = await post("/send", { s: sess, c: data.c, code: f.c.value.trim(), name: data.name, phone: data.phone, email: data.email, title: req.title, resume: req.resume, extra, note: data.note, lang: lang() });
+        const send1 = () => post("/send", { s: sess, c: data.c, code: f.c.value.trim(), name: data.name, phone: data.phone, email: data.email, title: req.title, resume: req.resume, extra, note: data.note, lang: lang() });
+        let r = await send1();
+        if (r.err === "expired") { sess = null; await session(); r = await send1(); } /* sessione scaduta mentre arrivava l'email: il codice resta valido */
         if (r.ok) { f.remove(); add("dga-a", t("sent")); req = null; return }
         btn.disabled = false;
         if (r.err === "code_expired") { f.remove(); sys(t("errExp")); reqForm(); return }
