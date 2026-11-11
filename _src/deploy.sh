@@ -10,6 +10,8 @@ if [ "$1" = main ]; then D=$R; EXTRA="$UM
 '; fi
 python3 $S/make_site.py $S/menu/index.html $D/menu.html "$EXTRA"; python3 $S/site/menu_page.py $D/menu.html
 python3 $S/site/gen_home.py $S/menu/index.html $D/index.html "$EXTRA"; mkdir -p $D/img; cp $S/site/img/*.jpg $D/img/
+# SEO: titolo del menu, canonical, scheda ristorante; sul sito vero anche sitemap.xml, robots.txt, 404.html
+python3 $S/seo/gen_seo.py $S/menu/index.html $D ${1:-prova}
 for f in allergenes.html livraison.html; do
   if [ "$1" = main ]; then python3 - "$S/menu/$f" "$D/$f" "$UM" <<'P'
 import sys;s=open(sys.argv[1]).read();s=s.replace('<meta name="description"',sys.argv[3]+'\n<meta name="description"',1).replace('id="back" href="index.html"','id="back" href="menu.html"');open(sys.argv[2],'w').write(s)
