@@ -636,20 +636,20 @@ async function photonQ(q,limit){const fv=findVil(q);if(!fv)return photon(q,limit
   const all=[...(a.value||[]),...(b.value||[])];const seen=new Set(),out=[];
   for(const f of all){const p=f.properties;let lab=p.label;const cpok=p.cp===fv.cp&&(!CPV[p.cp]||cpPlace(p.cp,f.geometry.coordinates)===fv.v);
     if(cpok&&!nrm(lab).includes(nrm(fv.v)))lab=lab.replace(/\d{4} [^,]+$/,fv.cp+" "+fv.v);
-    if(seen.has(lab))continue;seen.add(lab);out.push({properties:{label:lab,cp:p.cp},geometry:f.geometry,_m:cpok?0:1})}
+    if(seen.has(lab))continue;seen.add(lab);out.push({properties:{label:lab,cp:p.cp,rue:p.rue},geometry:f.geometry,_m:cpok?0:1})}
   out.sort((x,y)=>x._m-y._m);return out.slice(0,6)}
 async function photon(q,limit){try{return await photon1(q,limit)}catch(e){await new Promise(r=>setTimeout(r,900));return await photon1(q,limit)}}
 async function photon1(q,limit){const u=new URL(PH);u.searchParams.set("q",q);u.searchParams.set("lat","50.339");u.searchParams.set("lon","4.287");u.searchParams.set("limit",String(limit||8));u.searchParams.set("lang","fr");u.searchParams.set("bbox","4.125,50.236,4.449,50.443");u.searchParams.append("layer","house");u.searchParams.append("layer","street");u.searchParams.append("layer","other");
   const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),9000);
   try{const r=await fetch(u,{signal:ctl.signal});const txt=await r.text();LASTDBG="photon → "+r.status+" · "+txt.slice(0,300);if(!r.ok)throw new Error("photon "+r.status);const j=JSON.parse(txt);
-    const seen=new Set();return (j.features||[]).filter(f=>f.properties&&f.properties.countrycode==="BE"&&hav(ORIG,f.geometry.coordinates)<=11.5).map(f=>({properties:{label:phLabel(f.properties,f.geometry.coordinates),cp:f.properties.postcode},geometry:f.geometry})).filter(f=>{const k=f.properties.label;if(!k||seen.has(k))return false;seen.add(k);return true}).slice(0,5)}
+    const seen=new Set();return (j.features||[]).filter(f=>f.properties&&f.properties.countrycode==="BE"&&hav(ORIG,f.geometry.coordinates)<=11.5).map(f=>({properties:{label:phLabel(f.properties,f.geometry.coordinates),cp:f.properties.postcode,rue:f.properties.street||(f.properties.type==="street"?f.properties.name:"")||""},geometry:f.geometry})).filter(f=>{const k=f.properties.label;if(!k||seen.has(k))return false;seen.add(k);return true}).slice(0,5)}
   catch(e){if(!LASTDBG.startsWith("photon"))LASTDBG="photon → "+(e.name||"")+" "+(e.message||e);throw e}finally{clearTimeout(tm)}}
 async function origin(){return ORIG}
 function showSug(list){const b=$("sug");if(!b)return;if(!list.length){b.hidden=true;b.innerHTML="";return}b.innerHTML=list.map((f,i)=>`<button type="button" role="option" data-sg="${i}">${esc(f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,""))}</button>`).join("");b.hidden=false;b._list=list}
 const trk=(n,d)=>{try{if(window.umami&&umami.track)umami.track(n,d)}catch(_){}};
-async function pick(f){ADR=f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,"");ADRCP=/^\d{4}$/.test(String(f.properties.cp||""))?String(f.properties.cp):"";ADRST="wait";KM="";DUR=0;save();refreshCart();
+async function pick(f){const RUE=String(f.properties.rue||"").slice(0,80);ADR=f.properties.label.replace(/, (Belgique|België|Belgium|Belgien)$/,"");ADRCP=/^\d{4}$/.test(String(f.properties.cp||""))?String(f.properties.cp):"";ADRST="wait";KM="";DUR=0;save();refreshCart();
   try{const o=await origin(),d=f.geometry.coordinates;const j=await orsGet("/v2/directions/driving-car",{start:o.join(","),end:d.join(",")});
-    const sm=j.features[0].properties.summary,m=sm.distance;KM=String(Math.round(m)/1000);DUR=Math.round(sm.duration||0);{const mm=ADR.match(/(\d{4}) ([^,]+)$/);trk("livraison-village",{village:mm?mm[2]:"?",cp:mm?mm[1]:"?",km:Math.round(+KM)})}ADRST="";if(DBG)toast("orig "+o.join(",")+" · "+m+" m",8000)}
+    const sm=j.features[0].properties.summary,m=sm.distance;KM=String(Math.round(m)/1000);DUR=Math.round(sm.duration||0);{const mm=ADR.match(/(\d{4}) ([^,]+)$/);trk("livraison-village",{village:mm?mm[2]:"?",cp:mm?mm[1]:"?",km:Math.round(+KM),rue:RUE||"?"})}ADRST="";if(DBG)toast("orig "+o.join(",")+" · "+m+" m",8000)}
   catch(e){ADRST="err";KM="";DUR=0}
   save();bar();refreshCart()}
 function refreshCart(){const sh=$("sheet");const sc=sh?sh.scrollTop:0;cart();if(sh)sh.scrollTop=sc}
