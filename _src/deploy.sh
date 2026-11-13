@@ -37,3 +37,14 @@ P
   done
   if [ "$1" != main ]; then sed -i 's|<meta name="description"|<meta name="robots" content="noindex">\n<meta name="description"|' $D/confidentialite.html; fi
 fi
+# «Cadeau caché» (buoni regalo del sito, gift.js): su /prova/ sempre, sul sito vero solo se esiste _src/gift/ONLINE (ok del titolare)
+if [ "$1" != main ] || [ -f $S/gift/ONLINE ]; then
+  cp $S/gift/gift.js $D/; GV=$(md5sum $S/gift/gift.js | cut -c1-8)
+  for f in index.html menu.html; do python3 - "$D/$f" "$GV" <<'P'
+import sys,re;p=sys.argv[1];s=open(p).read();s=re.sub(r'<script src="gift.js[^"]*" defer></script>\n','',s)
+s=s.replace('</body>','<script src="gift.js?v='+sys.argv[2]+'" defer></script>\n</body>',1)
+open(p,'w').write(s)
+P
+  done
+else rm -f $D/gift.js; for f in index.html menu.html; do sed -i '/<script src="gift.js/d' $D/$f; done
+fi
