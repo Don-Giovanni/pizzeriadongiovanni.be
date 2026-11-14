@@ -32,6 +32,7 @@
   save();
 
   /* frasi del buono (come sul tablet: buoni.md) */
+  const disc = (type) => /\d\s*€[^=]*?(réduction|remise)|(réduction|remise)[^=]*?\d\s*€/i.test(type); /* sconto in euro: la frase delle scorte non serve */
   const beer = (type) => /bi[eè]re|\bbeer\b|\bbier\b|\bvin\b|\bwine\b|\bwijn\b|\bwein\b|\bvino\b|\bbirra\b|cerveza/i.test(type); /* solo se il regalo è birra o vino */
   function pizzaLine(type) {
     const g = (type.split(/=|\+|:/).slice(1).join(" ") || type).trim();
@@ -65,8 +66,10 @@
     let sx = W / 2 - (w1 + w2) / 2; x.font = "400 40px Poppins, sans-serif"; x.fillStyle = INK; x.fillText(a1, sx, y); x.font = "600 40px Poppins, sans-serif"; x.fillStyle = GOLD; x.fillText(a2, sx + w1, y);
     x.textAlign = "center"; x.font = "400 30px Poppins, sans-serif"; x.fillStyle = MUTED;
     y += 60; x.fillText("À emporter uniquement · non échangeable contre de l'argent", W / 2, y);
-    y += 44; x.fillText("Dans la limite des stocks du jour. Sinon, bon valable", W / 2, y);
-    y += 44; x.fillText("un autre jour ou contre un article équivalent.", W / 2, y);
+    if (!disc(b.t)) {
+      y += 44; x.fillText("Dans la limite des stocks du jour. Sinon, bon valable", W / 2, y);
+      y += 44; x.fillText("un autre jour ou contre un article équivalent.", W / 2, y);
+    }
     y += 44; x.fillText("Non cumulable avec d'autres offres", W / 2, y);
     y += 44; x.fillText("(carte de fidélité ou autre).", W / 2, y);
     const pl = pizzaLine(b.t); if (pl) { y += 44; x.fillText(pl, W / 2, y); }
@@ -130,7 +133,7 @@
     if (!p) { p = document.createElement("button"); p.className = "dgg-pill"; p.onclick = mine; document.body.appendChild(p); addEventListener("resize", () => placePill(p)); }
     p.textContent = "🎁 " + t("pill"); placePill(p); setTimeout(() => placePill(p), 1200);
   }
-  const giftBox = (b) => `<div class="dgg-g"><b>${esc(b.t)}</b><div class="dgg-c"><span>DG-</span>${esc(b.code.replace(/^DG-/, ""))}</div><span class="dgg-v">${t("until")} ${dmy(b.v)} · ${t("take")} · ${t("cash")}<br>${t("stock")}<br>${t("cumul")}${beer(b.t) ? "<br>" + t("beer") : ""}</span></div>`;
+  const giftBox = (b) => `<div class="dgg-g"><b>${esc(b.t)}</b><div class="dgg-c"><span>DG-</span>${esc(b.code.replace(/^DG-/, ""))}</div><span class="dgg-v">${t("until")} ${dmy(b.v)} · ${t("take")} · ${t("cash")}<br>${disc(b.t) ? "" : t("stock") + "<br>"}${t("cumul")}${beer(b.t) ? "<br>" + t("beer") : ""}</span></div>`;
 
   /* pop-up del buono trovato */
   function show(b) {
