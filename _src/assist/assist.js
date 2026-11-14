@@ -6,6 +6,13 @@
   const PAGE = location.pathname.indexOf("/prova/") === 0 ? "prova" : "main";
   const TEL = "0455 11 16 77", TELH = "tel:+32455111677";
   const LS = { get(k) { try { return localStorage.getItem(k) } catch (e) { return null } }, set(k, v) { try { localStorage.setItem(k, v) } catch (e) { } } };
+  /* 14.11 (titolare): SOLO su /prova/, per le prove: ?assist=reset azzera conto dei messaggi, blocchi, «richiesta già inviata» e conversazione */
+  if (PAGE === "prova" && /[?&]assist=reset(&|$)/.test(location.search)) {
+    try { ["dg_assist_n", "dg_assist_block", "dg_assist_blockn", "dg_assist_sent", "dg_assist_chat"].forEach(k => localStorage.removeItem(k)) } catch (e) { }
+    try { history.replaceState(null, "", location.pathname) } catch (e) { }
+    const show = () => { const d = document.createElement("div"); d.textContent = "✅ Leporello : compteur remis à zéro"; d.style.cssText = "position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:99;background:#1f7a3a;color:#fff;padding:10px 16px;border-radius:10px;font:600 15px system-ui,sans-serif"; document.body.appendChild(d); setTimeout(() => d.remove(), 4000) };
+    if (document.body) show(); else document.addEventListener("DOMContentLoaded", show);
+  }
   /* 14.11 (titolare): se il cliente scrive in un'altra lingua, anche la finestra della chat (titolo, avviso, pulsanti, campo) passa a quella lingua */
   let chatL = null;
   let reg = null; /* 14.11 (titolare): "tu" o "vous" come l'ultimo messaggio del cliente (lo dice il Worker); null = Lei / vous */
