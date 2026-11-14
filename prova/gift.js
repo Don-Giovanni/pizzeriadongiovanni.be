@@ -159,11 +159,29 @@
     const vis = (s) => { const e = document.querySelector(s); return e && getComputedStyle(e).display !== "none" && e.offsetParent !== null; };
     return document.hidden || vis(".intro") || vis("#intro") || document.querySelector(".excpop") || document.querySelector(".dga") || document.querySelector(".dgg");
   }
+  /* controllo anti-robot di Cloudflare (Turnstile), solo quando c'è davvero un buono: invisibile per le persone */
+  const SITEKEY = "0x4AAAAAAF5BzSwMW34UAihL";
+  function turnstile() {
+    return new Promise((res, rej) => {
+      const go = () => {
+        const h = document.createElement("div"); h.style.cssText = "position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:96";
+        document.body.appendChild(h);
+        window.turnstile.render(h, { sitekey: SITEKEY, language: lang(), appearance: "interaction-only", callback: (tok) => { h.remove(); res(tok); }, "error-callback": () => { h.remove(); rej(new Error("ts")); } });
+      };
+      if (window.turnstile) return go();
+      const sc = document.createElement("script"); sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; sc.async = true; sc.onload = go; sc.onerror = () => rej(new Error("ts")); document.head.appendChild(sc);
+    });
+  }
+  const post = async (path, data) => (await fetch(API + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })).json();
   async function ask() {
     /* se su questo telefono c'è già un buono ricevuto negli ultimi 7 giorni, non si chiede niente (stesso limite del Worker) */
     if (M.bons.some((b) => b.r && Date.now() - b.r < 7 * 86400000)) return;
     if (busy()) { setTimeout(ask, 4000); return; }
-    let r; try { r = await (await fetch(API + "/gift", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ p: location.pathname }) })).json(); } catch (e) { return; }
+    let r; try {
+      r = await post("/gift", { p: location.pathname });
+      if (!r || !r.ready) return;
+      r = await post("/gift/claim", { p: location.pathname, ts: await turnstile() });
+    } catch (e) { return; }
     if (!r || !r.code) return;
     show(r);
   }

@@ -154,6 +154,7 @@
     if (sess) return sess;
     const tok = await turnstile();
     const r = await post("/start", { ts: tok });
+    if (r.err === "blocked") { LS.set("dg_assist_block", String(r.until || Date.now() + 6 * 3600000)); throw new Error("blocked"); }
     if (!r.s) { console.log("assist start", JSON.stringify(r)); window.DG_ASSIST_LAST = r; throw new Error(r.err || "start"); }
     return sess = r.s;
   }
@@ -170,20 +171,22 @@
       let r = await post("/chat", { s: sess, messages: MSGS, lang: lang(), page: PAGE });
       if (r.err === "expired") { sess = null; await session(); r = await post("/chat", { s: sess, messages: MSGS, lang: lang(), page: PAGE }); }
       w.remove();
-      if (r.err === "down" || r.err === "error") { MSGS.pop(); callBox(t("down")); }
+      if (r.err === "blocked") { LS.set("dg_assist_block", String(r.until || Date.now() + 6 * 3600000)); MSGS.pop(); end(t("blocked")); }
+      else if (r.err === "down" || r.err === "error") { MSGS.pop(); callBox(t("down")); }
       else if (r.err === "limit") end(t("limit"));
       else if (r.err) { MSGS.pop(); callBox(t("err")); }
       else {
         const txt = r.text || t("call");
         add("dga-a", txt); MSGS.push({ role: "assistant", content: txt });
-        if (r.action === "hors_sujet") {
+        if (r.blocked) { LS.set("dg_assist_block", String(r.blocked)); end(t("ended")); } /* blocco deciso dal server (abusi ripetuti) */
+        else if (r.action === "hors_sujet") {
           off++;
           if (off === 2) sys(t("off2"));
-          if (off >= 3) { const n = +(LS.get("dg_assist_blockn") || 0) + 1; LS.set("dg_assist_blockn", String(n)); LS.set("dg_assist_block", String(Date.now() + [6, 12, 24][Math.min(n, 3) - 1] * 3600000 /* abusi: 6 h, poi 12 h, poi 24 h (titolare, 14.11) */)); end(t("ended")); } /* 1° blocco 1 h, poi 5 h */
+          if (off >= 3) { const n = +(LS.get("dg_assist_blockn") || 0) + 1; LS.set("dg_assist_blockn", String(n)); LS.set("dg_assist_block", String(Date.now() + [6, 12, 24][Math.min(n, 3) - 1] * 3600000 /* abusi: 6 h, poi 12 h, poi 24 h (titolare, 14.11) */)); end(t("ended")); }
         } else if (r.action === "demande") { req = { title: r.title, resume: txt }; addMode = false; reqButtons(); }
         else if (req && addMode) { addMode = false; reqButtons(); } /* dopo «Ajouter des détails» i pulsanti tornano sempre */
       }
-    } catch (e) { console.log("assist", e && e.message); window.DG_ASSIST_ERR = String(e && e.message); w.remove(); MSGS.pop(); callBox(t("down") + (PAGE === "prova" ? " [" + String(e && e.message) + " " + JSON.stringify(window.DG_ASSIST_LAST || "") + "]" : "")); }
+    } catch (e) { if (e && e.message === "blocked") { w.remove(); MSGS.pop(); end(t("blocked")); busy = false; return; } console.log("assist", e && e.message); window.DG_ASSIST_ERR = String(e && e.message); w.remove(); MSGS.pop(); callBox(t("down") + (PAGE === "prova" ? " [" + String(e && e.message) + " " + JSON.stringify(window.DG_ASSIST_LAST || "") + "]" : "")); }
     busy = false; if (S) S.f.querySelector("button").disabled = false;
   }
 
