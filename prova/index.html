@@ -371,7 +371,7 @@ function vis(e){const c=getComputedStyle(e);if(c.display==="none"||c.visibility=
 function chk(){const o=[...document.querySelectorAll(S)].some(vis);if(o!==on){on=o;document.documentElement.style.overflow=o?"hidden":"";document.body.style.overflow=o?"hidden":""}}
 new MutationObserver(()=>requestAnimationFrame(chk)).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden","open"]});
 addEventListener("load",chk);chk();})();</script>
-<script src="assist.js?v=174e7098" defer></script>
+<script src="assist.js?v=a9d81e59" defer></script>
 <script src="gift.js?v=8103e294" defer></script>
 </body>
 </html>
