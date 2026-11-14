@@ -179,7 +179,7 @@
         if (r.action === "hors_sujet") {
           off++;
           if (off === 2) sys(t("off2"));
-          if (off >= 3) { const n = +(LS.get("dg_assist_blockn") || 0) + 1; LS.set("dg_assist_blockn", String(n)); LS.set("dg_assist_block", String(Date.now() + (n === 1 ? 1 : 5) * 3600000)); end(t("ended")); } /* 1° blocco 1 h, poi 5 h */
+          if (off >= 3) { const n = +(LS.get("dg_assist_blockn") || 0) + 1; LS.set("dg_assist_blockn", String(n)); LS.set("dg_assist_block", String(Date.now() + [6, 12, 24][Math.min(n, 3) - 1] * 3600000 /* abusi: 6 h, poi 12 h, poi 24 h (titolare, 14.11) */)); end(t("ended")); } /* 1° blocco 1 h, poi 5 h */
         } else if (r.action === "demande") { req = { title: r.title, resume: txt }; addMode = false; reqButtons(); }
         else if (req && addMode) { addMode = false; reqButtons(); } /* dopo «Ajouter des détails» i pulsanti tornano sempre */
       }

@@ -1,7 +1,7 @@
 /* «Cadeau caché» – pop-up dei buoni regalo del sito (pagina di arrivo e menu).
    Il Worker decide se c'è un buono adesso (max 2 al giorno, momenti a caso): qui solo pop-up, immagine e «🎁 Mon bon».
    PRIVACY (titolare, 13.11.2026: rischio zero): nessun identificativo; nella memoria del browser (dg_gift) SOLO i buoni che il cliente
-   salva lui con «Enregistrer». Il limite (un buono ogni 5 giorni per connessione) lo fa il Worker, che cancella tutto dopo 5 giorni.
+   salva lui con «Enregistrer». Il limite (un buono ogni 7 giorni per connessione) lo fa il Worker, che cancella tutto dopo 7 giorni.
    Chi chiude senza toccare «Enregistrer» non rivede più il buono (niente pulsante); il codice resta comunque valido nell'app. */
 (function () {
   const API = (window.DG_ASSIST || {}).api || "https://assistance-dg.pizzeriadongiovannithuin.workers.dev";
@@ -27,7 +27,7 @@
   /* memoria del browser */
   if (PROVA && Q === "reset") LS.del("dg_gift");
   let M; try { M = JSON.parse(LS.get("dg_gift") || "null") } catch (e) { M = null }
-  M = { bons: ((M && M.bons) || []).filter((b) => b && b.v >= today()).map((b) => ({ code: b.code, t: b.t, v: b.v })) };
+  M = { bons: ((M && M.bons) || []).filter((b) => b && b.v >= today()).map((b) => ({ code: b.code, t: b.t, v: b.v, r: b.r || 0 })) };
   const save = () => { if (M.bons.length) LS.set("dg_gift", JSON.stringify(M)); else LS.del("dg_gift"); };
   save();
 
@@ -134,7 +134,7 @@
     btn.onclick = async () => {
       /* il buono va in «🎁 Mon bon» appena si tocca il bottone, anche se poi l'immagine non viene salvata (titolare, 14.11) */
       if (!saved) {
-        saved = true; M.bons = M.bons.filter((x) => x.code !== b.code).concat([{ code: b.code, t: b.t, v: b.v }]); save(); pill(); trk("salvato");
+        saved = true; M.bons = M.bons.filter((x) => x.code !== b.code).concat([{ code: b.code, t: b.t, v: b.v, r: Date.now() }]); save(); pill(); trk("salvato");
         small.textContent = t("kept");
         const f = document.createElement("button"); f.className = "dgg-f"; f.textContent = t("close"); f.onclick = close; btn.after(f);
       }
@@ -160,6 +160,8 @@
     return document.hidden || vis(".intro") || vis("#intro") || document.querySelector(".excpop") || document.querySelector(".dga") || document.querySelector(".dgg");
   }
   async function ask() {
+    /* se su questo telefono c'è già un buono ricevuto negli ultimi 7 giorni, non si chiede niente (stesso limite del Worker) */
+    if (M.bons.some((b) => b.r && Date.now() - b.r < 7 * 86400000)) return;
     if (busy()) { setTimeout(ask, 4000); return; }
     let r; try { r = await (await fetch(API + "/gift", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ p: location.pathname }) })).json(); } catch (e) { return; }
     if (!r || !r.code) return;
