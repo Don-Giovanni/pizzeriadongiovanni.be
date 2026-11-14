@@ -42,7 +42,7 @@
 .dga-k.p{background:#1f9a4b;border-color:#1f9a4b;color:#fff;font-weight:600}
 .dga-call{display:inline-block;margin-top:6px;background:#e3201b;color:#fff;border-radius:8px;padding:8px 12px;text-decoration:none;font-weight:600}
 .dga-f{display:flex;gap:6px;padding:10px;border-top:1px solid #2c2622;background:#171412}
-.dga-f textarea{flex:1;resize:none;height:42px;max-height:100px;background:#0d0b0a;color:#fbf4e6;border:1px solid #2c2622;border-radius:10px;padding:10px;font:inherit}
+.dga-f textarea{flex:1;resize:none;height:66px;min-height:66px;max-height:45dvh;overflow-y:auto;background:#0d0b0a;color:#fbf4e6;border:1px solid #2c2622;border-radius:10px;padding:10px;font:inherit}
 .dga-f button{background:#e3201b;color:#fff;border:0;border-radius:10px;padding:0 14px;font:inherit;font-weight:600;cursor:pointer}
 .dga-f button:disabled,.dga-k:disabled{opacity:.5;cursor:default}
 .dga-form{display:flex;flex-direction:column;gap:6px;align-self:stretch;background:#171412;border:1px solid #2c2622;border-radius:12px;padding:10px}
@@ -121,7 +121,7 @@
   function open() {
     if (S) return;
     ended = false; MSGS = []; sess = null; off = 0; req = null; addMode = false; startT = Date.now();
-    const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-z" type="button" aria-label="${esc(t("big"))}" title="${esc(t("big"))}">⤢</button><button class="dga-x" type="button" aria-label="${esc(t("close"))}">×</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="1" maxlength="600" placeholder="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
+    const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-z" type="button" aria-label="${esc(t("big"))}" title="${esc(t("big"))}">⤢</button><button class="dga-x" type="button" aria-label="${esc(t("close"))}">×</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="2" maxlength="600" placeholder="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
     document.body.appendChild(box);
     S = { box, m: box.querySelector(".dga-m"), f: box.querySelector(".dga-f"), ta: box.querySelector("textarea") };
     /* 14.11 (titolare): su telefoni e tablet la chat è sempre a tutto schermo (si esce solo con ×); sul computer resta un riquadro
@@ -137,7 +137,9 @@
     const c = el('<div class="dga-c"></div>');
     t("q").forEach(q => { const x = document.createElement("button"); x.type = "button"; x.textContent = q; x.onclick = () => { c.remove(); ask(q) }; c.appendChild(x) });
     addNode(c);
-    S.f.onsubmit = e => { e.preventDefault(); const v = S.ta.value.trim(); if (v) { S.ta.value = ""; c.remove(); ask(v) } };
+    S.f.onsubmit = e => { e.preventDefault(); const v = S.ta.value.trim(); if (v) { S.ta.value = ""; S.ta.style.height = ""; c.remove(); ask(v) } };
+    /* 14.11 (titolare): il campo parte da 2 righe e cresce mentre si scrive, fino a far leggere tutti i 600 caratteri */
+    S.ta.addEventListener("input", () => { if (!S) return; S.ta.style.height = "auto"; S.ta.style.height = Math.min(S.ta.scrollHeight + 2, Math.round(innerHeight * 0.45)) + "px"; });
     S.ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); S.f.requestSubmit() } });
     resetIdle();
   }
