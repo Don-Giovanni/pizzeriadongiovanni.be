@@ -34,7 +34,8 @@
 .dga-h{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #2c2622;background:#171412}
 .dga-h b{flex:1;font-weight:600}.dga-h small{color:#b7ab98;font-size:11px;display:block;font-weight:400}
 .dga-cl{background:none;border:1px solid #3a322c;border-radius:999px;color:#b7ab98;font:inherit;font-size:11px;line-height:1;cursor:pointer;padding:5px 9px;white-space:nowrap}.dga-cl.ok{color:#fbf4e6;border-color:#d0362a}
-.dga-x{background:none;border:0;color:#b7ab98;font-size:22px;line-height:1;cursor:pointer;padding:2px 6px}
+.dga-x{background:none;border:1px solid #3a322c;border-radius:999px;color:#fbf4e6;font:inherit;font-size:11px;line-height:1;cursor:pointer;padding:5px 9px;white-space:nowrap}
+.dga-h{flex-wrap:wrap}.dga-h>small{flex:1 0 100%;color:#b7ab98;font-size:11px;font-weight:400;margin-top:-4px}.dga.full .dga-h>small{font-size:13px}.dga.kb .dga-h>small{display:none}
 .dga-m{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
 .dga-b{max-width:88%;padding:8px 11px;border-radius:12px;white-space:pre-wrap;word-wrap:break-word}
 .dga-a{background:#171412;border:1px solid #2c2622;align-self:flex-start;border-bottom-left-radius:4px}
@@ -143,9 +144,10 @@
   function open() {
     if (S) return;
     ended = false; MSGS = []; sess = null; off = 0; req = null; addMode = false; startT = Date.now(); chatL = null;
-    const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-cl" type="button" hidden title="${esc(t("clrT"))}" aria-label="${esc(t("clrT"))}">${esc(t("clr"))}</button><button class="dga-z" type="button" aria-label="${esc(t("big"))}" title="${esc(t("big"))}">⤢</button><button class="dga-x" type="button" aria-label="${esc(t("close"))}">×</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="2" maxlength="600" placeholder="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
+    const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-cl" type="button" hidden title="${esc(t("clrT"))}" aria-label="${esc(t("clrT"))}">${esc(t("clr"))}</button><button class="dga-z" type="button" aria-label="${esc(t("big"))}" title="${esc(t("big"))}">⤢</button><button class="dga-x" type="button">${esc(t("close"))}</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="2" maxlength="600" placeholder="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
     document.body.appendChild(box);
     S = { box, m: box.querySelector(".dga-m"), f: box.querySelector(".dga-f"), ta: box.querySelector("textarea") };
+    box.querySelector(".dga-h").append(box.querySelector(".dga-h small")); /* la riga «Agent IA · …» va sotto, su tutta la larghezza: accanto al nome restano i pulsanti */
     S.m.prepend(box.querySelector(".dga-p")); /* 14.11: l'avviso scorre con i messaggi: si vede all'inizio e risalendo in cima */
     /* 14.11 (titolare): su telefoni e tablet la chat è sempre a tutto schermo (si esce solo con ×); sul computer resta un riquadro
        che si può ingrandire o ridurre col bottone; finché la chat è aperta la pagina sotto non scorre */
@@ -171,23 +173,30 @@
     if (blockedUntil() > Date.now()) { dropChat(); callBox(t("blocked")); S.f.hidden = true; return }
     const old = loadChat();
     if (old) { MSGS = old.m.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string"); off = Math.min(+old.o || 0, 2); req = old.r && typeof old.r.resume === "string" ? { title: String(old.r.title || ""), resume: old.r.resume } : null; if (old.l && T[old.l]) { chatL = old.l; relabel(); } }
-    add("dga-a", t("hello"));
-    const c = el('<div class="dga-c dga-q"></div>');
-    t("q").forEach(q => { const x = document.createElement("button"); x.type = "button"; x.textContent = q; x.onclick = () => { c.remove(); ask(q) }; c.appendChild(x) });
-    if (MSGS.length) { MSGS.forEach(m => add(m.role === "user" ? "dga-u" : "dga-a", m.content)); if (req) reqButtons(); clrShow(); } else if (!paused()) addNode(c);
+    /* 14.11 (titolare): niente più saluto fisso all'apertura; Leporello si presenta nella prima risposta. Se il cliente scrive solo un saluto,
+       risponde la finestra (senza consumare un messaggio) e ripropone i suggerimenti */
+    if (MSGS.length) { MSGS.forEach(m => add(m.role === "user" ? "dga-u" : "dga-a", m.content)); if (req) reqButtons(); clrShow(); } else if (!paused()) sugg();
     if (paused()) limBox();
-    S.f.onsubmit = e => { e.preventDefault(); const v = S.ta.value.trim(); if (v) { S.ta.value = ""; S.ta.style.height = ""; c.remove(); ask(v) } };
+    S.f.onsubmit = e => { e.preventDefault(); const v = S.ta.value.trim(); if (v) { S.ta.value = ""; S.ta.style.height = ""; ask(v) } };
     /* 14.11 (titolare): il campo parte da 2 righe e cresce mentre si scrive, fino a far leggere tutti i 600 caratteri */
     S.ta.addEventListener("input", () => { if (!S) return; S.ta.style.height = "auto"; S.ta.style.height = Math.min(S.ta.scrollHeight + 2, taMax()) + "px"; });
     S.ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); S.f.requestSubmit() } });
     resetIdle();
   }
   function limBox() { ended = true; if (!S) return; callBox(t("limit")); S.f.hidden = true; clearTimeout(idleT) }
+  function sugg() { if (!S) return; S.m.querySelectorAll(".dga-q").forEach(x => x.remove());
+    const c = el('<div class="dga-c dga-q"></div>');
+    t("q").forEach(q => { const x = document.createElement("button"); x.type = "button"; x.textContent = q; x.onclick = () => ask(q); c.appendChild(x) });
+    addNode(c); }
+  /* solo un saluto come primo messaggio: lingua riconosciuta dalla parola (hallo: olandese, tedesco se il sito è in tedesco) */
+  const HI = { it: "ciao|buongiorno|buonasera|buon giorno|buona sera|salve|buond[iì]", fr: "bonjour|bonsoir|salut|coucou|bjr", nl: "hallo|hoi|dag|goedendag|goeiedag|goedemorgen|goedemiddag|goedenavond", en: "hello|hi|hey|good morning|good afternoon|good evening", de: "guten tag|guten morgen|guten abend|servus|moin|gr[uü]ß gott", es: "hola|buenas|buenos d[ií]as|buenas tardes|buenas noches" };
+  function hiLang(text) { const v = String(text).toLowerCase().replace(/[!.,;:?¡¿\s]+$/g, "").replace(/^[\s¡¿]+/, ""); if (v.length > 20) return null;
+    for (const k in HI) if (new RegExp("^(" + HI[k] + ")$").test(v)) return k === "nl" && v === "hallo" && lang() === "de" ? "de" : k; return null }
   function escKey(e) { if (e.key === "Escape") close() }
   function relabel() { if (!S) return; const b = S.box, q = (x) => b.querySelector(x);
     q(".dga-h small").textContent = t("ai") + " · " + t("note");
     q(".dga-p").innerHTML = '<span class="dga-pt">' + esc(t("sens")) + ' </span><a href="confidentialite.html" target="_blank" rel="noopener">' + esc(t("priv")) + " →</a>";
-    S.ta.placeholder = t("ph"); q(".dga-f button").textContent = t("send"); { const k = q(".dga-cl"); if (k) { k.classList.remove("ok"); k.textContent = t("clr"); k.title = t("clrT"); k.setAttribute("aria-label", t("clrT")); } } q(".dga-x").setAttribute("aria-label", t("close"));
+    S.ta.placeholder = t("ph"); q(".dga-f button").textContent = t("send"); { const k = q(".dga-cl"); if (k) { k.classList.remove("ok"); k.textContent = t("clr"); k.title = t("clrT"); k.setAttribute("aria-label", t("clrT")); } } q(".dga-x").textContent = t("close");
     const z = q(".dga-z"); if (z) { z.title = t(b.classList.contains("full") ? "small" : "big"); z.setAttribute("aria-label", z.title); } }
   function close() { if (!S) return; if (window.visualViewport && S.fit) { visualViewport.removeEventListener("resize", S.fit); visualViewport.removeEventListener("scroll", S.fit); } S.box.remove(); S = null; document.documentElement.style.overflow = document.body.style.overflow = ""; clearTimeout(idleT); document.removeEventListener("keydown", escKey) }
   function end(msg) { ended = true; if (!S) return; sys(msg); S.f.hidden = true; clearTimeout(idleT) }
@@ -221,6 +230,9 @@
     if (busy || ended || !S) return;
     if (Date.now() - startT > 30 * 60000) return end(t("ended"));
     if (paused()) return limBox();
+    S.m.querySelectorAll(".dga-q").forEach(x => x.remove());
+    if (!MSGS.length) { const hl = hiLang(text); if (hl) { resetIdle(); add("dga-u", text); if (T[hl] && hl !== lang()) { chatL = hl; relabel(); }
+      add("dga-a", t("hello")); MSGS.push({ role: "user", content: text }, { role: "assistant", content: t("hello") }); sugg(); saveChat(); clrShow(); return } }
     busy = true; S.f.querySelector("button").disabled = true; resetIdle();
     add("dga-u", text); MSGS.push({ role: "user", content: text });
     const w = add("dga-a", t("wait"));
