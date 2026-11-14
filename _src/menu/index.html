@@ -669,3 +669,10 @@ addEventListener("scroll",()=>requestAnimationFrame(spy),{passive:true});
 setInterval(status,60000);
 draw();
 </script>
+<script>/* finestre aperte (carrello, pop-up, buono, chat, foto): la pagina sotto non scorre; si scorre solo la finestra (titolare, 14.11.2026) */
+(function(){const S=".intro,.sheet,.modal,.excpop,.lb,.dgg,.dga";let on=null;
+const st=document.createElement("style");st.textContent=".sheet,.modal,.excpop,.lb,.dgg,.dga,.panel{overscroll-behavior:contain}";document.head.appendChild(st);
+function vis(e){const c=getComputedStyle(e);if(c.display==="none"||c.visibility==="hidden")return false;const r=e.getBoundingClientRect();return r.width>0&&r.height>0}
+function chk(){const o=[...document.querySelectorAll(S)].some(vis);if(o!==on){on=o;document.documentElement.style.overflow=o?"hidden":"";document.body.style.overflow=o?"hidden":""}}
+new MutationObserver(()=>requestAnimationFrame(chk)).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden","open"]});
+addEventListener("load",chk);chk();})();</script>
