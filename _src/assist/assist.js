@@ -29,7 +29,7 @@
 .dga.full .dga-h,.dga.full .dga-p,.dga.full .dga-m,.dga.full .dga-f{padding-left:max(12px,calc(50% - 420px));padding-right:max(12px,calc(50% - 420px))}
 .dga.full .dga-h small,.dga.full .dga-p{font-size:13px}
 .dga-z{background:none;border:0;color:#b7ab98;font-size:19px;line-height:1;cursor:pointer;padding:2px 6px}
-.dga.kb .dga-q{display:none}
+.dga.kb .dga-q,.dga.kb .dga-h small{display:none}
 .dga{overscroll-behavior:contain}.dga-m{overscroll-behavior:contain}
 .dga-h{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #2c2622;background:#171412}
 .dga-h b{flex:1;font-weight:600}.dga-h small{color:#b7ab98;font-size:11px;display:block;font-weight:400}
@@ -55,6 +55,7 @@
 .dga-e{color:#f2b33d;font-size:12px}
 .dga-ts{align-self:center}
 .dga-p{padding:6px 12px;font-size:11px;color:#b7ab98;border-bottom:1px solid #2c2622}.dga-p a,.dga-p2 a{color:#f2b33d}
+.dga .dga-m .dga-p{flex:none;padding:0 0 8px}
 .dga-p2{font-size:11px;color:#b7ab98}`;
 
   let S = null, MSGS = [], busy = false, sess = null, idleT = null, startT = 0, off = 0, req = null, addMode = false, ended = false;
@@ -128,6 +129,7 @@
     const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-z" type="button" aria-label="${esc(t("big"))}" title="${esc(t("big"))}">⤢</button><button class="dga-x" type="button" aria-label="${esc(t("close"))}">×</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="2" maxlength="600" placeholder="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
     document.body.appendChild(box);
     S = { box, m: box.querySelector(".dga-m"), f: box.querySelector(".dga-f"), ta: box.querySelector("textarea") };
+    S.m.prepend(box.querySelector(".dga-p")); /* 14.11: l'avviso scorre con i messaggi: si vede all'inizio e risalendo in cima */
     /* 14.11 (titolare): su telefoni e tablet la chat è sempre a tutto schermo (si esce solo con ×); sul computer resta un riquadro
        che si può ingrandire o ridurre col bottone; finché la chat è aperta la pagina sotto non scorre */
     const z = box.querySelector(".dga-z"), touch = matchMedia("(max-width:520px), (pointer:coarse)").matches;
@@ -137,9 +139,10 @@
     /* 14.11 (titolare): con la tastiera aperta la chat si stringe sulla parte visibile dello schermo, così il campo dove si scrive
        resta sempre sopra la tastiera; i suggerimenti rapidi si nascondono finché la tastiera è aperta */
     const vv = window.visualViewport;
+    const taMax = () => { const kb = box.classList.contains("kb"), h = vv ? vv.height : innerHeight; return Math.max(66, Math.round(h * (kb ? 0.3 : 0.45))); }; /* con la tastiera aperta la casella non supera il 30% dello spazio visibile */
     const fit = () => { if (!S) return;
-      if (vv && box.classList.contains("full")) { box.style.height = Math.round(vv.height) + "px"; box.style.top = Math.round(vv.offsetTop) + "px"; box.style.bottom = "auto"; box.classList.toggle("kb", vv.height < 480); S.m.scrollTop = S.m.scrollHeight; }
-      else { box.style.height = box.style.top = box.style.bottom = ""; box.classList.remove("kb"); } };
+      if (vv && box.classList.contains("full")) { box.style.height = Math.round(vv.height) + "px"; box.style.top = Math.round(vv.offsetTop) + "px"; box.style.bottom = "auto"; box.classList.toggle("kb", vv.height < 480); S.ta.style.maxHeight = taMax() + "px"; if (S.ta.offsetHeight > taMax()) S.ta.style.height = taMax() + "px"; S.m.scrollTop = S.m.scrollHeight; }
+      else { box.style.height = box.style.top = box.style.bottom = ""; box.classList.remove("kb"); if (S.ta) S.ta.style.maxHeight = ""; } };
     S.fit = fit; if (vv) { vv.addEventListener("resize", fit); vv.addEventListener("scroll", fit); }
     if (!touch) z.addEventListener("click", fit);
     fit();
@@ -152,14 +155,14 @@
     addNode(c);
     S.f.onsubmit = e => { e.preventDefault(); const v = S.ta.value.trim(); if (v) { S.ta.value = ""; S.ta.style.height = ""; c.remove(); ask(v) } };
     /* 14.11 (titolare): il campo parte da 2 righe e cresce mentre si scrive, fino a far leggere tutti i 600 caratteri */
-    S.ta.addEventListener("input", () => { if (!S) return; S.ta.style.height = "auto"; S.ta.style.height = Math.min(S.ta.scrollHeight + 2, Math.round(innerHeight * 0.45)) + "px"; });
+    S.ta.addEventListener("input", () => { if (!S) return; S.ta.style.height = "auto"; S.ta.style.height = Math.min(S.ta.scrollHeight + 2, taMax()) + "px"; });
     S.ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); S.f.requestSubmit() } });
     resetIdle();
   }
   function escKey(e) { if (e.key === "Escape") close() }
   function relabel() { if (!S) return; const b = S.box, q = (x) => b.querySelector(x);
     q(".dga-h small").textContent = t("ai") + " · " + t("note");
-    q(".dga-p").innerHTML = esc(t("sens")) + ' <a href="confidentialite.html" target="_blank" rel="noopener">' + esc(t("priv")) + " →</a>";
+    q(".dga-p").innerHTML = '<span class="dga-pt">' + esc(t("sens")) + ' </span><a href="confidentialite.html" target="_blank" rel="noopener">' + esc(t("priv")) + " →</a>";
     S.ta.placeholder = t("ph"); q(".dga-f button").textContent = t("send"); q(".dga-x").setAttribute("aria-label", t("close"));
     const z = q(".dga-z"); if (z) { z.title = t(b.classList.contains("full") ? "small" : "big"); z.setAttribute("aria-label", z.title); } }
   function close() { if (!S) return; if (window.visualViewport && S.fit) { visualViewport.removeEventListener("resize", S.fit); visualViewport.removeEventListener("scroll", S.fit); } S.box.remove(); S = null; document.documentElement.style.overflow = document.body.style.overflow = ""; clearTimeout(idleT); document.removeEventListener("keydown", escKey) }
