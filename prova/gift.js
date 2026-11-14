@@ -173,7 +173,7 @@
       const go = () => {
         const h = document.createElement("div"); h.style.cssText = "position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:96";
         document.body.appendChild(h);
-        window.turnstile.render(h, { sitekey: SITEKEY, language: lang(), appearance: "interaction-only", callback: (tok) => { h.remove(); res(tok); }, "error-callback": () => { h.remove(); rej(new Error("ts")); } });
+        window.turnstile.render(h, { sitekey: SITEKEY, action: "cadeau", language: lang(), appearance: "interaction-only", callback: (tok) => { h.remove(); res(tok); }, "error-callback": () => { h.remove(); rej(new Error("ts")); } });
       };
       if (window.turnstile) return go();
       const sc = document.createElement("script"); sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; sc.async = true; sc.onload = go; sc.onerror = () => rej(new Error("ts")); document.head.appendChild(sc);
