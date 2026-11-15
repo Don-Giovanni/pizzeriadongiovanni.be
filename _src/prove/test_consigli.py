@@ -103,9 +103,9 @@ try:
     pg.locator('#boissons li.it:has-text("Ice Tea") button.add').last.click();pg.wait_for_timeout(200)
     ok('«+» sull\'Ice Tea da 1,5 L nel menu: nel carrello «Ice Tea (bouteille 1,5 L)» a 6 €',pg.evaluate("CART.length===1&&lnm(CART[0])==='Ice Tea (bouteille 1,5 L)'&&byId[CART[0].id].p===6"))
     pg.evaluate("document.querySelectorAll('.modal').forEach(e=>e.hidden=true)")
-    for lang,can,btl in(('it','lattina 33 cl','bottiglia 1,5 L'),('nl','blikje 33 cl','fles 1,5 L'),('de','Dose 33 cl','Flasche 1,5 L'),('es','lata 33 cl','botella 1,5 L'),('en','can 33 cl','bottle 1.5 L')):
-        g=page(lang);tx=g.evaluate("[...document.querySelectorAll('#boissons li.it .ing')].map(e=>e.textContent)");gr=g.evaluate("[...document.querySelectorAll('#boissons li.grp')].length")
-        ok(lang+': 3 «'+can+'» + Jupiler, 3 «'+btl+'», 3 titoli di gruppo',tx.count(can)==4 and tx.count(btl)==3 and gr==3,str(tx));g.context.close()
+    for lang,can,btl,tit in(('it','lattina 33 cl','bottiglia 1,5 L',['Bibite 33 cl','Bibite 1,5 L','Birre e vino']),('nl','blikje 33 cl','fles 1,5 L',['Frisdrank 33 cl','Frisdrank 1,5 L','Bier en wijn']),('de','Dose 33 cl','Flasche 1,5 L',['Softdrinks 33 cl','Softdrinks 1,5 L','Bier und Wein']),('es','lata 33 cl','botella 1,5 L',['Refrescos 33 cl','Refrescos 1,5 L','Cervezas y vino']),('en','can 33 cl','bottle 1.5 L',['Soft drinks 33 cl','Soft drinks 1.5 L','Beer and wine'])):
+        g=page(lang);tx=g.evaluate("[...document.querySelectorAll('#boissons li.it .ing')].map(e=>e.textContent)");gr=g.evaluate("[...document.querySelectorAll('#boissons li.grp')].map(e=>e.textContent)")
+        ok(lang+': 3 «'+can+'» + Jupiler, 3 «'+btl+'», titoli di gruppo tradotti ('+', '.join(tit)+')',tx.count(can)==4 and tx.count(btl)==3 and gr==tit,str(gr));g.context.close()
     a=pg.evaluate("[...document.querySelectorAll('#boissons a.alg')].map(e=>e.getAttribute('href'))")
     gc=br.new_context(locale='fr-BE');gc.add_init_script("try{localStorage.setItem('dg_lang','fr')}catch(e){}");g=gc.new_page();g.goto('http://127.0.0.1:%d/allergenes.html'%PORT);g.wait_for_timeout(500)
     rows=g.evaluate("(ids)=>ids.map(h=>{const r=document.getElementById('r-'+h.split('#')[1]);return r?r.querySelector('td.n').textContent.trim():null})",a)

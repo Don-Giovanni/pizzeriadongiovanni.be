@@ -419,7 +419,7 @@ const txt3=v=>typeof v==="string"?(I[v]?ingW(v):v):v[L];
 const price=v=>{const s=v===0?"":(Number.isInteger(v)?v+",00":v.toFixed(2).replace(".",","));return v===0?t("free0"):(L==="en"?"€"+v.toFixed(2):s+" €")};
 const norm=s=>String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/œ/g,"oe");
 /* voce normalizzata */
-const GRP={s33:{fr:"Soft 33 cl",nl:"Soft 33 cl",en:"Soft 33 cl",it:"Soft 33 cl",es:"Soft 33 cl",de:"Soft 33 cl"},s15:{fr:"Soft 1,5 L",nl:"Soft 1,5 L",en:"Soft 1.5 L",it:"Soft 1,5 L",es:"Soft 1,5 L",de:"Soft 1,5 L"},bv:{fr:"Bières et vin",nl:"Bier en wijn",en:"Beer and wine",it:"Birre e vino",es:"Cervezas y vino",de:"Bier und Wein"}};
+const GRP={s33:{fr:"Soft 33 cl",nl:"Frisdrank 33 cl",en:"Soft drinks 33 cl",it:"Bibite 33 cl",es:"Refrescos 33 cl",de:"Softdrinks 33 cl"},s15:{fr:"Soft 1,5 L",nl:"Frisdrank 1,5 L",en:"Soft drinks 1.5 L",it:"Bibite 1,5 L",es:"Refrescos 1,5 L",de:"Softdrinks 1,5 L"},bv:{fr:"Bières et vin",nl:"Bier en wijn",en:"Beer and wine",it:"Birre e vino",es:"Cervezas y vino",de:"Bier und Wein"}};
 const ITEMS=[];MENU.forEach(c=>c.items.forEach((x,i)=>{const [n,ing,p,w,extra,ver,sid,grp]=x;const keys=typeof ing==="string"&&ing&&ing.split(" ").every(k=>I[k])?ing.split(" "):null;
   const base=c.pz?[1]:c.pa?[1]:[];let al=new Set([...base,...(extra||[])]);let v=!!ver;if(keys)keys.forEach(k=>{I[k][3].forEach(a=>al.add(a));if(I[k][4])v=true});
   ITEMS.push({id:c.id+"-"+(sid??i),grp:grp||"",cat:c.id,n,keys,txt:keys?null:ing,p,w:!!w,al:[...al].sort((a,b)=>a-b),v,pizza:!!c.pz,dish:!!c.pz||!!c.pa||/^Pizza\b/i.test(String(n))})}));
