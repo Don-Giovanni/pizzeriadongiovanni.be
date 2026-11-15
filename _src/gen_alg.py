@@ -85,7 +85,7 @@ function draw(){const g=DATA.d.langs[L],u=DATA.ui[L];document.documentElement.la
  const pr=document.getElementById("pr");pr.textContent=u.print;
  document.getElementById("langs").innerHTML=["fr","nl","de","it","en","es"].map(l=>`<button class="b" type="button" data-l="${l}" aria-pressed="${l===L}">${l.toUpperCase()}</button>`).join("");
  const head=`<tr><th class="n" scope="col">${esc(g.T.dish)}</th>${[...Array(14)].map((_,i)=>`<th scope="col" title="${esc(g.alg[i])}">${i+1}</th>`).join("")}</tr>`;
- let body=g.cats.map(c=>`<tr class="cat"><td colspan="15">${esc(c.name)}</td></tr>`+c.items.map((x,i)=>row(x,c.id+"-"+i)).join("")).join("");
+ let body=g.cats.map(c=>`<tr class="cat"><td colspan="15">${esc(c.name)}</td></tr>`+c.items.map((x,i)=>row(x,x.id||c.id+"-"+i)).join("")).join("");
  body+=`<tr class="cat"><td colspan="15">${esc(DATA.d.supT[L])}</td></tr>`+DATA.d.supl[L].map(row).join("");
  document.getElementById("fx").innerHTML=`${DATA.d.draft?`<p class="draft">${esc(g.T.draft)}</p>`:""}
  <p class="intro" style="margin:6px 0 0">${esc(g.T.intro)}</p>
