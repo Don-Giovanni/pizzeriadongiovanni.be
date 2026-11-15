@@ -1,6 +1,6 @@
 # test_consigli.py <cartella delle pagine, es. ../prova-sito/public/prova>  (15.11.2026)
 # Pain pizza: ogni 2 = 1 piatto in tutte le fasce (minimi, prezzo, gratuità, regola dei 35 €).
-# Consigli del carrello: proposte a tutti (à emporter e livraison), al massimo due insieme, mai i pain pizza, «Non merci», riga nel riepilogo.
+# Consigli del carrello: proposte a tutti (à emporter e livraison), al massimo due insieme, mai i pain pizza, un tocco = aggiunto e riquadro che resta aperto, X per riquadro, «Non merci», riga nel riepilogo.
 # Nessuna richiesta esterna: tutto bloccato. Nessun dato vero.
 import subprocess,sys,time
 from playwright.sync_api import sync_playwright
@@ -11,7 +11,7 @@ def ok(n,c,d=''): R.append(bool(c));print('OK  ' if c else 'ERR ',n,d)
 SET="""const pz=ITEMS.find(x=>x.pizza),pp=ITEMS.find(x=>/^Pain pizza/i.test(String(x.n))),ti=ITEMS.find(x=>/^Tiramis/i.test(String(x.n))),vin=ITEMS.find(x=>/^Vin/i.test(String(x.n))),can=ITEMS.filter(x=>/^Coca/i.test(String(x.n))).sort((a,b)=>a.p-b.p)[0];
 const mk=(mode,km,np,npp,nti,nvin,ncan)=>{MODE=mode;ADR=mode==="del"?"Rue des Exemples 12, 9999 Villefictive":"";ADRCP="";KM=km?String(km):"";CART=[];if(np)CART.push({id:pz.id,q:np,s:[]});if(npp)CART.push({id:pp.id,q:npp,s:[]});if(nti)CART.push({id:ti.id,q:nti,s:[]});if(nvin)CART.push({id:vin.id,q:nvin,s:[]});if(ncan)CART.push({id:can.id,q:ncan,s:[]});
  const T=totals(),d=document.createElement("div");d.innerHTML=sumH(T);const q=s=>[...d.querySelectorAll(s)];
- return {st:T.st,npz:T.npz,fee:T.fee,ok:T.ok,food:T.sub+T.sup,gain:q(".gain").map(e=>e.textContent)[0]||"",props:q(".prop .pt").map(e=>e.textContent.replace(/\\u00a0/g," ")),chips:q(".prop .tchip,.tip .tchip").map(e=>e.textContent),tip:q(".tip").map(e=>e.textContent.replace(/\\u00a0/g," "))[0]||"",no:q("[data-tpno]").length,msg:q(".msg").length,all:d.textContent}};"""
+ return {st:T.st,npz:T.npz,fee:T.fee,ok:T.ok,food:T.sub+T.sup,gain:q(".gain").map(e=>e.textContent)[0]||"",props:q(".prop .pt").map(e=>e.textContent.replace(/\\u00a0/g," ")),chips:q(".prop .tchip,.tip .tchip").map(e=>e.textContent),tip:q(".tip").map(e=>e.textContent.replace(/\\u00a0/g," "))[0]||"",no:q(".tipno [data-tpno]").length,xs:q(".prop .px").length,msg:q(".msg").length,all:d.textContent}};"""
 try:
   with sync_playwright() as p:
     br=p.chromium.launch();ext=[]
@@ -23,7 +23,7 @@ try:
         c.route('**/*',route);c.add_init_script("try{localStorage.setItem('dg_lang','%s')}catch(e){}"%lang)
         pg=c.new_page();pg.goto('http://127.0.0.1:%d/menu.html'%PORT);pg.wait_for_timeout(600);return pg
     pg=page('fr');errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
-    ev=lambda *a:pg.evaluate("(a)=>{NOTIP=false;TIPSEL={};"+SET+"return mk(...a)}",list(a))
+    ev=lambda *a:pg.evaluate("(a)=>{TIPX={};TIPKEEP={};TIPSEL={};"+SET+"return mk(...a)}",list(a))
     # ---- regola dei pain pizza
     r=ev('del',5,1,2,0,0,0);ok('5 km, 1 pizza + 2 pain pizza = 2 piatti: consegna a 5 €',r['st']=='ok' and r['npz']==2 and r['fee']==5,str(r['fee']))
     r=ev('del',5,1,1,0,0,0);ok('5 km, 1 pizza + 1 pain pizza = 1 piatto (1 solo non conta): niente consegna sotto 35 €',r['st']=='no' and r['npz']==1)
@@ -60,29 +60,40 @@ try:
         if 'pain' in (r['gain']+' '.join(r['props'])+' '.join(r['chips'])+r['tip']).lower() or 'Pain pizza' in ' '.join(r['chips']): ok('mai i pain pizza nei consigli',False,str(a));break
     else: ok('mai i pain pizza nei consigli (5 casi)',True)
     # ---- «Non merci», aggiunta dai consigli, riepilogo: nel carrello vero
-    pg.evaluate("()=>{"+SET+"mk('take',0,3,0,0,0,0);save();bar();NOTIP=false;TIPSEL={};cart()}");pg.wait_for_timeout(200)
+    pg.evaluate("()=>{"+SET+"mk('take',0,3,0,0,0,0);save();bar();TIPX={};TIPKEEP={};TIPSEL={};cart()}");pg.wait_for_timeout(200)
     ok('tre bottiglie divise nelle proposte: Coca-Cola, Fanta, Ice Tea da 1,5 L + vino',[x.strip() for x in pg.locator('#panel .prop').first.locator('.tchip').all_inner_texts()]==['+ Coca-Cola 1,5 L · 6,00 €','+ Fanta 1,5 L · 6,00 €','+ Ice Tea 1,5 L · 6,00 €','+ Vin rouge / rosé · 16,00 €'],str(pg.locator('#panel .prop').first.locator('.tchip').all_inner_texts()))
     ok('nessun secondo pulsante «Ajouter (n)»',pg.locator('#panel [data-tpok]').count()==0)
+    ok('ogni riquadro ha la sua X e sotto c\'è «Non merci»',pg.locator('#panel .prop .px').count()==2 and pg.locator('#panel .tipno [data-tpno="all"]').count()==1)
     pg.locator('#panel [data-tp="btlF"]').click();pg.wait_for_timeout(250)
     ok('UN tocco sulla Fanta da 1,5 L: 1 bottiglia di Fanta subito nel carrello',pg.evaluate("JSON.stringify(CART.filter(l=>byId[l.id].cat==='boissons').map(l=>[byId[l.id].n,byId[l.id].p,l.q]))")=='[["Fanta",6,1]]')
     ok('«Ajouté ✓ Fanta» appare',(not pg.locator('#toast').is_hidden()) and 'Ajouté' in pg.locator('#toast').inner_text() and 'Fanta' in pg.locator('#toast').inner_text())
     ok('riga del carrello con la misura: «Fanta (bouteille 1,5 L)»','Fanta (bouteille 1,5 L)' in pg.locator('#panel').inner_text())
     ok('la barra in basso conta anche la bottiglia',pg.evaluate("document.getElementById('barN').textContent")=='4')
-    ok('dopo l\'aggiunta resta solo il dessert',pg.locator('#panel .prop').count()==1 and 'dessert' in pg.locator('#panel .prop .pt').inner_text())
+    ok('dopo il tocco il riquadro delle bevande RESTA aperto, con «×1» sulla Fanta, e c\'è anche il dessert',pg.locator('#panel .prop').count()==2 and '×1' in pg.locator('#panel [data-tp="btlF"]').inner_text())
+    pg.locator('#panel [data-tp="ts"]').click();pg.wait_for_timeout(200);pg.locator('#panel [data-tp="ts"]').click();pg.wait_for_timeout(200);pg.locator('#panel [data-tp="tc"]').click();pg.wait_for_timeout(200)
+    ok('tre tocchi sui tiramisù: 2 speculoos + 1 classique, riquadro ancora aperto con «×2»',pg.evaluate("JSON.stringify(CART.filter(l=>byId[l.id].cat==='desserts').map(l=>[l.v,l.q]))")=='[["tiraS",2],["tiraC",1]]' and '×2' in pg.locator('#panel [data-tp="ts"]').inner_text() and pg.locator('#panel .prop').count()==2)
     ls0=pg.evaluate("JSON.stringify([Object.keys(localStorage).sort(),Object.keys(sessionStorage).sort()])")
-    pg.locator('#panel [data-tpno]').click();pg.wait_for_timeout(200)
-    ok('«Non merci»: le proposte spariscono',pg.locator('#panel .prop').count()==0 and pg.locator('#panel [data-tpno]').count()==0)
-    ok('«Non merci» non scrive niente nel telefono (stesse chiavi di prima)',pg.evaluate("JSON.stringify([Object.keys(localStorage).sort(),Object.keys(sessionStorage).sort()])")==ls0,ls0)
+    pg.locator('#panel .prop .px').first.click();pg.wait_for_timeout(200)
+    ok('X sul riquadro delle bevande: si chiude solo quello, il dessert resta',pg.locator('#panel .prop').count()==1 and 'dessert' in pg.locator('#panel .prop .pt').inner_text())
+    pg.locator('#panel .tipno [data-tpno="all"]').click();pg.wait_for_timeout(200)
+    ok('«Non merci»: tutti i riquadri si chiudono',pg.locator('#panel .prop').count()==0 and pg.locator('#panel [data-tpno]').count()==0)
+    ok('X e «Non merci» non scrivono niente nel telefono (stesse chiavi di prima)',pg.evaluate("JSON.stringify([Object.keys(localStorage).sort(),Object.keys(sessionStorage).sort()])")==ls0,ls0)
+    ok('ciò che è stato aggiunto resta nel carrello dopo la chiusura',pg.evaluate("CART.reduce((a,l)=>a+l.q,0)")==7)
     pg.evaluate("()=>{"+SET+"mk('del',5,4,0,0,0,0);cart()}");pg.wait_for_timeout(200)
     ok('dopo «Non merci» il riquadro verde della gratuità resta (è un\'informazione sul prezzo), le altre proposte no',pg.locator('#panel .gain').count()==1 and pg.locator('#panel .prop').count()==0)
+    pg.evaluate("()=>{TIPX={};TIPKEEP={};"+SET+"mk('take',0,2,0,0,0,1);cart()}");pg.wait_for_timeout(200)
+    ok('bevanda presa dal menu (non dai consigli): il riquadro delle bevande non esce, solo il dessert',pg.locator('#panel .prop').count()==1 and 'dessert' in pg.locator('#panel .prop .pt').inner_text())
+    pg.evaluate("()=>{TIPX={};TIPKEEP={};"+SET+"mk('del',5,4,0,0,0,0);cart()}");pg.wait_for_timeout(200);pg.locator('#panel [data-tp="btlC"]').click();pg.wait_for_timeout(200)
+    ok('riquadro verde + bevande: dopo un\'aggiunta le bevande restano e arriva anche il dessert',pg.locator('#panel .gain').count()==1 and pg.locator('#panel .prop').count()==2)
+    pg.evaluate("()=>{TIPX={boi:true};TIPKEEP={};}")
     def recap(js):
         pg.evaluate("()=>{"+SET+js+";ACK=true;cart();ready()}");pg.wait_for_timeout(200);return pg.locator('#mbox .rlast').count()
-    ok('riepilogo dopo «Non merci»: nessuna riga in più',recap("mk('take',0,2,0,0,0,0)")==0)
-    ok('riepilogo senza bevande né dessert (e senza «Non merci»): riga «Une boisson ou un dessert ?»',recap("NOTIP=false;mk('take',0,2,0,0,0,0)")==1 and 'Une boisson ou un dessert' in pg.locator('#mbox .rlast').inner_text().replace(' ',' '))
+    ok('riepilogo dopo una X o «Non merci»: nessuna riga in più',recap("mk('take',0,2,0,0,0,0)")==0)
+    ok('riepilogo senza bevande né dessert (e senza «Non merci»): riga «Une boisson ou un dessert ?»',recap("TIPX={};TIPKEEP={};mk('take',0,2,0,0,0,0)")==1 and 'Une boisson ou un dessert' in pg.locator('#mbox .rlast').inner_text().replace(' ',' '))
     pg.locator('#mback').click();pg.wait_for_timeout(200)
     ok('«Ajouter» nel riepilogo: torna al carrello con le proposte',pg.evaluate("document.getElementById('modal').hidden&&!document.getElementById('sheet').hidden") and pg.locator('#panel .prop').count()==2)
-    ok('riepilogo con una bevanda già presa: nessuna riga',recap("NOTIP=false;mk('take',0,2,0,0,0,1)")==0)
-    ok('riepilogo con un dessert già preso: nessuna riga',recap("NOTIP=false;mk('take',0,2,0,1,0,0)")==0)
+    ok('riepilogo con una bevanda già presa: nessuna riga',recap("TIPX={};TIPKEEP={};mk('take',0,2,0,0,0,1)")==0)
+    ok('riepilogo con un dessert già preso: nessuna riga',recap("TIPX={};TIPKEEP={};mk('take',0,2,0,1,0,0)")==0)
     # ---- bevande divise nel menu (15.11.2026)
     pg.evaluate("document.getElementById('modal').hidden=true;document.getElementById('sheet').hidden=true;CART=[];save();draw()")
     m=pg.evaluate("[...document.querySelectorAll('#boissons li')].map(e=>e.classList.contains('grp')?'# '+e.textContent:e.querySelector('.nm').textContent+' | '+(e.querySelector('.ing')||{textContent:''}).textContent+' | '+e.querySelector('.pr').textContent.replace(/\u00a0/g,' '))")
@@ -104,7 +115,7 @@ try:
     # ---- 6 lingue
     n=pg.evaluate("Object.keys(TX).filter(k=>['tipFree','tipSave','tipBoi','tipNo','tipLast','tipDes','tipOk'].every(x=>typeof TX[k][x]==='string'&&TX[k][x].length>3)&&TX[k].tipSave.includes('{0}')).length");ok('testi nuovi nelle 6 lingue',n==6,str(n))
     for lang,w in(('nl','Een drankje erbij?'),('en','A drink with that?'),('de','Ein Getränk dazu?'),('es','¿Una bebida para acompañar?'),('it','Qualcosa da bere?')):
-        g=page(lang);r=g.evaluate("(a)=>{NOTIP=false;"+SET+"return mk(...a)}",['del',5,4,0,0,0,0]);ok(lang+': riquadro verde, risparmio e bevande tradotti',r['gain']!='' and '4' in r['gain'] and any(w in x for x in r['props']) and 'Il ne manque' not in r['gain'],r['gain']);g.context.close()
+        g=page(lang);r=g.evaluate("(a)=>{TIPX={};TIPKEEP={};"+SET+"return mk(...a)}",['del',5,4,0,0,0,0]);ok(lang+': riquadro verde, risparmio e bevande tradotti',r['gain']!='' and '4' in r['gain'] and any(w in x for x in r['props']) and 'Il ne manque' not in r['gain'],r['gain']);g.context.close()
     ok('nessun errore JavaScript',not errs,str(errs))
     ok('nessuna richiesta esterna fatta dai consigli (tutto bloccato in prova)',not [u for u in ext if 'photon' in u or 'openrouteservice' in u or 'workers.dev' in u],str(ext[:3]))
     br.close()

@@ -149,8 +149,8 @@ textarea{min-height:64px;resize:vertical}
 .msg{font-size:13px;margin-top:6px;color:var(--amber)}
 .tip{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px dashed var(--amber);color:var(--fg);font-size:14px;font-weight:600}.tipc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.tchip{font:600 13px var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 12px;cursor:pointer}.tchip.on{border-color:var(--amber);background:rgba(242,179,61,.12)}.tchip b{color:var(--amber)}.tipok{display:flex;align-items:center;gap:14px;width:100%;margin-top:4px}
 .gain{margin-top:12px;padding:14px;border-radius:14px;border:2px solid #3cc46a;background:rgba(60,196,106,.12)}.gain .gt{font:400 22px/1.15 var(--display);color:var(--fg)}.gain .gs{margin-top:4px;font-size:14px;font-weight:600;color:#3cc46a}.tchip.g{background:#3cc46a;border-color:#3cc46a;color:#000;font-size:14px;padding:9px 14px}
-.prop{margin-top:10px;padding:12px;border-radius:14px;background:var(--panel2);border:1px solid var(--line)}.prop .pt{font-size:15px;font-weight:700}.prop .tchip{background:var(--bg);text-align:left}
-.tipno{margin-top:10px;text-align:right}.tipno .lnk{color:var(--muted);text-decoration:underline;font-weight:400;padding:6px 0}.rlast{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.prop{position:relative;margin-top:10px;padding:12px;border-radius:14px;background:var(--panel2);border:1px solid var(--line)}.prop .pt{font-size:15px;font-weight:700}.prop .tchip{background:var(--bg);text-align:left}
+.tipno{margin-top:10px;text-align:right}.tipno .lnk{color:var(--muted);text-decoration:underline;font-weight:400;padding:6px 0}.prop .pt{padding-right:40px}.prop .px{all:unset;position:absolute;top:4px;right:4px;width:40px;height:40px;display:grid;place-items:center;font:400 24px/1 var(--body);color:var(--muted);cursor:pointer;border-radius:50%}.prop .px:focus-visible{outline:2px solid var(--amber)}.rlast{margin:8px 0 0;font-size:14px;color:var(--muted)}
 .grand.ok span:last-child,.rtot.ok{color:#3cc46a}.grand.no span:last-child,.rtot.no{color:#ff4a3d}
 .rtot{border-top:1px solid var(--line);margin-top:6px;padding-top:6px;font-weight:700;font-size:17px}
 .delno{margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(255,74,61,.12);border:1px solid #ff4a3d;color:#ff6a5e;font-weight:700;font-size:14px}
@@ -559,9 +559,9 @@ const TIPIT={vin:()=>ITEMS.find(x=>/^Vin rouge/i.test(String(x.n))),nut:()=>ITEM
 const tipSize=it=>(ingTxt(it).match(/\d.*$/)||[""])[0];
 const TIPV={tc:"tiraC",ts:"tiraS"};
 /* un tocco = aggiunto subito alla selezione (titolare, 15.11.2026 18:46): niente secondo pulsante «Ajouter» */
-function tipChips(keys){return `<div class="tipc">${keys.map(k=>{const it=TIPIT[k]();if(!it)return"";return `<button type="button" class="tchip" data-tp="${k}">+ ${esc(nm(it)+(TIPV[k]?" "+t(TIPV[k]):"")+(/^(can|btl)/.test(k)?" "+tipSize(it):""))} · ${price(it.p)}</button>`}).join("")}</div>`}
-/* CONSIGLI (titolare, 15.11.2026): proposte a TUTTI (à emporter e livraison), al massimo due insieme, in quest'ordine: ciò che serve per essere consegnati, la pizza che manca alla consegna gratuita (con il risparmio vero), le bevande (lattine fino a 2 piatti, bottiglie da 1,5 L da 3), i dessert. Mai i pain pizza nei consigli. Chi ha già una bevanda vede solo i dessert; chi ha tutto o tocca «Non merci» non vede più niente. NOTIP resta solo in memoria (fino alla ricarica della pagina): niente scritto nel telefono. */
-let NOTIP=false;
+function tipChips(keys){return `<div class="tipc">${keys.map(k=>{const it=TIPIT[k]();if(!it)return"";const v=TIPV[k]||"",c=CART.filter(l=>l.id===it.id&&(l.v||"")===v).reduce((a,l)=>a+l.q,0);return `<button type="button" class="tchip${c?" on":""}" data-tp="${k}">+ ${esc(nm(it)+(v?" "+t(v):"")+(/^(can|btl)/.test(k)?" "+tipSize(it):""))} · ${price(it.p)}${c?` <b>×${c}</b>`:""}</button>`}).join("")}</div>`}
+/* CONSIGLI (titolare, 15.11.2026): proposte a TUTTI (à emporter e livraison), al massimo due insieme, in quest'ordine: ciò che serve per essere consegnati, la pizza che manca alla consegna gratuita (con il risparmio vero), le bevande (lattine fino a 2 piatti, bottiglie da 1,5 L da 3), i dessert. Mai i pain pizza nei consigli. Chi ha già una bevanda (presa dal menu) vede solo i dessert. Un tocco aggiunge subito e il riquadro RESTA APERTO per prenderne altri (TIPKEEP; titolare, 15.11.2026 19:05); la piccola X chiude quel riquadro e «Non merci» sotto li chiude tutti (TIPX: chiuso = niente più proposte di quel tipo e niente riga nel riepilogo). TIPX e TIPKEEP restano solo in memoria (fino alla ricarica della pagina): niente scritto nel telefono. */
+let TIPX={},TIPKEEP={};const TIPCAT={boissons:"boi",desserts:"des"};
 const hasCat=c=>CART.some(l=>byId[l.id].cat===c);
 function tipNeed(T){if(MODE!=="del")return["",0];const km=kmVal();if(!(km>0)||km>12)return["",0];
   const go=c=>`<div class="tipc"><button type="button" class="tchip${c}" data-goto="pizzas">${esc(t("seePz"))}</button><button type="button" class="tchip${c}" data-goto="pates">${esc(t("seePa"))}</button></div>`;
@@ -570,10 +570,11 @@ function tipNeed(T){if(MODE!=="del")return["",0];const km=kmVal();if(!(km>0)||km
   if(!T.ok&&T.npz===1)return[`<div class="tip">${esc(t("tipMiss",price(Math.max(0,35-T.sub-T.sup))))}${tipChips(["vin","canC","tc","ts","nut"])}</div>`,2];
   if(T.ok&&T.fee>0&&((km<=8&&T.npz===4)||(km>8&&km<=10&&T.npz===5)||(km>10&&T.npz===6)))return[`<div class="gain"><div class="gt">${esc(t("tipFree"))}</div><div class="gs">${esc(t("tipSave",price(T.fee)))}</div>${go(" g")}</div>`,1];
   return["",0]}
-function tipProps(T,n){if(NOTIP||!CART.length||n>=2)return"";const o=[];
-  if(!hasCat("boissons"))o.push(`<div class="prop"><div class="pt">🥤 ${esc(t("tipBoi"))}</div>${tipChips(T.npz>=3?["btlC","btlF","btlI","vin"]:["canC","canF","canI","vin"])}</div>`);
-  if(!hasCat("desserts"))o.push(`<div class="prop"><div class="pt">🍰 ${esc(t("tipDes"))}</div>${tipChips(["tc","ts","nut","nut2"])}</div>`);
-  const x=o.slice(0,2-n);return x.length?x.join("")+`<div class="tipno"><button type="button" class="lnk" data-tpno="1">${esc(t("tipNo"))}</button></div>`:""}
+function tipProps(T,n){if(!CART.length||n>=2)return"";let free=2-n;const o=[];
+  const box=(k,cat,ico,title,chips)=>{if(TIPX[k])return;if(TIPKEEP[k]){}else if(hasCat(cat)||free<1)return;else free--;o.push(`<div class="prop"><button type="button" class="px" data-tpno="${k}" aria-label="${esc(t("close"))}">×</button><div class="pt">${ico} ${esc(t(title))}</div>${tipChips(chips)}</div>`)};
+  box("boi","boissons","🥤","tipBoi",T.npz>=3?["btlC","btlF","btlI","vin"]:["canC","canF","canI","vin"]);
+  box("des","desserts","🍰","tipDes",["tc","ts","nut","nut2"]);
+  return o.length?o.join("")+`<div class="tipno"><button type="button" class="lnk" data-tpno="all">${esc(t("tipNo"))}</button></div>`:""}
 function tipAdd(){for(const[k,c]of Object.entries(TIPSEL)){if(!c)continue;const it=TIPIT[k]();if(!it)continue;const v=TIPV[k]||"";
   const l=CART.find(l=>l.id===it.id&&(l.v||"")===v&&!(l.s||[]).length);if(l)l.q+=c;else CART.push(v?{id:it.id,q:c,s:[],v}:{id:it.id,q:c,s:[]})}
   TIPSEL={};save();draw();cart()}
@@ -604,7 +605,7 @@ let ACK=false;try{ACK=sessionStorage.getItem("dgAck")==="1"}catch(e){}
 function ack(){ACK=true;try{sessionStorage.setItem("dgAck","1")}catch(e){}}
 function warn(){$("mbox").innerHTML=`<div class="cwarn"><div class="wi">⚠️</div><h3>${esc(t("wT"))}</h3><p class="w1">${t("w1")}</p><p class="wc">${esc(t("wC"))}</p><div class="wn">${PHONE}</div><p class="wb">${esc(t("wB"))}</p>${(()=>{const d=dayNote();return d?`<p class="rstrip" style="margin:12px 0 0;font-size:17px;text-align:left">⚠️ ${esc(d.m)}</p>`:""})()}<div class="actions"><a class="btn red big" id="wcall" href="tel:${TEL}" target="_blank" rel="noopener">📞 ${esc(t("wCall"))}</a><button type="button" class="btn big" id="wok">${esc(t("wOk"))}</button></div></div>`;$("modal").hidden=false}
 function ready(){if(!ACK){warn();return}const T=totals();$("mbox").innerHTML=`<div class="mz">🍕</div><h3 class="mt" style="font:400 28px/1.1 var(--display);color:var(--red);margin:6px 0">${esc(t("readyT"))}</h3><p class="rstrip">${t("readyX")}</p>${(()=>{const d=dayNote();return d?`<p class="rstrip" style="margin-top:8px">⚠️ ${esc(d.m)}</p>`:""})()}
-  <div class="recap">${recapTxt().map(x=>`<div>${esc(x)}</div>`).join("")}<div class="rtot ${T.st}">${esc(t("total"))}${T.st==="no"?" ("+esc(t("take"))+")":""}${L==="fr"?"\u00a0: ":": "}${price(T.tot)}</div>${T.st==="no"?`<div class="delno">${esc(T.big?T.msg:t(T.out?"delOut":"delNo"))}</div>`:""}${T.msg&&!T.big?`<div class="msg">${esc(T.msg)}</div>`:""}</div>${!NOTIP&&!hasCat("boissons")&&!hasCat("desserts")?`<p class="rlast">${esc(t("tipLast"))} <button type="button" class="lnk" id="mback">${esc(t("tipAdd"))}</button></p>`:""}
+  <div class="recap">${recapTxt().map(x=>`<div>${esc(x)}</div>`).join("")}<div class="rtot ${T.st}">${esc(t("total"))}${T.st==="no"?" ("+esc(t("take"))+")":""}${L==="fr"?"\u00a0: ":": "}${price(T.tot)}</div>${T.st==="no"?`<div class="delno">${esc(T.big?T.msg:t(T.out?"delOut":"delNo"))}</div>`:""}${T.msg&&!T.big?`<div class="msg">${esc(T.msg)}</div>`:""}</div>${!TIPX.boi&&!TIPX.des&&!hasCat("boissons")&&!hasCat("desserts")?`<p class="rlast">${esc(t("tipLast"))} <button type="button" class="lnk" id="mback">${esc(t("tipAdd"))}</button></p>`:""}
   <div class="actions"><a class="btn red big" href="tel:${TEL}" target="_blank" rel="noopener">📞 ${esc(t("call"))}</a><button type="button" class="btn" id="mcopy">${esc(t("copy"))}</button><button type="button" class="btn" id="mclose">${esc(t("close"))}</button></div>`;$("modal").hidden=false}
 async function copyNum(btn){try{await navigator.clipboard.writeText(PHONE.replace(/ /g,""));btn.textContent=t("copied")}catch(e){btn.textContent=PHONE}setTimeout(()=>btn.textContent=t("copy"),2500)}
 
@@ -619,8 +620,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("button,a");if(!b
   if(d.as!==undefined){const l=CART[+d.as];(l.s=l.s||[]).push(d.sid);openPick=-1;save();bar();cart();return}
   if(d.rs!==undefined){CART[+d.rs].s.splice(+d.j,1);save();bar();cart();return}
   if(d.m){MODE=d.m;save();bar();cart();return}
-  if(d.tp){TIPSEL={[d.tp]:1};const it=TIPIT[d.tp]();tipAdd();bar();if(it)toast(t("tipOk")+" ✓ "+nm(it),2500);return}
-  if(d.tpno){NOTIP=true;TIPSEL={};cart();return}
+  if(d.tp){TIPSEL={[d.tp]:1};const it=TIPIT[d.tp]();if(it&&TIPCAT[it.cat])TIPKEEP[TIPCAT[it.cat]]=true;tipAdd();bar();if(it)toast(t("tipOk")+" ✓ "+nm(it),2500);return}
+  if(d.tpno){if(d.tpno==="all"){TIPX={boi:true,des:true};TIPKEEP={}}else{TIPX[d.tpno]=true;TIPKEEP[d.tpno]=false}cart();return}
   if(d.goto){$("sheet").hidden=true;const sec=$(d.goto);if(sec)sec.scrollIntoView({behavior:"smooth"});return}
   if(b.id==="ready"){ready();return}
   if(b.id==="wok"){ack();ready();return}
