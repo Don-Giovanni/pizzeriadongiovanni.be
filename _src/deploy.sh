@@ -1,13 +1,19 @@
 #!/bin/bash
-# deploy.sh main|prova  — pubblica menu + pagine (main con statistiche Umami, prova senza e noindex)
+# deploy.sh main|prova  — pubblica menu + pagine (statistiche Umami solo con consenso: stats/; prova con noindex e etichetta «prova»)
 set -e
 S=$(cd "$(dirname "$0")" && pwd)
 R=$(dirname "$S")
-UM='<script defer src="https://cloud.umami.is/script.js" data-website-id="8402e497-f6e1-4759-8890-e445a13ff93b" data-domains="pizzeriadongiovanni.be"></script>'
+# Statistiche SOLO con consenso (15.11.2026): consent.js mostra la fascia e carica umami.js (copia ospitata sul sito) solo dopo «Accepter»
+CV=$(md5sum $S/stats/consent.js | cut -c1-8); UV=$(md5sum $S/stats/umami.js | cut -c1-8)
+UM='<script defer src="consent.js?v='$CV'" data-wid="8402e497-f6e1-4759-8890-e445a13ff93b" data-uv="'$UV'"></script>'
+UMP='<script defer src="consent.js?v='$CV'" data-wid="8402e497-f6e1-4759-8890-e445a13ff93b" data-uv="'$UV'" data-tag="prova"></script>'
+UML='<script defer src="consent.js?v='$CV'" data-link></script>'
 git -C $R pull -q
 if [ "$1" = main ]; then D=$R; EXTRA="$UM
 "; else D=$R/prova; EXTRA='<meta name="robots" content="noindex">
+'"$UMP"'
 '; fi
+cp $S/stats/consent.js $S/stats/umami.js $D/
 python3 $S/make_site.py $S/menu/index.html $D/menu.html "$EXTRA"; python3 $S/site/menu_page.py $D/menu.html
 python3 $S/site/gen_home.py $S/menu/index.html $D/index.html "$EXTRA"; mkdir -p $D/img; cp $S/site/img/*.jpg $D/img/
 # SEO: titolo del menu, canonical, scheda ristorante; sul sito vero anche sitemap.xml, robots.txt, 404.html
@@ -16,8 +22,8 @@ for f in allergenes.html livraison.html; do
   if [ "$1" = main ]; then python3 - "$S/menu/$f" "$D/$f" "$UM" <<'P'
 import sys;s=open(sys.argv[1]).read();s=s.replace('<meta name="description"',sys.argv[3]+'\n<meta name="description"',1).replace('id="back" href="index.html"','id="back" href="menu.html"');open(sys.argv[2],'w').write(s)
 P
-  else python3 - "$S/menu/$f" "$D/$f" <<'P'
-import sys;s=open(sys.argv[1]).read();s=s.replace('<meta name="description"','<meta name="robots" content="noindex">\n<meta name="description"',1).replace('id="back" href="index.html"','id="back" href="menu.html"');open(sys.argv[2],'w').write(s)
+  else python3 - "$S/menu/$f" "$D/$f" "$UMP" <<'P'
+import sys;s=open(sys.argv[1]).read();s=s.replace('<meta name="description"','<meta name="robots" content="noindex">\n'+sys.argv[3]+'\n<meta name="description"',1).replace('id="back" href="index.html"','id="back" href="menu.html"');open(sys.argv[2],'w').write(s)
 P
   fi
 done
@@ -36,6 +42,9 @@ open(p,'w').write(s)
 P
   done
   if [ "$1" != main ]; then sed -i 's|<meta name="description"|<meta name="robots" content="noindex">\n<meta name="description"|' $D/confidentialite.html; fi
+  python3 - "$D/confidentialite.html" "$UML" <<'P'
+import sys;p=sys.argv[1];s=open(p).read();s=s.replace('<link rel="icon"',sys.argv[2]+'\n<link rel="icon"',1);open(p,'w').write(s)
+P
 fi
 # «Cadeau caché» (buoni regalo del sito, gift.js): su /prova/ sempre, sul sito vero solo se esiste _src/gift/ONLINE (ok del titolare)
 if [ "$1" != main ] || [ -f $S/gift/ONLINE ]; then
