@@ -462,7 +462,7 @@ function totals(){const sub=CART.reduce((a,l)=>a+byId[l.id].p*l.q,0),sup=CART.re
   const npz=CART.reduce((a,l)=>a+(byId[l.id].dish?l.q:0),0),food=sub+sup;let fee=0,msg="",ok=true,call=false,big=false,out=false;
   if(MODE==="del"){const km=kmVal();
     if(km>15){msg=t("outZone");ok=false;out=true}
-    else if(km>12){call=npz>=15&&food>=230;big=!call;msg=t(call?"bigCall":"bigOnly");ok=false}/* 12-15 km: servono ENTRAMBE le condizioni: almeno 15 piatti (pizze o paste insieme; pain pizza e dessert non contano) e almeno 230 € di ordine (tutto, senza la consegna); poi solo dopo conferma al telefono (titolare, 15.11.2026) */
+    else if(km>12){call=npz+Math.floor(CART.reduce((a,l)=>a+(/^Pain pizza/i.test(String(byId[l.id].n))?l.q:0),0)/2)>=15&&food>=230;big=!call;msg=t(call?"bigCall":"bigOnly");ok=false}/* 12-15 km: servono ENTRAMBE le condizioni: almeno 15 piatti (pizze o paste insieme; SOLO QUI ogni 2 pain pizza contano 1 piatto; i dessert non contano) e almeno 230 € di ordine (tutto, senza la consegna); poi solo dopo conferma al telefono (titolare, 15.11.2026) */
     else if(km>8&&npz<3){msg=t("min3");ok=false}
     else if(npz<2&&!(npz>=1&&food>=35)){msg=t("min2");ok=false}
     else if(!(km>0)){msg=t("pickV");ok=false}

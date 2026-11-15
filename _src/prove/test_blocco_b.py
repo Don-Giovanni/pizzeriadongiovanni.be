@@ -1,5 +1,5 @@
 # test_blocco_b.py <cartella delle pagine, es. ../prova-sito/public/prova>  (blocco B degli audit del 15.11.2026)
-# 83 controlli con Photon e openrouteservice finti: indirizzo fuori zona (6 lingue), «Thuin» per il CAP 6530, etichette degli allergeni,
+# 90 controlli con Photon e openrouteservice finti: indirizzo fuori zona (6 lingue), «Thuin» per il CAP 6530, etichette degli allergeni,
 # focus dentro le finestre, titoli della home, didascalia e scope delle tabelle, <main>, link Confidentialité e twitter:card scritti nell'HTML.
 import subprocess,sys,time,json
 from playwright.sync_api import sync_playwright
@@ -85,8 +85,16 @@ try:
     ok('230 € ma solo 10 piatti: non basta',r['c']['npz']==10 and r['c']['food']>=230 and r['c']['st']=='no' and r['c']['red'],str(r['c']))
     ok('10 pizze + 5 paste = 15 piatti e 230 € con il resto: possibile dopo conferma',r['d']['npz']==15 and r['d']['food']>=230 and r['d']['st']=='call',str(r['d']))
     ok('10 pizze + 4 paste = 14 piatti e 230 €: non basta',r['f']['npz']==14 and r['f']['food']>=230 and r['f']['st']=='no',str(r['f']))
-    pg.evaluate("KM='14.9'");
-    r=pg.evaluate("""()=>{const pz=ITEMS.find(x=>x.pizza),pp=ITEMS.find(x=>/^Pain pizza/i.test(String(x.n))),ti=ITEMS.find(x=>/^Tiramis/i.test(String(x.n)));CART=[{id:pz.id,q:14,s:[]},{id:pp.id,q:20,s:[]},{id:ti.id,q:20,s:[]}];const T=totals();return [T.st,T.npz,pp.dish,ti.dish,T.sub+T.sup>=230]}""");ok('14 pizze + 20 pain pizza + 20 tiramisù (oltre 230 €): pain pizza e tiramisù non contano come piatti',r==['no',14,False,False,True],str(r))
+    # ogni 2 pain pizza = 1 piatto, SOLO tra 12 e 15 km (titolare, 15.11.2026); il tiramisù non conta mai come piatto
+    P="""(a)=>{const pz=ITEMS.find(x=>x.pizza),pp=ITEMS.find(x=>/^Pain pizza/i.test(String(x.n))),ti=ITEMS.find(x=>/^Tiramis/i.test(String(x.n)));MODE="del";ADR="Rue des Exemples 12, 9999 Villefictive";KM=String(a[0]);CART=[{id:pz.id,q:a[1],s:[]}].concat(a[2]?[{id:pp.id,q:a[2],s:[]}]:[]).concat(a[3]?[{id:ti.id,q:a[3],s:[]}]:[]);const T=totals();return [T.st,T.npz,T.sub+T.sup>=230,T.fee,T.ok]}"""
+    r=pg.evaluate(P,[14.9,14,2,20]);ok('14 pizze + 2 pain pizza (+ tiramisù per i 230 €): 15 piatti, possibile dopo conferma',r[:3]==['call',14,True],str(r))
+    r=pg.evaluate(P,[14.9,14,1,20]);ok('14 pizze + 1 pain pizza: 14 piatti, non basta',r[:3]==['no',14,True],str(r))
+    r=pg.evaluate(P,[14.9,13,3,20]);ok('13 pizze + 3 pain pizza: 14 piatti, non basta',r[:3]==['no',13,True],str(r))
+    r=pg.evaluate(P,[14.9,14,0,40]);ok('14 pizze + 40 tiramisù: il tiramisù non conta come piatto',r[:3]==['no',14,True],str(r))
+    r=pg.evaluate(P,[14.9,14,2,0]);ok('14 pizze + 2 pain pizza ma meno di 230 €: non basta',r[0]=='no' and r[2] is False,str(r))
+    r=pg.evaluate("""()=>{const pz=ITEMS.find(x=>x.pizza),nu=ITEMS.filter(x=>/nutella/i.test(String(x.n)));MODE="del";KM="14.9";CART=[{id:pz.id,q:14,s:[]},{id:nu[0].id,q:1,s:[]}];const T=totals();return [nu.map(x=>String(x.n)+":"+x.dish).join(" | "),T.npz,nu.every(x=>x.dish)]}""");ok('la pizza Nutella conta come piatto (14 pizze + 1 Nutella = 15)',r[1]==15 and r[2],str(r))
+    r=pg.evaluate(P,[9,2,2,0]);ok('sotto i 12 km il pain pizza non conta: 9 km, 2 pizze + 2 pain pizza = minimo 3 non raggiunto',r[0]=='no' and r[1]==2,str(r))
+    r=pg.evaluate(P,[5,4,2,0]);ok('sotto i 12 km il pain pizza non conta: 5 km, 4 pizze + 2 pain pizza = consegna a pagamento come prima',r[0]=='ok' and r[3]>0,str(r))
     r=pg.evaluate(J,[15.1,20,0]);ok('15,1 km, 20 pizze: riquadro «Livraison impossible : hors zone.»',r[0]=='no' and r[5] and r[6] and r[8].replace('\u00a0',' ')=='Livraison impossible : hors zone.' and r[9]==1,r[8])
     r=pg.evaluate(J,[11.9,15,0]);ok('11,9 km, 15 pizze: consegna normale gratuita',r[0]=='ok' and r[1] and r[2]==0)
     r=pg.evaluate(J,[9,2,0]);ok('9 km, 2 pizze: riquadro «impossible pour cette commande» come prima','pour cette commande' in r[8],r[8])
