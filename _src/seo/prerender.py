@@ -26,7 +26,7 @@ PAGES = {
 }
 HEAD = ('<script>try{var dgl=localStorage.getItem("dg_lang")||(navigator.language||"fr").slice(0,2);'
         'if(/^(nl|de|it|en|es)$/.test(dgl))document.documentElement.className+=" dgpre"}catch(e){}</script>'
-        '<style>.dgpre [data-t],%s{visibility:hidden}</style>\n')
+        '<style>.dgpre [data-t],.dgpre #dgc-f,%s{visibility:hidden}</style>\n')
 TAIL = '<script>document.documentElement.classList.remove("dgpre")</script>\n'
 
 

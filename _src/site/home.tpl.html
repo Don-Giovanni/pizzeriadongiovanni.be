@@ -56,7 +56,7 @@ h2{font:400 clamp(26px,5vw,36px)/1.15 var(--display);margin:0 0 6px;text-wrap:ba
 h2+.lead{margin:0 0 18px;color:var(--muted)}
 .cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.card h3{margin:0;font:600 13px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.card h3,.card h2.ch{margin:0;font:600 13px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);text-wrap:wrap}
 .card .big{font-size:18px;font-weight:600}
 .card .mon{color:var(--red);font-weight:700;font-size:16px}
 .card .sm{color:var(--muted);font-size:14px}
@@ -90,6 +90,7 @@ h2+.lead{margin:0 0 18px;color:var(--muted)}
 .info .card .big a{text-decoration:none}
 footer{margin-top:34px;border-top:1px solid var(--line);padding-block:20px 24px;color:var(--muted);font-size:13px;text-align:center}
 footer p{margin:4px 0}
+.dgc-f{font-size:11.5px;color:#b7ab98;margin:6px 0 0}.dgc-f a{color:inherit;text-decoration:underline}@media print{.dgc-f{display:none!important}}
 footer .mascot{width:90px;height:auto;border-radius:12px;opacity:.9}
 /* barra in basso */
 nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(23,20,18,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
@@ -161,9 +162,9 @@ nav.bot a span.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-w
 <main>
 <section class="wrap" id="horaires">
   <div class="cards">
-    <div class="card"><h3 data-t="hoursT"></h3><span class="big" data-t="hours"></span><span class="mon" data-t="closedMon"></span><span class="sm" data-t="takeaway"></span></div>
-    <div class="card"><h3 data-t="delivT"></h3><span class="big" data-t="deliv"></span><span class="sm" data-t="delivC"></span><a class="lk" href="livraison.html" data-t="delivSee"></a></div>
-    <div class="card"><h3 data-t="partyT"></h3><span class="big" data-t="partyB"></span><span class="sm" data-t="party"></span><blockquote class="pq">« Une commande de 26 pizzas pour une soirée entre amis. 26 pizzas qui on été faites à l&#39;heure dite. […] Les amis ont, évidemment, adoré! »<small>Tripadvisor ★★★★★</small></blockquote><a class="lk" href="tel:+32455111677" data-t="partyCall"></a></div>
+    <div class="card"><h2 class="ch" data-t="hoursT"></h2><span class="big" data-t="hours"></span><span class="mon" data-t="closedMon"></span><span class="sm" data-t="takeaway"></span></div>
+    <div class="card"><h2 class="ch" data-t="delivT"></h2><span class="big" data-t="deliv"></span><span class="sm" data-t="delivC"></span><a class="lk" href="livraison.html" data-t="delivSee"></a></div>
+    <div class="card"><h2 class="ch" data-t="partyT"></h2><span class="big" data-t="partyB"></span><span class="sm" data-t="party"></span><blockquote class="pq">« Une commande de 26 pizzas pour une soirée entre amis. 26 pizzas qui on été faites à l&#39;heure dite. […] Les amis ont, évidemment, adoré! »<small>Tripadvisor ★★★★★</small></blockquote><a class="lk" href="tel:+32455111677" data-t="partyCall"></a></div>
   </div>
 </section>
 
@@ -220,7 +221,7 @@ nav.bot a span.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-w
   <p><b>Pizzeria Don Giovanni</b></p>
   <p><span style="white-space:nowrap">Grand'Rue 1, 6530 Thuin</span> · <span style="white-space:nowrap">0455 11 16 77</span> · <a href="mailto:info@pizzeriadongiovanni.be" style="white-space:nowrap;color:inherit">info@pizzeriadongiovanni.be</a></p>
   <p><span style="white-space:nowrap">New Don Giovanni SRL</span> · <span style="white-space:nowrap">BCE / TVA BE 1036.749.658</span></p>
-  <p data-t="privacy"></p>
+  <p data-t="privacy"></p><p id="dgc-f" class="dgc-f"><a href="confidentialite.html">Confidentialité</a></p>
 </footer>
 
 <nav class="bot" aria-label="Navigation">
@@ -320,11 +321,20 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-l]");if(b)
 addEventListener("keydown",e=>{if(e.key==="Escape")$("lb").hidden=true});
 draw();setInterval(status,60000);
 </script>
-<script>/* finestre aperte (carrello, pop-up, buono, chat, foto): la pagina sotto non scorre; si scorre solo la finestra (titolare, 14.11.2026) */
-(function(){const S=".intro,.sheet,.modal,.excpop,.lb,.dgg,.dga";let on=null;
-const st=document.createElement("style");st.textContent=".sheet,.modal,.excpop,.lb,.dgg,.dga,.panel{overscroll-behavior:contain}";document.head.appendChild(st);
+<script>/* finestre aperte (carrello, pop-up, buono, chat, foto): la pagina sotto non scorre; si scorre solo la finestra (titolare, 14.11.2026).
+   Dal 15.11.2026 (accessibilità): il focus della tastiera entra nella finestra, Tab resta dentro e alla chiusura torna dov'era. Niente cambia per chi usa il dito. */
+(function(){const S=".intro,.sheet,.modal,.excpop,.lb,.dgg,.dga";let on=null,cur=null,prev=null;
+const st=document.createElement("style");st.textContent=".sheet,.modal,.excpop,.lb,.dgg,.dga,.panel{overscroll-behavior:contain}.intro:focus,.sheet:focus,.modal:focus,.excpop:focus,.lb:focus,.dgg:focus,.dga:focus{outline:none}";document.head.appendChild(st);
+const FQ='a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 function vis(e){const c=getComputedStyle(e);if(c.display==="none"||c.visibility==="hidden")return false;const r=e.getBoundingClientRect();return r.width>0&&r.height>0}
-function chk(){const o=[...document.querySelectorAll(S)].some(vis);if(o!==on){on=o;document.documentElement.style.overflow=o?"hidden":"";document.body.style.overflow=o?"hidden":""}}
+function top(){let b=null,bz=-1;for(const e of document.querySelectorAll(S)){if(!vis(e))continue;const z=+getComputedStyle(e).zIndex||0;if(z>=bz){b=e;bz=z}}return b}
+function chk(){const w=top(),o=!!w;if(o!==on){on=o;document.documentElement.style.overflow=o?"hidden":"";document.body.style.overflow=o?"hidden":""}
+  if(w===cur)return;const a=document.activeElement;
+  if(w){if(!cur)prev=a;if(!w.contains(a)){if(!w.hasAttribute("tabindex"))w.setAttribute("tabindex","-1");try{w.focus({preventScroll:true})}catch(_){}}}
+  else{const p=prev;prev=null;if(p&&p!==document.body&&document.contains(p)&&!/^(INPUT|TEXTAREA|SELECT)$/.test(p.tagName)){try{p.focus({preventScroll:true})}catch(_){}}}
+  cur=w}
+document.addEventListener("keydown",e=>{if(e.key!=="Tab"||!cur||!document.contains(cur))return;const f=[...cur.querySelectorAll(FQ)].filter(vis);if(!f.length){e.preventDefault();return}
+  const i=f.indexOf(document.activeElement);if(e.shiftKey?i<=0:(i<0||i===f.length-1)){e.preventDefault();f[e.shiftKey?f.length-1:0].focus()}});
 new MutationObserver(()=>requestAnimationFrame(chk)).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden","open"]});
 addEventListener("load",chk);chk();})();</script>
 </body>

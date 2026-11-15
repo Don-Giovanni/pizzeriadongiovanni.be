@@ -19,6 +19,7 @@ html='''<!doctype html>
 <meta property="og:url" content="https://pizzeriadongiovanni.be/allergenes.html">
 <meta property="og:image" content="https://pizzeriadongiovanni.be/og-image.jpg">
 <meta property="og:locale" content="fr_BE">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-512.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
@@ -65,13 +66,14 @@ tbody tr td,th,.legend li{transition:background-color .6s}
 html,body{height:auto}body{display:block}.wrap{display:block}.tw{overflow:visible;flex:none}
 .lgs{position:sticky;top:0;z-index:3;background:#fff;padding:6px 8px 4px;border-bottom:1px solid var(--line)}.lgs .legend{margin:0}.tw{border-radius:10px}th{top:var(--lh,0px)!important;z-index:2}
 @media print{.lgs{position:static}th{top:0!important}html,body{height:auto}body{display:block}.wrap{display:block;height:auto}.tw{overflow:visible;flex:none}@page{size:A4;margin:9mm}.noprint{display:none!important}body{font-size:11px}.wrap{max-width:none;padding:0}table{font-size:9.5px;min-width:0}th,td{padding:2px 3px}.tw{overflow:visible;border:0}th{position:static}h1{font-size:17px}header img{width:52px}tr{break-inside:avoid}}
-</style></head><body>
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.dgc-f{font-size:11.5px;color:#b7ab98;margin:6px 0 0}.dgc-f a{color:inherit;text-decoration:underline}@media print{.dgc-f{display:none!important}}</style></head><body>
 <div class="flag"><i></i><i></i><i></i></div>
 <div class="wrap">
 <div class="fixed"><div class="top noprint"><a class="b" id="back" href="index.html"></a><div class="btns" id="langs"></div><button class="b" id="pr" type="button" hidden></button></div>
 <header><img src="logo-light.webp" onerror="this.onerror=null;this.src=this.src.replace(/\.webp$/,'.png')" alt="Pizzeria Don Giovanni"><div><h1 id="h1"></h1><p>Pizzeria Don Giovanni · Grand'Rue 1 · 6530 Thuin · Tél. 0455 11 16 77</p></div></header>
 <div id="fx"></div></div>
 <div class="tw" id="tw"></div>
+<p id="dgc-f" class="dgc-f"><a href="confidentialite.html">Confidentialité</a></p>
 </div>
 <script>
 const DATA=__DATA__,UPD="__UPD__";
@@ -82,14 +84,14 @@ function draw(){const g=DATA.d.langs[L],u=DATA.ui[L];document.documentElement.la
  document.getElementById("h1").textContent=u.sub;document.getElementById("back").textContent=u.back;
  const pr=document.getElementById("pr");pr.textContent=u.print;
  document.getElementById("langs").innerHTML=["fr","nl","de","it","en","es"].map(l=>`<button class="b" type="button" data-l="${l}" aria-pressed="${l===L}">${l.toUpperCase()}</button>`).join("");
- const head=`<tr><th class="n">${esc(g.T.dish)}</th>${[...Array(14)].map((_,i)=>`<th title="${esc(g.alg[i])}">${i+1}</th>`).join("")}</tr>`;
+ const head=`<tr><th class="n" scope="col">${esc(g.T.dish)}</th>${[...Array(14)].map((_,i)=>`<th scope="col" title="${esc(g.alg[i])}">${i+1}</th>`).join("")}</tr>`;
  let body=g.cats.map(c=>`<tr class="cat"><td colspan="15">${esc(c.name)}</td></tr>`+c.items.map((x,i)=>row(x,c.id+"-"+i)).join("")).join("");
  body+=`<tr class="cat"><td colspan="15">${esc(DATA.d.supT[L])}</td></tr>`+DATA.d.supl[L].map(row).join("");
  document.getElementById("fx").innerHTML=`${DATA.d.draft?`<p class="draft">${esc(g.T.draft)}</p>`:""}
  <p class="intro" style="margin:6px 0 0">${esc(g.T.intro)}</p>
  <p class="intro" style="margin:4px 0 0;font-size:12px">${esc(g.T.tr)}</p>
  <p class="intro" style="margin:4px 0 0;font-size:12px">${esc(g.T.resp).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}</p>`;
- document.getElementById("tw").innerHTML=`<div class="lgs"><ol class="legend">${g.alg.map((a,i)=>`<li><b>${i+1}</b>${esc(a)}</li>`).join("")}</ol></div><table><thead>${head}</thead><tbody>${body}</tbody></table>
+ document.getElementById("tw").innerHTML=`<div class="lgs"><ol class="legend">${g.alg.map((a,i)=>`<li><b>${i+1}</b>${esc(a)}</li>`).join("")}</ol></div><table><caption class="sr">${esc(g.T.title)}</caption><thead>${head}</thead><tbody>${body}</tbody></table>
  <p class="foot">${esc(u.x)} · <span class="v">*</span> ${esc(g.T.v.replace(/^\\*\\s*/,""))}<br>${esc(u.upd)} : ${UPD}</p>`;}
 document.addEventListener("click",e=>{const l=e.target.closest("[data-l]");if(l){L=l.dataset.l;try{localStorage.setItem("dg_lang",L)}catch(_){ }draw()}});
 try{if(window.self===window.top){const pr=document.getElementById("pr");pr.hidden=false;pr.onclick=()=>window.print()}}catch(e){}

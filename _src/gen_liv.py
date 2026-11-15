@@ -71,6 +71,7 @@ html = r'''<!doctype html>
 <meta property="og:url" content="https://pizzeriadongiovanni.be/livraison.html">
 <meta property="og:image" content="https://pizzeriadongiovanni.be/og-image.jpg">
 <meta property="og:locale" content="fr_BE">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-512.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
@@ -111,12 +112,13 @@ body{font-size:17px}h1{font-size:26px}header p{font-size:14px}header img{width:8
 th.pz{white-space:nowrap;line-height:1.25}th.pz .pn{font-size:1.15em}
 table{table-layout:fixed}thead th:first-child{width:31%}td.f{overflow-wrap:anywhere;font-size:.92em}@media (max-width:560px){td.f{font-size:11px}}
 thead th:first-child{width:19%!important}thead th:nth-child(n+2):nth-child(-n+4){width:12%}thead th:nth-child(n+5){width:15%}td.f{overflow-wrap:normal;white-space:nowrap}
-@media (max-width:340px){th,td{padding:7px 2px}td.f{font-size:9.5px}th.pz{font-size:10.5px}}</style></head><body>
+@media (max-width:340px){th,td{padding:7px 2px}td.f{font-size:9.5px}th.pz{font-size:10.5px}}.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.dgc-f{font-size:11.5px;color:#b7ab98;margin:6px 0 0}.dgc-f a{color:inherit;text-decoration:underline}@media print{.dgc-f{display:none!important}}</style></head><body>
 <div class="flag"><i></i><i></i><i></i></div>
 <div class="wrap">
 <div class="top noprint"><a class="b" id="back" href="index.html"></a><div class="btns" id="langs"></div><button class="b" id="pr" type="button" hidden></button></div>
 <header><img src="logo-light.webp" onerror="this.onerror=null;this.src=this.src.replace(/\.webp$/,'.png')" alt="Pizzeria Don Giovanni"><div><h1 id="h1"></h1><p>Pizzeria Don Giovanni · Grand'Rue 1 · 6530 Thuin · Tél. 0455 11 16 77</p></div></header>
 <div id="main"></div>
+<p id="dgc-f" class="dgc-f"><a href="confidentialite.html">Confidentialité</a></p>
 </div>
 <script>
 const ROWS=__ROWS__,UI=__UI__,UPD="__UPD__";
@@ -127,10 +129,10 @@ function lab(k,u){if(k==="city")return u.city;const [a,b]=k.split("-");return a+
 function draw(){const u=UI[L];document.documentElement.lang=L;document.getElementById("h1").textContent=u.title;document.title=u.title+" · Pizzeria Don Giovanni, Thuin";
  document.getElementById("back").textContent=u.back;document.getElementById("pr").textContent=u.print;
  document.getElementById("langs").innerHTML=["fr","nl","de","it","en","es"].map(l=>`<button class="b" type="button" data-l="${l}" aria-pressed="${l===L}">${l.toUpperCase()}</button>`).join("");
- const head=`<tr><th>${esc(u.dist)}</th>${u.pz.map(p=>{const i=p.indexOf(" ");return `<th class="pz"><span class="pn">${esc(p.slice(0,i))}</span><br>${esc(p.slice(i+1))}</th>`}).join("")}</tr>`;
+ const head=`<tr><th scope="col">${esc(u.dist)}</th>${u.pz.map(p=>{const i=p.indexOf(" ");return `<th class="pz" scope="col"><span class="pn">${esc(p.slice(0,i))}</span><br>${esc(p.slice(i+1))}</th>`}).join("")}</tr>`;
  const body=ROWS.map(([k,ps])=>`<tr><td>${esc(lab(k,u))}</td>${ps.map(v=>v==null?`<td class="f">${esc(u.free)}</td>`:v==="-"?`<td class="m">${esc(u.min3)}</td>`:`<td>${eur(v)}</td>`).join("")}</tr>`).join("")
   +`<tr class="big"><td>12 – 15 ${u.km}</td><td colspan="6"><b>${esc(u.big)}</b></td></tr><tr class="no"><td>${esc(u.more15)}</td><td colspan="6">${esc(u.no)}</td></tr>`;
- document.getElementById("main").innerHTML=`<div class="tw"><table class="l-${L}"><thead>${head}</thead><tbody>${body}</tbody></table></div><ul class="notes">${u.notes.map(n=>`<li>${n}</li>`).join("")}</ul><p class="disc">${esc(u.disc)}</p><p class="foot">${esc(u.upd)} : ${UPD}</p>`}
+ document.getElementById("main").innerHTML=`<div class="tw"><table class="l-${L}"><caption class="sr">${esc(u.title)}</caption><thead>${head}</thead><tbody>${body}</tbody></table></div><ul class="notes">${u.notes.map(n=>`<li>${n}</li>`).join("")}</ul><p class="disc">${esc(u.disc)}</p><p class="foot">${esc(u.upd)} : ${UPD}</p>`}
 document.addEventListener("click",e=>{const l=e.target.closest("[data-l]");if(l){L=l.dataset.l;try{localStorage.setItem("dg_lang",L)}catch(_){ }draw()}});
 try{if(window.self===window.top){const pr=document.getElementById("pr");pr.hidden=false;pr.onclick=()=>window.print()}}catch(e){}
 draw();

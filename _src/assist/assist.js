@@ -165,7 +165,7 @@
   function open() {
     if (S) return;
     ended = false; MSGS = []; sess = null; off = 0; req = null; addMode = false; startT = Date.now(); chatL = null; reg = null;
-    const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-cl" type="button" hidden title="${esc(t("clrT"))}" aria-label="${esc(t("clrT"))}">${esc(t("clr"))}</button><button class="dga-z" type="button" aria-label="${esc(t("big"))}" title="${esc(t("big"))}">⤢</button><button class="dga-x" type="button">${esc(t("close"))}</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="2" maxlength="600" placeholder="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
+    const box = el(`<div class="dga" role="dialog" aria-label="Assistance"><div class="dga-h"><b>Pizzeria Don Giovanni<small>${esc(t("ai"))} · ${esc(t("note"))}</small></b><button class="dga-cl" type="button" hidden title="${esc(t("clrT"))}" aria-label="${esc(t("clrT"))}">${esc(t("clr"))}</button><button class="dga-z" type="button" aria-label="${esc(t("big"))}" title="${esc(t("big"))}">⤢</button><button class="dga-x" type="button">${esc(t("close"))}</button></div><div class="dga-p">${esc(t("sens"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><div class="dga-m" aria-live="polite"></div><form class="dga-f"><textarea rows="2" maxlength="600" placeholder="${esc(t("ph"))}" aria-label="${esc(t("ph"))}"></textarea><button type="submit">${esc(t("send"))}</button></form></div>`);
     document.body.appendChild(box);
     S = { box, m: box.querySelector(".dga-m"), f: box.querySelector(".dga-f"), ta: box.querySelector("textarea") };
     box.querySelector(".dga-h").append(box.querySelector(".dga-h small")); /* la riga «Agent IA · …» va sotto, su tutta la larghezza: accanto al nome restano i pulsanti */
@@ -220,7 +220,7 @@
   function relabel() { if (!S) return; const b = S.box, q = (x) => b.querySelector(x);
     q(".dga-h small").textContent = t("ai") + " · " + t("note");
     q(".dga-p").innerHTML = '<span class="dga-pt">' + esc(t("sens")) + ' </span><a href="confidentialite.html" target="_blank" rel="noopener">' + esc(t("priv")) + " →</a>";
-    S.ta.placeholder = t("ph"); q(".dga-f button").textContent = t("send"); { const k = q(".dga-cl"); if (k) { k.classList.remove("ok"); k.textContent = t("clr"); k.title = t("clrT"); k.setAttribute("aria-label", t("clrT")); } } q(".dga-x").textContent = t("close");
+    S.ta.placeholder = t("ph"); S.ta.setAttribute("aria-label", t("ph")); q(".dga-f button").textContent = t("send"); { const k = q(".dga-cl"); if (k) { k.classList.remove("ok"); k.textContent = t("clr"); k.title = t("clrT"); k.setAttribute("aria-label", t("clrT")); } } q(".dga-x").textContent = t("close");
     const z = q(".dga-z"); if (z) { z.title = t(b.classList.contains("full") ? "small" : "big"); z.setAttribute("aria-label", z.title); } }
   function close() { if (!S) return; if (window.visualViewport && S.fit) { visualViewport.removeEventListener("resize", S.fit); visualViewport.removeEventListener("scroll", S.fit); } S.box.remove(); S = null; document.documentElement.style.overflow = document.body.style.overflow = ""; clearTimeout(idleT); document.removeEventListener("keydown", escKey) }
   function end(msg) { ended = true; if (!S) return; sys(msg); S.f.hidden = true; clearTimeout(idleT) }
@@ -311,7 +311,7 @@
       c.append(b1, bn); } else c.append(el(`<div class="dga-ask">${esc(t("askReq"))}</div>`), b1, b2, b3); addNode(c);
   }
   function reqForm() {
-    const f = el(`<form class="dga-form"><input name="n" required maxlength="80" autocomplete="name" placeholder="${esc(t("name"))}"><input name="p" maxlength="30" type="tel" autocomplete="tel" placeholder="${esc(t("phone"))}"><input name="e" required maxlength="120" type="email" autocomplete="email" placeholder="${esc(t("email"))}"><textarea name="x" maxlength="300" rows="3" placeholder="${esc(t("pnote"))}"></textarea><div class="dga-p2">${esc(t("fnote"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><label class="dga-ok"><input type="checkbox" name="ok" required><span>${esc(t("fok"))}</span></label><div class="dga-e" hidden></div><button type="submit" class="dga-k p">${esc(t("getCode"))}</button></form>`);
+    const f = el(`<form class="dga-form"><input name="n" required maxlength="80" autocomplete="name" placeholder="${esc(t("name"))}" aria-label="${esc(t("name"))}"><input name="p" maxlength="30" type="tel" autocomplete="tel" placeholder="${esc(t("phone"))}" aria-label="${esc(t("phone"))}"><input name="e" required maxlength="120" type="email" autocomplete="email" placeholder="${esc(t("email"))}" aria-label="${esc(t("email"))}"><textarea name="x" maxlength="300" rows="3" placeholder="${esc(t("pnote"))}" aria-label="${esc(t("pnote"))}"></textarea><div class="dga-p2">${esc(t("fnote"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><label class="dga-ok"><input type="checkbox" name="ok" required><span>${esc(t("fok"))}</span></label><div class="dga-e" hidden></div><button type="submit" class="dga-k p">${esc(t("getCode"))}</button></form>`);
     addNode(f); f.n.focus();
     const err = m => { const e = f.querySelector(".dga-e"); e.textContent = nb(m); e.hidden = !m };
     /* 15.11 (titolare): casella non spuntata = frase nostra (non l'avviso del telefono), che dice anche le alternative */
@@ -334,7 +334,7 @@
   }
   function codeForm(data) {
     const extra = MSGS.slice(MSGS.findIndex(m => m.content === req.resume) + 1).filter(m => m.role === "user").map(m => m.content).join("\n");
-    const f = el(`<form class="dga-form"><div>${esc(t("codeSent"))} ${esc(data.email)}</div><input name="c" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="${esc(t("code"))}"><div class="dga-e" hidden></div><button type="submit" class="dga-k p">${esc(t("confirm"))}</button></form>`);
+    const f = el(`<form class="dga-form"><div>${esc(t("codeSent"))} ${esc(data.email)}</div><input name="c" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="${esc(t("code"))}" aria-label="${esc(t("code"))}"><div class="dga-e" hidden></div><button type="submit" class="dga-k p">${esc(t("confirm"))}</button></form>`);
     addNode(f); f.c.focus();
     const err = m => { const e = f.querySelector(".dga-e"); e.textContent = nb(m); e.hidden = !m };
     f.onsubmit = async e => {
