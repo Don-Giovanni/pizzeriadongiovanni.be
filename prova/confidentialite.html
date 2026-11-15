@@ -3,9 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Confidentialité · Pizzeria Don Giovanni</title>
+<title>Confidentialité · Pizzeria Don Giovanni, Thuin</title>
 <meta name="robots" content="noindex">
 <meta name="description" content="Confidentialité du site de la Pizzeria Don Giovanni à Thuin.">
+<link rel="canonical" href="https://pizzeriadongiovanni.be/confidentialite.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pizzeria Don Giovanni">
+<meta property="og:title" content="Confidentialité · Pizzeria Don Giovanni, Thuin">
+<meta property="og:description" content="Confidentialité du site de la Pizzeria Don Giovanni à Thuin.">
+<meta property="og:url" content="https://pizzeriadongiovanni.be/confidentialite.html">
+<meta property="og:image" content="https://pizzeriadongiovanni.be/og-image.jpg">
+<meta property="og:locale" content="fr_BE">
 <script defer src="consent.js?v=01786aa2" data-link></script>
 <link rel="icon" href="favicon.ico">
 <link rel="stylesheet" href="fonts/fonts.css">
@@ -116,7 +124,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const lk=s=>esc(s).replace(/\[\[([^|\]]+)\|(\w+)\]\]/g,(m,a,k)=>U[k]?`<a href="${U[k]}" target="_blank" rel="noopener">${a}</a>`:a);
 let L=new URLSearchParams(location.search).get("l")||LS.get("dg_lang")||(navigator.language||"fr").slice(0,2);if(!T[L])L="fr";
-function draw(){const t=T[L];document.documentElement.lang=L;document.title=t.h+" · Pizzeria Don Giovanni";
+function draw(){const t=T[L];document.documentElement.lang=L;document.title=t.h+" · Pizzeria Don Giovanni, Thuin";
  document.querySelector(".back").textContent=t.back;
  document.getElementById("langs").innerHTML=Object.keys(T).map(k=>`<button type="button" data-l="${k}" class="${k===L?"on":""}">${k.toUpperCase()}</button>`).join(" ");
  document.getElementById("c").innerHTML=`<h1>${esc(t.h)}</h1><p class="muted"><small>${esc(t.u)}</small></p><div class="box"><b>${esc(t.who)}</b><br>${esc(t.whoT)}</div>`+t.s.map(([a,b])=>`<h2>${esc(a)}</h2>`+b.split("\n\n").map(x=>`<p>${lk(x)}</p>`).join("")).join("")}

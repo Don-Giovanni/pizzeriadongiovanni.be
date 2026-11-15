@@ -1,9 +1,17 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Livraison Don Giovanni</title>
+<title>Livraison · Pizzeria Don Giovanni, Thuin</title>
 <meta name="robots" content="noindex">
 <script defer src="consent.js?v=01786aa2" data-wid="8402e497-f6e1-4759-8890-e445a13ff93b" data-uv="69c88607" data-tag="prova"></script>
 <meta name="description" content="Tarifs de livraison de la Pizzeria Don Giovanni, Thuin : prix selon les km et le nombre de pizzas.">
+<link rel="canonical" href="https://pizzeriadongiovanni.be/livraison.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pizzeria Don Giovanni">
+<meta property="og:title" content="Livraison · Pizzeria Don Giovanni, Thuin">
+<meta property="og:description" content="Tarifs de livraison de la Pizzeria Don Giovanni, Thuin : prix selon les km et le nombre de pizzas.">
+<meta property="og:url" content="https://pizzeriadongiovanni.be/livraison.html">
+<meta property="og:image" content="https://pizzeriadongiovanni.be/og-image.jpg">
+<meta property="og:locale" content="fr_BE">
 <link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-512.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
@@ -57,7 +65,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 let L="fr";try{const s=localStorage.getItem("dg_lang");if(UI[s])L=s;else{const n=(navigator.language||"fr").slice(0,2);if(UI[n])L=n}}catch(e){}
 const eur=v=>L==="en"?"€"+v:v+" €";
 function lab(k,u){if(k==="city")return u.city;const [a,b]=k.split("-");return a+" – "+b+" "+u.km}
-function draw(){const u=UI[L];document.documentElement.lang=L;document.getElementById("h1").textContent=u.title;document.title=u.title+" · Don Giovanni";
+function draw(){const u=UI[L];document.documentElement.lang=L;document.getElementById("h1").textContent=u.title;document.title=u.title+" · Pizzeria Don Giovanni, Thuin";
  document.getElementById("back").textContent=u.back;document.getElementById("pr").textContent=u.print;
  document.getElementById("langs").innerHTML=["fr","nl","de","it","en","es"].map(l=>`<button class="b" type="button" data-l="${l}" aria-pressed="${l===L}">${l.toUpperCase()}</button>`).join("");
  const head=`<tr><th>${esc(u.dist)}</th>${u.pz.map(p=>{const i=p.indexOf(" ");return `<th class="pz"><span class="pn">${esc(p.slice(0,i))}</span><br>${esc(p.slice(i+1))}</th>`}).join("")}</tr>`;

@@ -57,7 +57,7 @@ button{font-family:inherit}
 .langs button{font:600 12px var(--body);letter-spacing:.06em;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 9px;cursor:pointer}
 .langs button[aria-pressed="true"]{color:var(--bg);background:var(--fg);border-color:var(--fg)}
 header.hero{padding-block:6px 18px;text-align:center}
-header.hero img{width:min(220px,56vw);height:auto;display:block;margin:0 auto}
+header.hero img{width:min(220px,56vw);height:auto;display:block;margin:0 auto}.hero h1{margin:0;font:inherit}
 .fact>span[data-t]{display:block}
 .status{display:inline-flex;max-width:100%;align-items:center;gap:8px;margin:6px 0 8px;font-weight:600;border-radius:999px;padding:6px 14px;background:var(--panel);border:1px solid var(--line)}
 .status i{width:10px;height:10px;border-radius:50%;background:var(--muted);flex:0 0 auto}
@@ -239,7 +239,7 @@ textarea{min-height:64px;resize:vertical}
   <button type="button" data-l="fr">FR</button><button type="button" data-l="nl">NL</button><button type="button" data-l="de">DE</button><button type="button" data-l="it">IT</button><button type="button" data-l="en">EN</button><button type="button" data-l="es">ES</button>
 </div>
 <header class="hero wrap">
-  <img src="logo-dark.png" alt="Pizzeria Don Giovanni" width="643" height="720">
+  <h1><img src="logo-dark.png" alt="Menu de la Pizzeria Don Giovanni, Thuin" width="643" height="720"></h1>
   <div class="addr">Grand'Rue 1 · 6530 Thuin</div>
   <div class="call2">
     <a class="btn red cb" href="tel:+32455111677"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>0455 11 16 77</a>
@@ -250,6 +250,7 @@ textarea{min-height:64px;resize:vertical}
     <div class="fact"><b data-t="deliv"></b><span class="dl" id="dlTxt"></span><span data-t="delivH"></span><small data-t="delivC"></small><small data-t="bigC"></small><a class="lk" href="livraison.html" data-t="livSee"></a></div>
   </div>
 </header>
+<noscript><div class="wrap" style="padding-block:14px;text-align:center"><p>À emporter du mardi au dimanche, 17h00 – 22h00 · Livraison du jeudi au dimanche, 17h30 – 21h30 · Fermé le lundi</p><p>Le menu avec les prix s'affiche quand JavaScript est activé. Vous pouvez aussi nous appeler au <a href="tel:+32455111677">0455 11 16 77</a>.</p><p><a href="livraison.html">Livraison</a> · <a href="allergenes.html">Allergènes</a></p></div></noscript>
 
 <nav class="cats" id="catsNav" aria-label="Catégories"><div class="wrap" id="chips"></div></nav>
 
