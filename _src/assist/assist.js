@@ -350,5 +350,19 @@
     };
   }
 
+  /* 15.11 (titolare): «seleziona tutto» partito da un messaggio della chat seleziona solo QUEL messaggio, non tutta la pagina.
+     Si ricorda l'ultimo messaggio toccato; se la selezione diventa «tutta la finestra» (titolo in alto + campo in basso compresi),
+     la si riporta su quel messaggio. La selezione di un pezzo di frase col dito resta com'è. Niente viene salvato né inviato. */
+  let selB = null, selFix = false;
+  document.addEventListener("pointerdown", e => { selB = e.target && e.target.closest ? e.target.closest(".dga-b") : null }, true);
+  document.addEventListener("selectionchange", () => {
+    if (selFix || !selB || !selB.isConnected) return;
+    const s = getSelection(); if (!s || !s.rangeCount || s.isCollapsed) return;
+    if (selB.contains(s.getRangeAt(0).commonAncestorContainer)) return;
+    const hd = document.querySelector(".dga-h"), ft = document.querySelector(".dga-f");
+    if (!hd || !s.containsNode(hd, true) || (ft && !ft.hidden && !s.containsNode(ft, true))) return;
+    selFix = true; const r = document.createRange(); r.selectNodeContents(selB); s.removeAllRanges(); s.addRange(r); setTimeout(() => { selFix = false }, 0);
+  });
+
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
