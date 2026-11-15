@@ -31,7 +31,7 @@ spec+=[(a,b) for a,b in closed if b>=today.isoformat()]
 spec.sort()
 ld={"@context":"https://schema.org","@type":"Restaurant","@id":B+"#restaurant","name":"Pizzeria Don Giovanni","url":B,
  "image":B+"og-image.jpg","logo":B+"icon-512.png","telephone":"+32455111677","email":"info@pizzeriadongiovanni.be",
- "servesCuisine":["Pizza","Italienne"],"hasMenu":B+"menu.html",
+ "servesCuisine":["Pizza","Italienne"],"priceRange":"€€","hasMenu":B+"menu.html","sameAs":["https://www.facebook.com/dongiovannithuin"],
  "address":{"@type":"PostalAddress","streetAddress":"Grand'Rue 1","postalCode":"6530","addressLocality":"Thuin","addressCountry":"BE"},
  "geo":{"@type":"GeoCoordinates","latitude":50.339311,"longitude":4.2871456},
  "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"17:00","closes":"22:00"}],
