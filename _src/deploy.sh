@@ -15,7 +15,7 @@ if [ "$1" = main ]; then D=$R; EXTRA="$UM
 '; fi
 cp $S/stats/consent.js $S/stats/umami.js $D/
 python3 $S/make_site.py $S/menu/index.html $D/menu.html "$EXTRA"; python3 $S/site/menu_page.py $D/menu.html
-python3 $S/site/gen_home.py $S/menu/index.html $D/index.html "$EXTRA"; mkdir -p $D/img; cp $S/site/img/*.jpg $D/img/
+python3 $S/site/gen_home.py $S/menu/index.html $D/index.html "$EXTRA"; mkdir -p $D/img; cp $S/site/img/*.jpg $S/site/img/*.webp $D/img/
 # SEO: titolo del menu, canonical, scheda ristorante; sul sito vero anche sitemap.xml, robots.txt, 404.html
 python3 $S/seo/gen_seo.py $S/menu/index.html $D ${1:-prova}
 for f in allergenes.html livraison.html; do
@@ -29,7 +29,7 @@ P
 done
 cp $S/menu/estimation-livraison.html $D/
 mkdir -p $D/fonts; cp $S/menu/fonts/* $D/fonts/
-cp $S/menu/logo-dark.png $S/menu/logo-light.png $S/menu/logo-mix.png $S/menu/logo-glow.png $S/menu/favicon.ico $S/menu/icon-512.png $S/menu/apple-touch-icon.png $D/
+cp $S/menu/logo-dark.png $S/menu/logo-light.png $S/menu/logo-mix.png $S/menu/logo-glow.png $S/menu/logo-dark.webp $S/menu/logo-light.webp $S/menu/logo-glow.webp $S/menu/favicon.ico $S/menu/icon-512.png $S/menu/apple-touch-icon.png $D/
 if [ "$1" = main ]; then cp $S/menu/favicon.ico $S/qr/og-image.jpg $R/; fi
 # Assistance (assistente IA): dati pubblici del menu + pulsante. Sul sito vero solo se esiste _src/assist/ONLINE (ok del titolare)
 node $S/assist/gen_kb.js $S/menu/index.html $D/assistance-kb.txt

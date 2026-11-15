@@ -69,7 +69,7 @@ html,body{height:auto}body{display:block}.wrap{display:block}.tw{overflow:visibl
 <div class="flag"><i></i><i></i><i></i></div>
 <div class="wrap">
 <div class="fixed"><div class="top noprint"><a class="b" id="back" href="index.html"></a><div class="btns" id="langs"></div><button class="b" id="pr" type="button" hidden></button></div>
-<header><img src="logo-light.png" alt="Pizzeria Don Giovanni"><div><h1 id="h1"></h1><p>Pizzeria Don Giovanni · Grand'Rue 1 · 6530 Thuin · Tél. 0455 11 16 77</p></div></header>
+<header><img src="logo-light.webp" onerror="this.onerror=null;this.src=this.src.replace(/\.webp$/,'.png')" alt="Pizzeria Don Giovanni"><div><h1 id="h1"></h1><p>Pizzeria Don Giovanni · Grand'Rue 1 · 6530 Thuin · Tél. 0455 11 16 77</p></div></header>
 <div id="fx"></div></div>
 <div class="tw" id="tw"></div>
 </div>
