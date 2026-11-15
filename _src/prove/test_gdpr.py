@@ -74,7 +74,10 @@ with sync_playwright() as p:
     pg.locator('.dga-form input[name=n]').fill('Jean Exemple');pg.locator('.dga-form input[name=e]').fill('jean@exemple.test')
     pg.locator('.dga-form button[type=submit]').click();pg.wait_for_timeout(1200)
     ok('3b senza spunta: niente parte (né codice né invio)',not [u for m,u,d in ext if u.endswith('/code') or u.endswith('/send')] and pg.locator('.dga-form input[name=n]').count()==1)
-    pg.locator('.dga-ok input').check();pg.locator('.dga-form button[type=submit]').click();pg.wait_for_timeout(1500)
+    em=pg.locator('.dga-form .dga-e');emt=em.inner_text() if em.is_visible() else ''
+    pg.locator('.dga-ok input').check();pg.wait_for_timeout(200)
+    ok('3c senza spunta: frase nostra con telefono ed email, sparisce con la spunta',('Sans cette case cochée' in emt) and ('0455 11 16 77' in emt) and ('info@pizzeriadongiovanni.be' in emt) and not em.is_visible(),emt)
+    pg.locator('.dga-form button[type=submit]').click();pg.wait_for_timeout(1500)
     pg.locator('.dga-form input[name=c]').fill('123456');pg.locator('.dga-form button[type=submit]').click();pg.wait_for_timeout(1500)
     snd=[json.loads(d) for m,u,d in ext if u.endswith('/send')]
     ok('3b con spunta: codice chiesto e richiesta inviata con ok:1',len([1 for m,u,d in ext if u.endswith('/code')])==1 and len(snd)==1 and snd[0].get('ok')==1,str(sorted(snd[0].keys())) if snd else '')
