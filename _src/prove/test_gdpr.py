@@ -79,12 +79,12 @@ with sync_playwright() as p:
     snd=[json.loads(d) for m,u,d in ext if u.endswith('/send')]
     ok('3b con spunta: codice chiesto e richiesta inviata con ok:1',len([1 for m,u,d in ext if u.endswith('/code')])==1 and len(snd)==1 and snd[0].get('ok')==1,str(sorted(snd[0].keys())) if snd else '')
     c.close()
-    # 6. Confidentialité: 6 lingue, 11 sezioni, link, riga sul francese
+    # 6. Confidentialité: 6 lingue, 12 sezioni, link, riga sul francese
     c,ext,sent=ctx();pg=c.new_page()
     for l in ['fr','nl','en','de','it','es']:
         pg.goto(B+'confidentialite.html?l='+l);pg.wait_for_timeout(400)
         n=pg.locator('#c h2').count();a=pg.locator('#c a').count();last=pg.locator('#c p').last.inner_text()
-        ok('6 Confidentialité '+l+': 11 sezioni, 18 link',n==11 and a==18,f'{n} sezioni, {a} link · «{last[-70:]}»')
+        ok('6 Confidentialité '+l+': 12 sezioni, 18 link',n==12 and a==18,f'{n} sezioni, {a} link · «{last[-70:]}»')
     ok('6 Confidentialité: niente fascia, niente Umami, link Statistiques',pg.locator('.dgc').count()==0 and pg.locator('#dgc-f button').count()==1 and ext==[] and st(pg)=={'l':{},'s':{}})
     pg.screenshot(path='/home/claude/work/t/conf.png');c.close()
     # schermate
