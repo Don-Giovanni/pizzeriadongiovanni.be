@@ -1,5 +1,5 @@
 # test_blocco_b.py <cartella delle pagine, es. ../prova-sito/public/prova>  (blocco B degli audit del 15.11.2026)
-# 79 controlli con Photon e openrouteservice finti: indirizzo fuori zona (6 lingue), «Thuin» per il CAP 6530, etichette degli allergeni,
+# 80 controlli con Photon e openrouteservice finti: indirizzo fuori zona (6 lingue), «Thuin» per il CAP 6530, etichette degli allergeni,
 # focus dentro le finestre, titoli della home, didascalia e scope delle tabelle, <main>, link Confidentialité e twitter:card scritti nell'HTML.
 import subprocess,sys,time,json
 from playwright.sync_api import sync_playwright
@@ -73,13 +73,14 @@ try:
     ok('menu: adrFar in 6 lingue',pg.evaluate("Object.keys(TX).filter(k=>TX[k].adrFar).length")==6)
     ok('menu: link Confidentialité + Statistiques in fondo',pg.eval_on_selector('#dgc-f','e=>e.querySelector("a[href=\\"confidentialite.html\\"]")&&e.querySelector("button")?1:0')==1 and pg.locator('#dgc-f').count()==1)
     # 12-15 km di strada: 15 pizze o più = possibile dopo conferma al telefono (titolare, 15.11.2026)
-    J="""(a)=>{const pz=ITEMS.find(x=>x.pizza),pa=ITEMS.find(x=>x.dish&&!x.pizza);MODE="del";ADR="Rue des Exemples 12, 9999 Villefictive";KM=String(a[0]);CART=[{id:pz.id,q:a[1],s:[]}].concat(a[2]?[{id:pa.id,q:a[2],s:[]}]:[]);const T=totals();const d=document.createElement("div");d.innerHTML=sumH(T);return [T.st,T.ok,T.fee,T.msg===t("bigCall"),T.msg===t("bigOnly"),T.msg===t("outZone"),!!d.querySelector(".delno"),T.msg]}"""
-    r=pg.evaluate(J,[13,14,0]);ok('13 km, 14 pizze: «impossible» + minimo 15 pizze',r[0]=='no' and r[4] and r[6] and '15 pizzas' in r[7] and '0455\u00a011\u00a016\u00a077' in r[7],r[7])
+    J="""(a)=>{const pz=ITEMS.find(x=>x.pizza),pa=ITEMS.find(x=>x.dish&&!x.pizza);MODE="del";ADR="Rue des Exemples 12, 9999 Villefictive";KM=String(a[0]);CART=[{id:pz.id,q:a[1],s:[]}].concat(a[2]?[{id:pa.id,q:a[2],s:[]}]:[]);const T=totals();const d=document.createElement("div");d.innerHTML=sumH(T);const dn=d.querySelector(".delno");return [T.st,T.ok,T.fee,T.msg===t("bigCall"),T.msg===t("bigOnly"),T.msg===t("outZone"),!!dn,T.msg,dn?dn.textContent:"",d.querySelectorAll(".msg").length]}"""
+    r=pg.evaluate(J,[13,14,0]);ok('13 km, 14 pizze: riquadro rosso con la frase intera, niente «impossible», niente doppione sotto',r[0]=='no' and r[4] and r[6] and r[8]==r[7] and 'impossible' not in r[8] and r[9]==0 and '15 pizzas' in r[7] and '0455\u00a011\u00a016\u00a077' in r[7],r[7])
     r=pg.evaluate(J,[13,15,0]);ok('13 km, 15 pizze: possibile dopo conferma, niente riquadro rosso, niente prezzo',r[0]=='call' and r[3] and not r[6] and r[1] is False and r[2]==0,r[7])
     r=pg.evaluate(J,[14.9,20,0]);ok('14,9 km, 20 pizze: possibile dopo conferma',r[0]=='call' and r[3] and not r[6])
     r=pg.evaluate(J,[13,10,8]);ok('13 km, 10 pizze + 8 paste: non basta (contano le pizze)',r[0]=='no' and r[4] and r[6])
-    r=pg.evaluate(J,[15.1,20,0]);ok('15,1 km, 20 pizze: fuori zona',r[0]=='no' and r[5] and r[6])
+    r=pg.evaluate(J,[15.1,20,0]);ok('15,1 km, 20 pizze: riquadro «Livraison impossible : hors zone.»',r[0]=='no' and r[5] and r[6] and r[8].replace('\u00a0',' ')=='Livraison impossible : hors zone.' and r[9]==1,r[8])
     r=pg.evaluate(J,[11.9,15,0]);ok('11,9 km, 15 pizze: consegna normale gratuita',r[0]=='ok' and r[1] and r[2]==0)
+    r=pg.evaluate(J,[9,2,0]);ok('9 km, 2 pizze: riquadro «impossible pour cette commande» come prima','pour cette commande' in r[8],r[8])
     r=pg.evaluate(J,[9,2,0]);ok('9 km, 2 pizze: minimo 3 come prima',r[0]=='no' and not r[3] and not r[4])
     ok('bigCall e bigOnly nuove in 6 lingue',pg.evaluate("Object.keys(TX).filter(k=>TX[k].bigCall&&/15/.test(TX[k].bigOnly)&&TX[k].bigCall.includes('0455\\u00a011\\u00a016\\u00a077')).length")==6)
     pg.evaluate("CART=[];MODE='take';KM='';ADR='';save()")
