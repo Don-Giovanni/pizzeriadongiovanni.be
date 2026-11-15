@@ -1,5 +1,7 @@
 #!/bin/bash
 # deploy.sh main|prova  — pubblica menu + pagine (statistiche Umami solo con consenso: stats/; prova con noindex e etichetta «prova»)
+# 15.11.2026: la copia di prova NON sta più in questo repository (era pubblica su /prova/): si scrive nel repository PRIVATO
+# Don-Giovanni/prova-sito (cartella public/prova/, clonato accanto a questo o indicato con PROVA_DIR), protetto da Cloudflare Access.
 set -e
 S=$(cd "$(dirname "$0")" && pwd)
 R=$(dirname "$S")
@@ -10,7 +12,7 @@ UMP='<script defer src="consent.js?v='$CV'" data-wid="8402e497-f6e1-4759-8890-e4
 UML='<script defer src="consent.js?v='$CV'" data-link></script>'
 git -C $R pull -q
 if [ "$1" = main ]; then D=$R; EXTRA="$UM
-"; else D=$R/prova; EXTRA='<meta name="robots" content="noindex">
+"; else D=${PROVA_DIR:-$(dirname "$R")/prova-sito/public/prova}; [ -d "$D" ] || { echo "ERRORE: manca la copia di prova privata ($D). Clonare Don-Giovanni/prova-sito accanto a questo repository."; exit 1; }; EXTRA='<meta name="robots" content="noindex">
 '"$UMP"'
 '; fi
 cp $S/stats/consent.js $S/stats/umami.js $D/
