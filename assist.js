@@ -137,7 +137,9 @@
   }
 
   function el(html) { const d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild }
-  function add(cls, text) { const n = el(`<div class="dga-b ${cls}"></div>`); n.textContent = nb(text); S.m.appendChild(n); S.m.scrollTop = 1e6; return n }
+  /* 15.11.2026: il modello a volte scrive il grassetto «**così**»: la finestra mostra solo testo, quindi gli asterischi si tolgono */
+  const plain = x => String(x == null ? "" : x).replace(/\*\*([^*\n]+)\*\*/g, "$1").replace(/\*\*/g, "");
+  function add(cls, text) { const n = el(`<div class="dga-b ${cls}"></div>`); n.textContent = nb(plain(text)); S.m.appendChild(n); S.m.scrollTop = 1e6; return n }
   function addNode(n) { S.m.appendChild(n); S.m.scrollTop = 1e6; return n }
   function sys(text) { return add("dga-s", text) }
   function callBox(msg) { addNode(el(`<div class="dga-b dga-a">${esc(msg)}<br><a class="dga-call" href="${TELH}">📞 ${TEL}</a></div>`)) }

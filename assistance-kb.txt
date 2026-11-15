@@ -1,7 +1,7 @@
 # MENU (prix en euros, TVA comprise)
 
 ## Pour commencer
-- Pain pizza : 7,00 € — nature ou ail-parmesan | allergènes : Gluten, Lait
+- Pain pizza : 7,00 € — nature ou ail-parmesan | allergènes : Gluten, Œufs, Lait
 
 ## Pizzas — « Blanche » = sans sauce tomate.
 - Margherita : 11,00 € — tomate, mozzarella, basilic, huile d'olive | allergènes : Gluten, Lait
