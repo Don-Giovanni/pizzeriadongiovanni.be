@@ -374,7 +374,7 @@ function vis(e){const c=getComputedStyle(e);if(c.display==="none"||c.visibility=
 function chk(){const o=[...document.querySelectorAll(S)].some(vis);if(o!==on){on=o;document.documentElement.style.overflow=o?"hidden":"";document.body.style.overflow=o?"hidden":""}}
 new MutationObserver(()=>requestAnimationFrame(chk)).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden","open"]});
 addEventListener("load",chk);chk();})();</script>
-<script src="assist.js?v=aa95ae3b" defer></script>
+<script src="assist.js?v=ec1551e2" defer></script>
 <script>document.documentElement.classList.remove("dgpre")</script>
 </body>
 </html>

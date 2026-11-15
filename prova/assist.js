@@ -4,7 +4,9 @@
   const API = W.api || "https://assistance-dg.pizzeriadongiovannithuin.workers.dev";
   const SITEKEY = W.sitekey || "0x4AAAAAAF5BzSwMW34UAihL";
   const PAGE = location.pathname.indexOf("/prova/") === 0 ? "prova" : "main";
-  const TEL = "0455 11 16 77", TELH = "tel:+32455111677";
+  const TEL = "0455\u00a011\u00a016\u00a077", TELH = "tel:+32455111677";
+  /* 15.11 (titolare): il numero di telefono non si spezza mai su due righe (spazi che non vanno a capo), in ogni testo mostrato dalla chat */
+  const nb = x => String(x == null ? "" : x).replace(/0455[ \u00a0]11[ \u00a0]16[ \u00a0]77/g, TEL);
   const LS = { get(k) { try { return localStorage.getItem(k) } catch (e) { return null } }, set(k, v) { try { localStorage.setItem(k, v) } catch (e) { } } };
   /* 14.11 (titolare): SOLO su /prova/, per le prove: ?assist=reset azzera conto dei messaggi, blocchi, «richiesta già inviata» e conversazione */
   if (PAGE === "prova" && /[?&]assist=reset(&|$)/.test(location.search)) {
@@ -135,7 +137,7 @@
   }
 
   function el(html) { const d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild }
-  function add(cls, text) { const n = el(`<div class="dga-b ${cls}"></div>`); n.textContent = text; S.m.appendChild(n); S.m.scrollTop = 1e6; return n }
+  function add(cls, text) { const n = el(`<div class="dga-b ${cls}"></div>`); n.textContent = nb(text); S.m.appendChild(n); S.m.scrollTop = 1e6; return n }
   function addNode(n) { S.m.appendChild(n); S.m.scrollTop = 1e6; return n }
   function sys(text) { return add("dga-s", text) }
   function callBox(msg) { addNode(el(`<div class="dga-b dga-a">${esc(msg)}<br><a class="dga-call" href="${TELH}">📞 ${TEL}</a></div>`)) }
@@ -309,7 +311,7 @@
   function reqForm() {
     const f = el(`<form class="dga-form"><input name="n" required maxlength="80" autocomplete="name" placeholder="${esc(t("name"))}"><input name="p" maxlength="30" type="tel" autocomplete="tel" placeholder="${esc(t("phone"))}"><input name="e" required maxlength="120" type="email" autocomplete="email" placeholder="${esc(t("email"))}"><textarea name="x" maxlength="300" rows="3" placeholder="${esc(t("pnote"))}"></textarea><div class="dga-p2">${esc(t("fnote"))} <a href="confidentialite.html" target="_blank" rel="noopener">${esc(t("priv"))} →</a></div><label class="dga-ok"><input type="checkbox" name="ok" required><span>${esc(t("fok"))}</span></label><div class="dga-e" hidden></div><button type="submit" class="dga-k p">${esc(t("getCode"))}</button></form>`);
     addNode(f); f.n.focus();
-    const err = m => { const e = f.querySelector(".dga-e"); e.textContent = m; e.hidden = !m };
+    const err = m => { const e = f.querySelector(".dga-e"); e.textContent = nb(m); e.hidden = !m };
     /* 15.11 (titolare): casella non spuntata = frase nostra (non l'avviso del telefono), che dice anche le alternative */
     f.ok.addEventListener("invalid", e => { e.preventDefault(); err(t("errOk")) }); f.ok.addEventListener("change", () => { if (f.ok.checked) err("") });
     f.onsubmit = async e => {
@@ -332,7 +334,7 @@
     const extra = MSGS.slice(MSGS.findIndex(m => m.content === req.resume) + 1).filter(m => m.role === "user").map(m => m.content).join("\n");
     const f = el(`<form class="dga-form"><div>${esc(t("codeSent"))} ${esc(data.email)}</div><input name="c" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="${esc(t("code"))}"><div class="dga-e" hidden></div><button type="submit" class="dga-k p">${esc(t("confirm"))}</button></form>`);
     addNode(f); f.c.focus();
-    const err = m => { const e = f.querySelector(".dga-e"); e.textContent = m; e.hidden = !m };
+    const err = m => { const e = f.querySelector(".dga-e"); e.textContent = nb(m); e.hidden = !m };
     f.onsubmit = async e => {
       e.preventDefault(); err(""); const btn = f.querySelector("button"); btn.disabled = true;
       try {
