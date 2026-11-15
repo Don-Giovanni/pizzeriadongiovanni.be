@@ -22,5 +22,11 @@ Servono prima di ogni pubblicazione che tocca dati (PRIMA REGOLA GDPR, progetto 
 - CAP 6530: «Thuin» al posto del quartiere; Leers-et-Fosteau e gli altri paesi invariati.
 - 68 link degli allergeni con i nomi nell'etichetta; focus della tastiera dentro carrello, scelta della lingua e foto; titoli della home in ordine.
 - Tabelle con didascalia nascosta e scope; Confidentialité dentro <main>; link Confidentialité e twitter:card scritti nei file.
-- Carrello tra 12 e 15 km di strada: meno di 15 piatti (pizze o paste; pain pizza e dessert non contano) = riquadro rosso con la frase intera (minimo 15 pizze e conferma al telefono); oltre 15 km = «Livraison impossible : hors zone.»; 15 piatti o più E almeno 230 € di ordine (servono entrambe) = possibile solo dopo conferma al telefono, senza prezzo; ricerca fino a 15 km in linea d'aria.
-- Solo tra 12 e 15 km ogni 2 pain pizza contano 1 piatto; il tiramisù non conta mai; sotto i 12 km il pain pizza non conta.
+- Carrello tra 12 e 15 km di strada: meno di 15 piatti (pizze o paste, più 1 ogni 2 pain pizza; i dessert non contano) = riquadro rosso con la frase intera (minimo 15 pizze e conferma al telefono); oltre 15 km = «Livraison impossible : hors zone.»; 15 piatti o più E almeno 230 € di ordine (servono entrambe) = possibile solo dopo conferma al telefono, senza prezzo; ricerca fino a 15 km in linea d'aria.
+- Ogni 2 pain pizza contano 1 piatto in TUTTE le fasce (titolare, 15.11.2026 18:20); il tiramisù non conta mai.
+
+## test_consigli.py: 70 controlli (dal 15.11.2026 sera)
+`python3 _src/prove/test_consigli.py <cartella delle pagine>`
+- Pain pizza: ogni 2 = 1 piatto in tutte le fasce (minimi, prezzo, gratuità, regola dei 35 €, anche con soli pain pizza).
+- Consigli del carrello: riquadro verde della gratuità con il risparmio vero, bevande (lattine fino a 2 piatti, bottiglie da 3) e dessert a tutti, un tocco = aggiunto, riquadro che resta aperto con «×n», X per riquadro, «Non merci», riga nel riepilogo, niente scritto nel telefono, mai i pain pizza nei consigli.
+- Bevande divise: gruppi «Soft 33 cl», «Soft 1,5 L», «Bières et vin», id fissi (boissons-N), misura nel carrello, 6 lingue, link e righe della pagina Allergènes.
