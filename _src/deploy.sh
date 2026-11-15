@@ -57,3 +57,5 @@ P
   done
 else rm -f $D/gift.js; for f in index.html menu.html; do sed -i '/<script src="gift.js/d' $D/$f; done
 fi
+# TESTO FRANCESE NELL'HTML (15.11.2026): SEMPRE ULTIMO PASSO. Scrive nelle pagine il testo che JavaScript disegna (seo/prerender.py; serve Playwright + Chromium)
+python3 $S/seo/prerender.py $D
