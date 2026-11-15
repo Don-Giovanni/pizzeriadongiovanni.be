@@ -1,5 +1,5 @@
 # test_blocco_b.py <cartella delle pagine, es. ../prova-sito/public/prova>  (blocco B degli audit del 15.11.2026)
-# 70 controlli con Photon e openrouteservice finti: indirizzo fuori zona (6 lingue), «Thuin» per il CAP 6530, etichette degli allergeni,
+# 79 controlli con Photon e openrouteservice finti: indirizzo fuori zona (6 lingue), «Thuin» per il CAP 6530, etichette degli allergeni,
 # focus dentro le finestre, titoli della home, didascalia e scope delle tabelle, <main>, link Confidentialité e twitter:card scritti nell'HTML.
 import subprocess,sys,time,json
 from playwright.sync_api import sync_playwright
@@ -13,7 +13,8 @@ def feat(street,num,pc,city,district,lon,lat):
 PH={'maladrie':[feat("Rue des Exemples","12","6530","Thuin","La Maladrie",4.2950,50.3360)],
     'fosteau':[feat("Rue des Exemples","3","6530","Thuin","Leers-et-Fosteau",4.2448,50.3042)],
     'gozee':[feat("Rue des Exemples","5","6534","Thuin","Gozée",4.3516,50.3332)],
-    'lointain':[feat("Rue Lointaine","1","6000","Charleroi","Charleroi",4.44,50.44)],
+    'lointain':[feat("Rue Lointaine","1","6000","Charleroi","Charleroi",4.49,50.47)],
+    'bordure':[feat("Rue des Exemples","7","7130","Binche","Binche",4.1652,50.4107)],
     'rien':[]}
 try:
   with sync_playwright() as p:
@@ -56,6 +57,7 @@ try:
             t=typ('rien du tout');ok('fr: niente trovato → «Adresse introuvable» come prima','Adresse introuvable' in t,repr(t[:60]))
             t=typ('rue des exemples maladrie');ok('fr: 6530 quartiere → Thuin','6530 Thuin' in t and 'Maladrie' not in t,repr(t))
             t=typ('rue des exemples fosteau');ok('fr: 6530 Leers-et-Fosteau resta','6530 Leers-et-Fosteau' in t,repr(t))
+            t=typ('rue bordure');ok('fr: 11,7 km in linea d\'aria → ora si trova (limite 15 km)','7130 Binche' in t,repr(t))
             t=typ('rue des exemples gozee');ok('fr: 6534 Gozée invariato','6534 Gozée' in t,repr(t))
             pg.locator('#sug button').first.click();pg.wait_for_timeout(600)
             ok('fr: scelta indirizzo → km calcolati','2,1' in pg.locator('#kmbox').inner_text() or '2.1' in pg.locator('#kmbox').inner_text(),pg.locator('#kmbox').inner_text())
@@ -70,6 +72,17 @@ try:
     ok('menu: «bigOk» sparita',pg.evaluate("Object.values(TX).every(x=>!('bigOk' in x))"))
     ok('menu: adrFar in 6 lingue',pg.evaluate("Object.keys(TX).filter(k=>TX[k].adrFar).length")==6)
     ok('menu: link Confidentialité + Statistiques in fondo',pg.eval_on_selector('#dgc-f','e=>e.querySelector("a[href=\\"confidentialite.html\\"]")&&e.querySelector("button")?1:0')==1 and pg.locator('#dgc-f').count()==1)
+    # 12-15 km di strada: 15 pizze o più = possibile dopo conferma al telefono (titolare, 15.11.2026)
+    J="""(a)=>{const pz=ITEMS.find(x=>x.pizza),pa=ITEMS.find(x=>x.dish&&!x.pizza);MODE="del";ADR="Rue des Exemples 12, 9999 Villefictive";KM=String(a[0]);CART=[{id:pz.id,q:a[1],s:[]}].concat(a[2]?[{id:pa.id,q:a[2],s:[]}]:[]);const T=totals();const d=document.createElement("div");d.innerHTML=sumH(T);return [T.st,T.ok,T.fee,T.msg===t("bigCall"),T.msg===t("bigOnly"),T.msg===t("outZone"),!!d.querySelector(".delno"),T.msg]}"""
+    r=pg.evaluate(J,[13,14,0]);ok('13 km, 14 pizze: «impossible» + minimo 15 pizze',r[0]=='no' and r[4] and r[6] and '15 pizzas' in r[7] and '0455\u00a011\u00a016\u00a077' in r[7],r[7])
+    r=pg.evaluate(J,[13,15,0]);ok('13 km, 15 pizze: possibile dopo conferma, niente riquadro rosso, niente prezzo',r[0]=='call' and r[3] and not r[6] and r[1] is False and r[2]==0,r[7])
+    r=pg.evaluate(J,[14.9,20,0]);ok('14,9 km, 20 pizze: possibile dopo conferma',r[0]=='call' and r[3] and not r[6])
+    r=pg.evaluate(J,[13,10,8]);ok('13 km, 10 pizze + 8 paste: non basta (contano le pizze)',r[0]=='no' and r[4] and r[6])
+    r=pg.evaluate(J,[15.1,20,0]);ok('15,1 km, 20 pizze: fuori zona',r[0]=='no' and r[5] and r[6])
+    r=pg.evaluate(J,[11.9,15,0]);ok('11,9 km, 15 pizze: consegna normale gratuita',r[0]=='ok' and r[1] and r[2]==0)
+    r=pg.evaluate(J,[9,2,0]);ok('9 km, 2 pizze: minimo 3 come prima',r[0]=='no' and not r[3] and not r[4])
+    ok('bigCall e bigOnly nuove in 6 lingue',pg.evaluate("Object.keys(TX).filter(k=>TX[k].bigCall&&/15/.test(TX[k].bigOnly)&&TX[k].bigCall.includes('0455\\u00a011\\u00a016\\u00a077')).length")==6)
+    pg.evaluate("CART=[];MODE='take';KM='';ADR='';save()")
     pg.evaluate("document.querySelectorAll('.cwarn').forEach(e=>e.remove())")
     b=pg.locator('button.add').first;b.focus();pg.keyboard.press('Enter');pg.wait_for_timeout(300)
     pg.evaluate("document.querySelectorAll('.modal').forEach(e=>e.hidden=true)");pg.wait_for_timeout(200)
