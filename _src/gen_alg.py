@@ -44,6 +44,11 @@ tr.cat td{background:#fde9e7;color:var(--red);font-weight:700;text-align:left;fo
 tbody tr:nth-child(even):not(.cat) td{background:var(--zebra)}
 td.x{color:var(--red);font-weight:700}
 .v{color:var(--amber);font-weight:700}
+tbody tr.hl td{background:#ffe08a!important;font-weight:700}
+th.hl{background:var(--red)!important}
+.legend li.hl{background:#ffe08a;border-radius:5px;font-weight:700;padding:0 4px;margin:0 -4px}
+tbody tr td,th,.legend li{transition:background-color .6s}
+@media print{tbody tr.hl td,.legend li.hl{background:none!important;font-weight:inherit}}
 .foot{margin-top:10px;color:var(--muted);font-size:12.5px}
 @media (max-width:560px){table{font-size:11px}th,td{padding:4px 0}th:not(.n){font-size:10px;letter-spacing:-.3px}th.n,td.n{padding-left:5px}header{margin:8px 0 6px;padding-bottom:6px;gap:10px}header img{width:44px}h1{font-size:17px}header p{font-size:11px}.draft{font-size:12.5px;padding:5px 9px;margin:6px 0}.intro{font-size:12.5px}.legend{grid-template-columns:repeat(3,auto);justify-content:space-between;font-size:12.5px;gap:1px 10px;margin:6px 0 8px}.legend b{min-width:20px}.b{padding:5px 10px;font-size:12px}}
 @media (max-height:600px){.intro{display:none}header img{width:36px}header p{display:none}.draft{margin:4px 0}.legend{margin:2px 0 4px}}
@@ -64,13 +69,13 @@ html,body{height:auto}body{display:block}.wrap{display:block}.tw{overflow:visibl
 const DATA=__DATA__,UPD="__UPD__";
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let L="fr";try{const s=localStorage.getItem("dg_lang");if(DATA.d.langs[s])L=s;else{const n=(navigator.language||"fr").slice(0,2);if(DATA.d.langs[n])L=n}}catch(e){}
-function row(x){return `<tr><td class="n">${esc(x.n)}${x.v?' <span class="v">*</span>':''}</td>${[...Array(14)].map((_,i)=>x.al.includes(i+1)?'<td class="x">●</td>':'<td></td>').join("")}</tr>`}
+function row(x,id){return `<tr${id?` id="r-${id}"`:""}><td class="n">${esc(x.n)}${x.v?' <span class="v">*</span>':''}</td>${[...Array(14)].map((_,i)=>x.al.includes(i+1)?'<td class="x">●</td>':'<td></td>').join("")}</tr>`}
 function draw(){const g=DATA.d.langs[L],u=DATA.ui[L];document.documentElement.lang=L;
  document.getElementById("h1").textContent=u.sub;document.getElementById("back").textContent=u.back;
  const pr=document.getElementById("pr");pr.textContent=u.print;
  document.getElementById("langs").innerHTML=["fr","nl","de","it","en","es"].map(l=>`<button class="b" type="button" data-l="${l}" aria-pressed="${l===L}">${l.toUpperCase()}</button>`).join("");
  const head=`<tr><th class="n">${esc(g.T.dish)}</th>${[...Array(14)].map((_,i)=>`<th title="${esc(g.alg[i])}">${i+1}</th>`).join("")}</tr>`;
- let body=g.cats.map(c=>`<tr class="cat"><td colspan="15">${esc(c.name)}</td></tr>`+c.items.map(row).join("")).join("");
+ let body=g.cats.map(c=>`<tr class="cat"><td colspan="15">${esc(c.name)}</td></tr>`+c.items.map((x,i)=>row(x,c.id+"-"+i)).join("")).join("");
  body+=`<tr class="cat"><td colspan="15">${esc(DATA.d.supT[L])}</td></tr>`+DATA.d.supl[L].map(row).join("");
  document.getElementById("fx").innerHTML=`${DATA.d.draft?`<p class="draft">${esc(g.T.draft)}</p>`:""}
  <p class="intro" style="margin:6px 0 0">${esc(g.T.intro)}</p>
@@ -80,8 +85,18 @@ function draw(){const g=DATA.d.langs[L],u=DATA.ui[L];document.documentElement.la
  <p class="foot">${esc(u.x)} · <span class="v">*</span> ${esc(g.T.v.replace(/^\\*\\s*/,""))}<br>${esc(u.upd)} : ${UPD}</p>`;}
 document.addEventListener("click",e=>{const l=e.target.closest("[data-l]");if(l){L=l.dataset.l;try{localStorage.setItem("dg_lang",L)}catch(_){ }draw()}});
 try{if(window.self===window.top){const pr=document.getElementById("pr");pr.hidden=false;pr.onclick=()=>window.print()}}catch(e){}
+/* piatto scelto nel menu (allergenes.html#pizzas-3): riga al centro, riga e allergeni evidenziati per 10 secondi */
+let HL=(location.hash||"").slice(1),HLT=0;
+function hl(scroll){document.querySelectorAll(".hl").forEach(e=>e.classList.remove("hl"));if(!HL)return;
+ const r=document.getElementById("r-"+HL);if(!r){HL="";return}
+ r.classList.add("hl");const ths=document.querySelectorAll("thead th"),lis=document.querySelectorAll(".legend li");
+ [...r.children].forEach((td,i)=>{if(i&&td.classList.contains("x")){if(ths[i])ths[i].classList.add("hl");if(lis[i-1])lis[i-1].classList.add("hl")}});
+ if(scroll)r.scrollIntoView({block:"center"});
+ if(!HLT)HLT=setTimeout(()=>{HL="";hl()},10000)}
+const draw0=draw;draw=function(){draw0();hl()};
 draw();
 function lh(){const e=document.querySelector(".lgs");if(e)document.documentElement.style.setProperty("--lh",e.offsetHeight+"px")}lh();addEventListener("resize",lh);document.addEventListener("click",()=>setTimeout(lh,50));
+if(HL)setTimeout(()=>hl(1),80);
 </script></body></html>'''
 import datetime,zoneinfo
 upd=datetime.datetime.now(zoneinfo.ZoneInfo("Europe/Brussels")).strftime("%d/%m/%Y")
