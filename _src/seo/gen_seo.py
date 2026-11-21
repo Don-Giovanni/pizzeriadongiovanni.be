@@ -44,7 +44,7 @@ open(p,'w').write(s)
 if mode=='main':
     import shutil,subprocess
     shutil.copy(S+'/robots.txt',D+'/robots.txt');shutil.copy(S+'/404.html',D+'/404.html')
-    urls=[('', 'menu/index.html','1.0'),('menu.html','menu/index.html','0.9'),('allergenes.html','menu/allergenes.html','0.5'),('livraison.html','menu/livraison.html','0.6'),('confidentialite.html','assist/confidentialite.html','0.3')]
+    urls=[('', 'menu/index.html','1.0'),('menu.html','menu/index.html','0.9'),('allergenes.html','menu/allergenes.html','0.5'),('livraison.html','menu/livraison.html','0.6'),('confidentialite.html','assist/confidentialite.html','0.3'),('qui-sommes-nous.html','assist/qui-sommes-nous.html','0.4'),('mentions-legales.html','assist/mentions-legales.html','0.2')]
     x='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for u,f,pr in urls:
         try: lm=subprocess.check_output(['git','-C',S,'log','-1','--format=%cs','--',S+'/../'+f]).decode().strip() or today.isoformat()
