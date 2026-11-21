@@ -20,7 +20,7 @@ try:
         def route(r):
             if '127.0.0.1' in r.request.url: return r.continue_()
             ext.append(r.request.url);return r.abort()
-        c.route('**/*',route);c.add_init_script("try{localStorage.setItem('dg_lang','%s')}catch(e){}"%lang)
+        c.route('**/*',route);c.add_init_script("try{localStorage.setItem('dg_lang','%s');localStorage.setItem('dg_stats',JSON.stringify({v:0,t:Date.now()}))}catch(e){}"%lang)  # finestra delle statistiche già chiusa (dal 16.11 al centro)
         pg=c.new_page();pg.goto('http://127.0.0.1:%d/menu.html'%PORT);pg.wait_for_timeout(600);return pg
     pg=page('fr');errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
     ev=lambda *a:pg.evaluate("(a)=>{TIPX={};TIPKEEP={};TIPSEL={};"+SET+"return mk(...a)}",list(a))
@@ -107,7 +107,7 @@ try:
         g=page(lang);tx=g.evaluate("[...document.querySelectorAll('#boissons li.it .ing')].map(e=>e.textContent)");gr=g.evaluate("[...document.querySelectorAll('#boissons li.grp')].map(e=>e.textContent)")
         ok(lang+': 3 «'+can+'» + Jupiler, 3 «'+btl+'», titoli di gruppo tradotti ('+', '.join(tit)+')',tx.count(can)==4 and tx.count(btl)==3 and gr==tit,str(gr));g.context.close()
     a=pg.evaluate("[...document.querySelectorAll('#boissons a.alg')].map(e=>e.getAttribute('href'))")
-    gc=br.new_context(locale='fr-BE');gc.add_init_script("try{localStorage.setItem('dg_lang','fr')}catch(e){}");g=gc.new_page();g.goto('http://127.0.0.1:%d/allergenes.html'%PORT);g.wait_for_timeout(500)
+    gc=br.new_context(locale='fr-BE');gc.add_init_script("try{localStorage.setItem('dg_lang','fr');localStorage.setItem('dg_stats',JSON.stringify({v:0,t:Date.now()}))}catch(e){}");g=gc.new_page();g.goto('http://127.0.0.1:%d/allergenes.html'%PORT);g.wait_for_timeout(500)
     rows=g.evaluate("(ids)=>ids.map(h=>{const r=document.getElementById('r-'+h.split('#')[1]);return r?r.querySelector('td.n').textContent.trim():null})",a)
     ok('link degli allergeni delle bevande: arrivano sulla riga giusta (Jupiler, Résilience, Vin)',len(rows)==3 and rows[0].startswith('Jupiler') and rows[1].startswith('Résilience') and rows[2].startswith('Vin'),str(rows))
     ok('pagina Allergènes: sei righe soft con la misura',sorted(x for x in g.evaluate("[...document.querySelectorAll('td.n')].map(e=>e.textContent.trim())") if x.split(' (')[0] in('Coca-Cola','Fanta','Ice Tea'))==['Coca-Cola (bouteille 1,5 L)','Coca-Cola (canette 33 cl)','Fanta (bouteille 1,5 L)','Fanta (canette 33 cl)','Ice Tea (bouteille 1,5 L)','Ice Tea (canette 33 cl)'])

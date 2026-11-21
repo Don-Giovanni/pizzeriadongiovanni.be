@@ -37,6 +37,9 @@ if [ "$1" = main ]; then cp $S/menu/favicon.ico $S/qr/og-image.jpg $R/; fi
 node $S/assist/gen_kb.js $S/menu/index.html $D/assistance-kb.txt
 if [ "$1" != main ] || [ -f $S/assist/ONLINE ]; then
   cp $S/assist/assist.js $S/assist/confidentialite.html $D/; AV=$(md5sum $S/assist/assist.js | cut -c1-8)
+  # CONFIDENTIALITÉ COL CADEAU CACHÉ (titolare, 16.11.2026): la versione con la sezione del gioco è salvata in assist/confidentialite_cadeau.html.
+  # Va nella prova sempre; sul sito vero SOLO quando si pubblica il gioco (_src/gift/ONLINE). Ogni modifica della Confidentialité va fatta in TUTTI E DUE i file.
+  if [ "$1" != main ] || [ -f $S/gift/ONLINE ]; then cp $S/assist/confidentialite_cadeau.html $D/confidentialite.html; fi
   for f in index.html menu.html; do python3 - "$D/$f" "$AV" <<'P'
 import sys,re;p=sys.argv[1];s=open(p).read();s=re.sub(r'<script src="assist.js[^"]*" defer></script>\n','',s)
 s=s.replace('</body>','<script src="assist.js?v='+sys.argv[2]+'" defer></script>\n</body>',1)
@@ -44,9 +47,18 @@ open(p,'w').write(s)
 P
   done
   if [ "$1" != main ]; then sed -i 's|<meta name="description"|<meta name="robots" content="noindex">\n<meta name="description"|' $D/confidentialite.html; fi
-  python3 - "$D/confidentialite.html" "$UML" <<'P'
+  # MENTIONS LÉGALES (titolare, 16.11.2026): pagina in 6 lingue, come la Confidentialité (solo il link alle statistiche)
+  cp $S/assist/mentions-legales.html $D/
+  # CONDITIONS GÉNÉRALES DE VENTE (titolare, 18.11.2026): PDF in francese, linkato dalle Mentions légales (sezione «Conditions générales de vente»)
+  cp $S/cgv/cgv.pdf $D/
+  # QUI SOMMES-NOUS ? (titolare, 18.11.2026): pagina in 6 lingue (testi assist/qsn_text.py, si rigenera con assist/gen_qsn.py)
+  cp $S/assist/qui-sommes-nous.html $D/
+  if [ "$1" != main ]; then sed -i 's|<meta name="description"|<meta name="robots" content="noindex">\n<meta name="description"|' $D/qui-sommes-nous.html; fi
+  if [ "$1" != main ]; then sed -i 's|<meta name="description"|<meta name="robots" content="noindex">\n<meta name="description"|' $D/mentions-legales.html; fi
+  for f in confidentialite.html mentions-legales.html qui-sommes-nous.html; do python3 - "$D/$f" "$UML" <<'P'
 import sys;p=sys.argv[1];s=open(p).read();s=s.replace('<link rel="icon"',sys.argv[2]+'\n<link rel="icon"',1);open(p,'w').write(s)
 P
+  done
 fi
 # «Cadeau caché» (buoni regalo del sito, gift.js): su /prova/ sempre, sul sito vero solo se esiste _src/gift/ONLINE (ok del titolare)
 if [ "$1" != main ] || [ -f $S/gift/ONLINE ]; then
@@ -61,3 +73,20 @@ else rm -f $D/gift.js; for f in index.html menu.html; do sed -i '/<script src="g
 fi
 # TESTO FRANCESE NELL'HTML (15.11.2026): SEMPRE ULTIMO PASSO. Scrive nelle pagine il testo che JavaScript disegna (seo/prerender.py; serve Playwright + Chromium)
 python3 $S/seo/prerender.py $D
+# BOTTONE «RESET» (titolare, 15.11.2026): SOLO nella copia di prova privata, su tutte le pagine; MAI sul sito vero. Dopo prerender: è solo una riga <script>.
+if [ "$1" != main ]; then
+  cp $S/prova_reset/reset.js $D/; RV=$(md5sum $S/prova_reset/reset.js | cut -c1-8)
+  for f in $D/*.html; do python3 - "$f" "$RV" <<'P'
+import sys,re;p=sys.argv[1];s=open(p).read();s=re.sub(r'<script src="reset.js[^"]*" defer></script>\n','',s)
+if '</body>' in s: s=s.replace('</body>','<script src="reset.js?v='+sys.argv[2]+'" defer></script>\n</body>',1);open(p,'w').write(s)
+P
+  done
+else rm -f $D/reset.js; if grep -l 'reset.js' $D/*.html 2>/dev/null; then echo "ERRORE: reset.js in una pagina del sito vero"; exit 1; fi
+  # NOVITÀ EVIDENZIATE (titolare, 15.11.2026): nelle sorgenti i testi nuovi stanno tra {{+ e +}}; nella prova diventano gialli (reset.js).
+  # Sul sito vero i segni si TOLGONO da tutti i file pubblicati; se ne resta anche uno solo, non si pubblica.
+  for f in $D/*.html $D/*.js $D/*.txt $D/*.xml; do [ -f "$f" ] && sed -i 's/{{+//g; s/+}}//g; s/{{\*//g; s/\*}}//g' "$f"; done
+  if grep -l -e '{{+' -e '+}}' -e '{{\*' -e '\*}}' -e 'mark class="dgn"' $D/*.html $D/*.js $D/*.txt 2>/dev/null; then echo "ERRORE: segni di novità in un file del sito vero"; exit 1; fi
+fi
+# PDF DA SCARICARE (titolare, 16.11.2026): Confidentialité e Mentions légales nelle 6 lingue, SEMPRE ULTIMO PASSO
+# (sul sito vero dopo aver tolto i segni di novità; serve Playwright + Chromium). Se fallisce, non si pubblica.
+if [ -f $D/confidentialite.html ]; then python3 $S/assist/make_pdf.py $D ${1:-prova}; fi

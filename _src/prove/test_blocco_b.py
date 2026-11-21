@@ -71,7 +71,7 @@ try:
     ok('menu: pain pizza = Gluten, Œufs, Lait',li.locator('a.alg').get_attribute('aria-label').replace(' ',' ')=='Allergènes : Gluten, Œufs, Lait',li.locator('a.alg').get_attribute('aria-label'))
     ok('menu: «bigOk» sparita',pg.evaluate("Object.values(TX).every(x=>!('bigOk' in x))"))
     ok('menu: adrFar in 6 lingue',pg.evaluate("Object.keys(TX).filter(k=>TX[k].adrFar).length")==6)
-    ok('menu: link Confidentialité + Statistiques in fondo',pg.eval_on_selector('#dgc-f','e=>e.querySelector("a[href=\\"confidentialite.html\\"]")&&e.querySelector("button")?1:0')==1 and pg.locator('#dgc-f').count()==1)
+    ok('menu: link Confidentialité + Statistiques in fondo',pg.eval_on_selector('#dgc-f','e=>e.querySelector("a[href^=\\"confidentialite\\"]")&&e.querySelector("button")?1:0')==1 and pg.locator('#dgc-f').count()==1)
     # 12-15 km di strada: 15 pizze o più = possibile dopo conferma al telefono (titolare, 15.11.2026)
     J="""(a)=>{const pz=ITEMS.find(x=>x.pizza),pa=ITEMS.find(x=>x.dish&&!x.pizza);MODE="del";ADR="Rue des Exemples 12, 9999 Villefictive";KM=String(a[0]);CART=[{id:pz.id,q:a[1],s:[]}].concat(a[2]?[{id:pa.id,q:a[2],s:[]}]:[]);const T=totals();const d=document.createElement("div");d.innerHTML=sumH(T);const dn=d.querySelector(".delno");return [T.st,T.ok,T.fee,T.msg===t("bigCall"),T.msg===t("bigOnly"),T.msg===t("outZone"),!!dn,T.msg,dn?dn.textContent:"",d.querySelectorAll(".msg").length]}"""
     r=pg.evaluate(J,[13,14,0]);ok('13 km, 14 pizze: riquadro rosso con la frase intera, niente «impossible», niente doppione sotto',r[0]=='no' and r[4] and r[6] and r[8]==r[7] and 'impossible' not in r[8] and r[9]==0 and '15 plats (pizzas ou pâtes) et de 230\u00a0€ de commande' in r[7].replace('230 €','230\u00a0€') and '0455\u00a011\u00a016\u00a077' in r[7],r[7])
@@ -128,7 +128,7 @@ try:
     pg.goto('http://127.0.0.1:%d/index.html'%PORT);pg.wait_for_timeout(700)
     hs=pg.eval_on_selector_all('h1,h2,h3','e=>e.filter(x=>!x.closest(".excpop,.dgg,.dga")).map(x=>+x.tagName[1])')
     ok('home: titoli in ordine (mai un salto)',hs[0]==1 and all(b-a<=1 for a,b in zip(hs,hs[1:])),str(hs))
-    ok('home: link Confidentialité + Statistiques',pg.eval_on_selector('#dgc-f','e=>e.querySelector("a[href=\\"confidentialite.html\\"]")&&e.querySelector("button")?1:0')==1 and pg.locator('#dgc-f').count()==1)
+    ok('home: link Confidentialité + Statistiques',pg.eval_on_selector('#dgc-f','e=>e.querySelector("a[href^=\\"confidentialite\\"]")&&e.querySelector("button")?1:0')==1 and pg.locator('#dgc-f').count()==1)
     g=pg.locator('#gal button').first;g.scroll_into_view_if_needed();g.focus();pg.keyboard.press('Enter');pg.wait_for_timeout(300)
     ok('home: foto aperta, focus nella foto',pg.evaluate("document.activeElement.id")=='lb')
     pg.keyboard.press('Tab');ok('home: Tab non esce dalla foto',pg.evaluate("document.activeElement.id")=='lb')
@@ -139,9 +139,9 @@ try:
     for lang in('fr','nl','de','it','en','es'):
         c=ctx(lang);pg=c.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
         pg.goto('http://127.0.0.1:%d/livraison.html'%PORT);pg.wait_for_timeout(400)
-        r1=pg.evaluate("()=>{const t=document.querySelector('table');const c=t.querySelector('caption');return [c&&c.textContent,c&&c.getBoundingClientRect().width,[...t.querySelectorAll('thead th')].every(x=>x.scope==='col'),document.querySelectorAll('#dgc-f').length,!!document.querySelector('#dgc-f a[href=\"confidentialite.html\"]'),document.getElementById('h1').textContent]}")
+        r1=pg.evaluate("()=>{const t=document.querySelector('table');const c=t.querySelector('caption');return [c&&c.textContent,c&&c.getBoundingClientRect().width,[...t.querySelectorAll('thead th')].every(x=>x.scope==='col'),document.querySelectorAll('#dgc-f').length,!!document.querySelector('#dgc-f a[href^=\"confidentialite\"]'),document.getElementById('h1').textContent]}")
         pg.goto('http://127.0.0.1:%d/allergenes.html'%PORT);pg.wait_for_timeout(400)
-        r2=pg.evaluate("()=>{const t=document.querySelector('table');const c=t.querySelector('caption');return [c&&c.textContent,c&&c.getBoundingClientRect().width,[...t.querySelectorAll('thead th')].every(x=>x.scope==='col'),document.querySelectorAll('#dgc-f').length,!!document.querySelector('#dgc-f a[href=\"confidentialite.html\"]'),t.querySelectorAll('thead th').length]}")
+        r2=pg.evaluate("()=>{const t=document.querySelector('table');const c=t.querySelector('caption');return [c&&c.textContent,c&&c.getBoundingClientRect().width,[...t.querySelectorAll('thead th')].every(x=>x.scope==='col'),document.querySelectorAll('#dgc-f').length,!!document.querySelector('#dgc-f a[href^=\"confidentialite\"]'),t.querySelectorAll('thead th').length]}")
         pg.goto('http://127.0.0.1:%d/confidentialite.html'%PORT);pg.wait_for_timeout(400)
         r3=pg.evaluate("()=>[document.querySelectorAll('main').length,document.querySelector('main h1')?1:0,document.querySelectorAll('main h2').length]")
         ok(lang+': livraison didascalia, scope, link',bool(r1[0]) and r1[0]==r1[5] and r1[1]<=1 and r1[2] and r1[3]==1 and r1[4],str(r1))
@@ -152,7 +152,7 @@ try:
     for f in('index','menu','livraison','allergenes','confidentialite'):
         s=open(D+'/'+f+'.html',encoding='utf-8').read()
         ok(f+'.html: twitter:card nel file',s.count('<meta name="twitter:card" content="summary_large_image">')==1)
-        if f!='confidentialite': ok(f+'.html: link Confidentialité nel file (senza JavaScript)',s.count('<p id="dgc-f" class="dgc-f"><a href="confidentialite.html">Confidentialité</a></p>')==1)
+        if f!='confidentialite': ok(f+'.html: link Confidentialité (PDF) nel file (senza JavaScript)',s.count('<div id="dgc-f" class="dgc-f">')==1 and 'href="confidentialite-fr.pdf"' in s)  # dal 16-21.11 il fondo pagina statico porta al PDF
     br.close()
 finally:
     srv.terminate()
