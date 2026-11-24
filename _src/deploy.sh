@@ -29,7 +29,8 @@ import sys;s=open(sys.argv[1]).read();s=s.replace('<meta name="description"','<m
 P
   fi
 done
-cp $S/menu/estimation-livraison.html $D/
+# PAGINA INTERNA estimation-livraison TOLTA (titolare, 24.11.2026): non serve più, il calcolo è quello del carrello del menu
+rm -f $D/estimation-livraison.html
 mkdir -p $D/fonts; cp $S/menu/fonts/* $D/fonts/
 cp $S/menu/logo-dark.png $S/menu/logo-light.png $S/menu/logo-mix.png $S/menu/logo-glow.png $S/menu/logo-dark.webp $S/menu/logo-light.webp $S/menu/logo-glow.webp $S/menu/favicon.ico $S/menu/icon-512.png $S/menu/apple-touch-icon.png $D/
 if [ "$1" = main ]; then cp $S/menu/favicon.ico $S/qr/og-image.jpg $R/; fi

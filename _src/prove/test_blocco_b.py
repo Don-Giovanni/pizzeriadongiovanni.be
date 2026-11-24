@@ -24,8 +24,8 @@ try:
         def route(r):
             u=r.request.url
             if '127.0.0.1' in u: return r.continue_()
-            if 'photon.komoot.io' in u:
-                q=u.lower()
+            if 'photon.komoot.io' in u or 'workers.dev/geo' in u:  # 24.11.2026: la ricerca passa dal Worker (/geo, POST)
+                q=(u+' '+(r.request.post_data or '')).lower()
                 for k,v in PH.items():
                     if k in q: return r.fulfill(status=200,content_type='application/json',body=json.dumps({"features":v}))
                 return r.fulfill(status=200,content_type='application/json',body='{"features":[]}')

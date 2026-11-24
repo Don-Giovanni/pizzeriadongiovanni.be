@@ -23,7 +23,7 @@ with sync_playwright() as p:
             if 'turnstile' in u: return r.fulfill(content_type='text/javascript',body='window.turnstile={render:(e,o)=>{setTimeout(()=>o.callback("tok"),20);return "w"},remove(){},reset(){}}')
             if 'workers.dev' in u:
                 path=u.split('workers.dev')[1]
-                j={'/start':{'s':'S'},'/chat':{'text':'Récapitulatif de test','action':'demande','title':'Test','lang':'fr'},'/code':{'c':'C'},'/send':{'id':'DG-TEST-1'},'/gift':{'none':1}}.get(path,{})
+                j={'/start':{'s':'S'},'/chat':{'text':'Récapitulatif de test','action':'demande','title':'Test','lang':'fr'},'/code':{'c':'C'},'/send':{'id':'DG-TEST-1'},'/gift':{'none':1},'/geo':{'features':[{'type':'Feature','geometry':{'type':'Point','coordinates':[4.29,50.34]},'properties':{'name':'Rue des Exemples','street':'Rue des Exemples','housenumber':'12','postcode':'6530','city':'Thuin','country':'Belgique','countrycode':'BE','osm_key':'highway','type':'house'}}]}}.get(path,{})  # 24.11.2026: /geo = ricerca dell'indirizzo via Worker
                 return r.fulfill(json=j,headers={'access-control-allow-origin':'*'})
             if 'photon' in u: return r.fulfill(json={'features':[{'type':'Feature','geometry':{'type':'Point','coordinates':[4.29,50.34]},'properties':{'name':'Rue des Exemples','street':'Rue des Exemples','housenumber':'12','postcode':'6530','city':'Thuin','country':'Belgique','countrycode':'BE','osm_key':'highway','type':'house'}}]},headers={'access-control-allow-origin':'*'})
             if 'heigit' in u or 'openrouteservice' in u: return r.fulfill(json={'features':[{'properties':{'summary':{'distance':3400,'duration':420}}}]},headers={'access-control-allow-origin':'*'})
@@ -77,7 +77,7 @@ with sync_playwright() as p:
     pg.locator('#dgc-f button').click();pg.locator('.dgc-b button').nth(0).click();pg.wait_for_timeout(1500);n1=len(sent)
     ok('3 cambio idea (Refuser): pagina ricaricata senza Umami',not pg.evaluate('!!window.umami') and json.loads(st(pg)['l']['dg_stats'])['v']==0)
     c.close()
-    # 5. chat: avviso + modulo con casella
+    # 5. chat: avviso + modulo (senza casella dal 24.11.2026)
     c,ext,sent=ctx();pg=c.new_page();pg.goto(B+'menu.html');pg.wait_for_timeout(800)
     if pg.locator('#intro').is_visible(): pg.locator('#intro button[data-l="fr"]').click()
     pg.locator('.dgc-b button').nth(0).click()
@@ -87,18 +87,18 @@ with sync_playwright() as p:
     ok('5 aprire la chat non manda niente',[u for m,u,d in ext if 'workers.dev/gift' not in u]==[],str([u for m,u,d in ext]))
     pg.locator('.dga-f textarea').fill('Bonjour, une fête pour 20 personnes');pg.locator('.dga-f button').click();pg.wait_for_timeout(1500)
     pg.locator('.dga-rq button').nth(0).click();pg.wait_for_timeout(300)
-    fn=pg.locator('.dga-form .dga-p2').inner_text();lab=pg.locator('.dga-ok').inner_text()
-    ok('3b modulo: frase senza «uniquement» + casella',('uniquement' not in fn) and pg.locator('.dga-ok input[type=checkbox][required]').count()==1 and not pg.locator('.dga-ok input').is_checked(),fn+' || '+lab)
+    # 24.11.2026 (titolare): niente casella; riga del consenso sopra «Confirmer et envoyer» (art. 9.2.a)
+    fn=pg.locator('.dga-form .dga-p2').first.inner_text()
+    ok('3b modulo: frase senza «uniquement», nessuna casella',('uniquement' not in fn) and pg.locator('.dga-form input[type=checkbox]').count()==0,fn)
     pg.locator('.dga-form input[name=n]').fill('Jean Exemple');pg.locator('.dga-form input[name=e]').fill('jean@exemple.test')
-    pg.locator('.dga-form button[type=submit]').click();pg.wait_for_timeout(1200)
-    ok('3b senza spunta: niente parte (né codice né invio)',not [u for m,u,d in ext if u.endswith('/code') or u.endswith('/send')] and pg.locator('.dga-form input[name=n]').count()==1)
-    em=pg.locator('.dga-form .dga-e');emt=em.inner_text() if em.is_visible() else ''
-    pg.locator('.dga-ok input').check();pg.wait_for_timeout(200)
-    ok('3c senza spunta: frase nostra con telefono (che non va a capo) ed email, sparisce con la spunta',('Sans cette case cochée' in emt) and ('0455\u00a011\u00a016\u00a077' in emt) and ('info@pizzeriadongiovanni.be' in emt) and not em.is_visible(),emt)
     pg.locator('.dga-form button[type=submit]').click();pg.wait_for_timeout(1500)
+    ok('3b codice chiesto, niente inviato prima della conferma',len([1 for m,u,d in ext if u.endswith('/code')])==1 and not [u for m,u,d in ext if u.endswith('/send')])
+    cf=pg.locator('.dga-form').last;btn=cf.locator('button[type=submit]');rg=cf.locator('.dga-p2').last.inner_text()
+    above=pg.evaluate("""()=>{const f=[...document.querySelectorAll('.dga-form')].pop();const r=[...f.querySelectorAll('.dga-p2')].pop();const b=f.querySelector('button[type=submit]');return !!(r&&b&&(r.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING))}""")
+    ok('3c riga del consenso sopra «Confirmer et envoyer», con salute e senza parentesi',above and 'vous acceptez' in rg and 'données de santé' in rg and '(' not in rg and 'Confirmer et envoyer' in btn.inner_text(),rg)
     pg.locator('.dga-form input[name=c]').fill('123456');pg.locator('.dga-form button[type=submit]').click();pg.wait_for_timeout(1500)
     snd=[json.loads(d) for m,u,d in ext if u.endswith('/send')]
-    ok('3b con spunta: codice chiesto e richiesta inviata con ok:1',len([1 for m,u,d in ext if u.endswith('/code')])==1 and len(snd)==1 and snd[0].get('ok')==1,str(sorted(snd[0].keys())) if snd else '')
+    ok('3b dopo «Confirmer et envoyer»: richiesta inviata con ok:1',len(snd)==1 and snd[0].get('ok')==1,str(sorted(snd[0].keys())) if snd else '')
     c.close()
     # 6. Confidentialité: 6 lingue, 12 sezioni, link, riga sul francese
     c,ext,sent=ctx();pg=c.new_page()
